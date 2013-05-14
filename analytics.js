@@ -41,6 +41,7 @@ var Apigee = (function(){
   //Work around hack because onerror is always called in the window context so we can't store crashes internally
   //This isn't too bad because we are encapsulated.
   var logs = [];
+  var metrics = [];
   //Constructor for mobile analytics SDK
   Apigee.MobileAnalytics = function(options) {
     this.orgName = options.orgName;
@@ -50,8 +51,8 @@ var Apigee = (function(){
     this.crashReportingEnabled = options.crashReportingEnabled || false;
     this.interceptNetworkCalls = options.interceptNetworkCalls || false;
     
-    this.metrics = [];
-    this.syncDate = new Date().getTime() / 1000;;
+    
+    this.syncDate = timeStamp();
 
     //Pickup the mobile config here
     this.downloadConfig();
@@ -79,13 +80,13 @@ var Apigee = (function(){
           syncObject.sessionMetrics = self.sessionMetrics;
         }
         var syncFlag = false;
-        self.syncDate = new Date().getTime() / 1000;;
+        self.syncDate = timeStamp();
         //Go through each of the aggregated metrics
         //If there are unreported metrics present add them to the object to be sent across the network
-        if(self.metrics.length > 0) {
-          syncObject.metrics = self.metrics;
+        if(metrics.length > 0) {
+          syncObject.metrics = metrics;
           syncFlag = true;
-          self.metrics = [];
+          metrics = [];
         }
 
         if(logs.length > 0) {
@@ -100,7 +101,7 @@ var Apigee = (function(){
           self.sync(syncObject);
         }
 
-      }, syncInterval);
+      }, 3000);
 
       //Setting up the catching of errors and network calls
       if(this.interceptNetworkCalls) {
@@ -179,6 +180,10 @@ var Apigee = (function(){
     syncData.orgName = this.orgName;
     syncData.appName = this.appName;
     syncData.fullAppName = this.orgName + '_' + this.appName;
+    syncData.instaOpsApplicationId = this.configuration.instaOpsApplicationId;
+    syncData.timeStamp = timeStamp();
+
+    console.log(syncData);
 
     var syncRequest = new XMLHttpRequest();
     var path = this.apiUrl + this.orgName + '/' + this.appName + '/apm/apmMetrics';
@@ -220,16 +225,17 @@ var Apigee = (function(){
   Apigee.MobileAnalytics.prototype.startSession = function() {
     //If the user agent string exists on the device
     var sessionSummary = {};
-    sessionSummary.timeStamp = new Date().getTime() / 1000;
+    sessionSummary.timeStamp = timeStamp();
     //Lets set all the automatically unknowns
     sessionSummary.networkCarrier = UNKNOWN;
     sessionSummary.deviceCountry = UNKNOWN;
     sessionSummary.batteryLevel = "-100";
     sessionSummary.networkSubType = UNKNOWN;
     sessionSummary.networkCountry = UNKNOWN;
-
+    sessionSummary.sessionId = randomUUID();
+    sessionSummary.applicationVersion = "1.0";
     
-    sessionSummary.appId = this.appId;
+    sessionSummary.appId = this.appId.toString();
 
     //We're checking if it's a phonegap app.
     //If so let's use APIs exposed by phonegap to collect device info.
@@ -240,18 +246,17 @@ var Apigee = (function(){
       sessionSummary.deviceId = window.device.uuid;
       sessionSummary.deviceModel = window.device.name;
       sessionSummary.networkType = navigator.network.connection.type;
-      sessionSummary.sessionId = randomUUID();
-
-
     } else {
 
       //Here we want to check for localstorage and make sure the browser has it
       if(typeof window.localStorage !== "undefined") {
         //If no uuid is set in localstorage create a new one, and set it as the session's deviceId
-        if(typeof window.localStorage.getItem("uuid") !== "undefined") {
+
+        if(typeof window.localStorage.getItem("uuid") === null) {
           sessionSummary.deviceId = window.localStorage.getItem("uuid");
         } else {
-          window.localStorage.setItem("uuid", randomUUID());
+          var uuid = randomUUID();
+          window.localStorage.setItem("uuid", uuid);
           sessionSummary.deviceId = window.localStorage.getItem("uuid");
         }
       }
@@ -274,12 +279,12 @@ var Apigee = (function(){
       }
 
       if(typeof navigator.platform !== "undefined") {
-        sessionSummary.platform = navigator.platform;
+        sessionSummary.devicePlatform = navigator.platform;
       }
 
-      if(typeof navigator.appVersion !== "undefined") {
-        sessionSummary.appVersion = navigator.appVersion;
-      }
+      // if(typeof navigator.appVersion !== "undefined") {
+      //   sessionSummary.appVersion = navigator.appVersion;
+      // }
 
       if (typeof navigator.language !== "undefined") {
         sessionSummary.localLanguage = navigator.language;
@@ -322,7 +327,7 @@ var Apigee = (function(){
                   //gap_exec and any other platform specific filtering here
                   //gap_exec is used internally by phonegap, and shouldn't be logged.
                   if( url.indexOf("/!gap_exec") === -1 ) {
-                      var endTime = new Date().getTime() / 1000;
+                      var endTime = timeStamp();
                       var latency = endTime - startTime;
                       var summary = { 
                                       regexUrl:url, 
@@ -352,7 +357,7 @@ var Apigee = (function(){
           }
        
           if(!this.noIntercept) {
-              startTime = new Date().getTime() / 1000;
+              startTime = timeStamp();
        
               if(this.addEventListener) {
                   this.addEventListener("readystatechange", onReadyStateChange, false);
@@ -377,13 +382,14 @@ var Apigee = (function(){
   */
   Apigee.MobileAnalytics.prototype.logMessage = function(options) {
     var log = options || {};
+    console.log(log);
     var cleansedLog = {
       logLevel:log.logLevel,
       logMessage: log.logMessage,
       tag: log.tag,
-      timeStamp: new Date().getTime() / 1000
+      timeStamp: timeStamp()
     }
-    logs.push(log);
+    logs.push(cleansedLog);
   }
 
   /*
@@ -489,7 +495,7 @@ var Apigee = (function(){
   *
   */
   Apigee.MobileAnalytics.prototype.logNetworkCall = function(options) {
-    this.networkCalls.push(options);
+    metrics.push(options);
   }
 
   //UUID Generation function unedited
@@ -529,6 +535,10 @@ var Apigee = (function(){
     s[8] = s[13] = s[18] = s[23] = '-';
    
     return s.join('');
+  }
+
+  function timeStamp() {
+    return new Date().getTime().toString();
   }
 
   return Apigee;

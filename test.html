@@ -47,7 +47,7 @@
                 
                 if (httpStatusCode == 200) {
                     document.getElementById("webServiceTextArea").value = xmlHttpRequest.responseText;
-                    max.logInfo({"message":"jumped through good", "tag":"WEB_SERVICE_CALL"});
+                    max.logInfo({"logMessage":"jumped through good", "tag":"WEB_SERVICE_CALL"});
                 } else {
                     document.getElementById("webServiceTextArea").value = "Error: " + httpStatusCode;
                 }
