@@ -49,7 +49,6 @@ var Apigee = (function(){
     //You best know what you're doing if you're setting this for mobile analytics!
     this.apiUrl = typeof options.apiUrl === "undefined" ? "https://api.usergrid.org/" : options.apiUrl;
     this.crashReportingEnabled = options.crashReportingEnabled || false;
-    this.interceptNetworkCalls = options.interceptNetworkCalls || false;
     
     
     this.syncDate = timeStamp();
@@ -60,56 +59,66 @@ var Apigee = (function(){
     //Don't do anything if configuration wasn't loaded.
     if(this.configuration !== null) {
       
-      this.appId = this.configuration.instaOpsApplicationId;
-      var deviceSyncSetting = this.configuration.defaultAppConfig.agentUploadIntervalInSeconds;
-      var defaultSyncSetting = this.configuration.defaultAppConfig.agentUploadIntervalInSeconds;
-      var syncInterval = 3000;
-      if(typeof deviceSyncSetting !== "undefined") {
-        syncInterval = deviceSyncSetting * 1000;
-      } else if (typeof defaultSyncSetting !== "undefined") {
-        syncInterval = defaultSyncSetting * 1000;
+      //Ensure that we want to sample data from this device.
+      var sampleSeed = 0; 
+      if(this.deviceConfig.samplingRate < 100) {
+        sampleSeed = Math.floor(Math.random() * 101)
       }
 
-      //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
-      var self = this;
-      //Set up server syncing
-      setInterval(function(){
-        var syncObject = {};
-        //Just in case something bad happened.
-        if(typeof self.sessionMetrics !== "undefined") {
-          syncObject.sessionMetrics = self.sessionMetrics;
-        }
-        var syncFlag = false;
-        self.syncDate = timeStamp();
-        //Go through each of the aggregated metrics
-        //If there are unreported metrics present add them to the object to be sent across the network
-        if(metrics.length > 0) {
-          syncObject.metrics = metrics;
-          syncFlag = true;
-          metrics = [];
-        }
+      //If we're not in the sampling window don't setup data collection at all
+      if(sampleSeed < this.deviceConfig.samplingRate){
+        this.appId = this.configuration.instaOpsApplicationId;
 
-        if(logs.length > 0) {
+        //Let's monkeypatch logging calls to intercept and send to server.
+        this.patchLoggingCalls();
+
+        var syncInterval = 3000;
+        if (typeof this.deviceConfig.agentUploadIntervalInSeconds !== "undefined") {
+          syncInterval = this.deviceConfig.agentUploadIntervalInSeconds;
+        }
+        
+
+        //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
+        var self = this;
+        //Set up server syncing
+        setInterval(function(){
+          var syncObject = {};
+          //Just in case something bad happened.
+          if(typeof self.sessionMetrics !== "undefined") {
+            syncObject.sessionMetrics = self.sessionMetrics;
+          }
+          var syncFlag = false;
+          self.syncDate = timeStamp();
+          //Go through each of the aggregated metrics
+          //If there are unreported metrics present add them to the object to be sent across the network
+          if(metrics.length > 0) {
+            syncFlag = true;
+          }
+
+          if(logs.length > 0) {
+            syncFlag = true;
+          }
+
           syncObject.logs = logs;
-          syncFlag = true;
+          syncObject.metrics = metrics;
           logs = [];
+          metrics = [];
+          
+          //If there is data to sync go ahead and do it.
+          if(syncFlag) {
+            self.sync(syncObject);
+          }
+
+        }, 3000);
+
+        //Setting up the catching of errors and network calls
+        if(this.configuration.defaultAppConfig.networkMonitoringEnabled) {
+           this.patchNetworkCalls(XMLHttpRequest);
         }
-
-        //If there is data to sync go ahead and do it.
-        if(syncFlag) {
-          console.log("syncing");
-          self.sync(syncObject);
+        
+        if(this.crashReportingEnabled) {
+          window.onerror = Apigee.MobileAnalytics.catchCrashReport;
         }
-
-      }, 3000);
-
-      //Setting up the catching of errors and network calls
-      if(this.interceptNetworkCalls) {
-        this.patchNetworkCalls(XMLHttpRequest);
-      }
-      
-      if(this.crashReportingEnabled) {
-        window.onerror = Apigee.MobileAnalytics.catchCrashReport;
       }
     } else {
       console.log("Error configuration unavailable.");
@@ -128,7 +137,6 @@ var Apigee = (function(){
   Apigee.MobileAnalytics.prototype.downloadConfig = function(callback){
     var configRequest = new XMLHttpRequest();
     var path = this.apiUrl + this.orgName + '/' + this.appName + '/apm/apigeeMobileConfig';
-    console.log(path);
     //If we have a function lets load the config async else do it sync.
     if(typeof callback === "function") {
       configRequest.open(VERBS.get, path, true);
@@ -144,6 +152,13 @@ var Apigee = (function(){
       if(configRequest.status === 200) {
         var config = JSON.parse(configRequest.responseText);
         this.configuration = config;
+        if(config.deviceLevelOverrideEnabled === true) {
+          this.deviceConfig = config.deviceLevelAppConfig;
+        } else if(this.abtestingOverrideEnabled === true){
+          this.deviceConfig = config.abtestingAppConfig;
+        } else {
+          this.deviceConfig = config.defaultAppConfig;
+        }
       } else {
         //When tapping into the configuration. If it's null let's assume bad things happened.
         this.configuration = null;
@@ -182,9 +197,7 @@ var Apigee = (function(){
     syncData.fullAppName = this.orgName + '_' + this.appName;
     syncData.instaOpsApplicationId = this.configuration.instaOpsApplicationId;
     syncData.timeStamp = timeStamp();
-
-    console.log(syncData);
-
+    alert(JSON.stringify(syncData));
     var syncRequest = new XMLHttpRequest();
     var path = this.apiUrl + this.orgName + '/' + this.appName + '/apm/apmMetrics';
     syncRequest.open(VERBS.post, path, false);
@@ -192,12 +205,12 @@ var Apigee = (function(){
     syncRequest.setRequestHeader("Content-Type","application/json");
     syncRequest.send(JSON.stringify(syncData));
     if(syncRequest.status === 200) {
-      var response = JSON.parse(syncRequest.responseText);
+      var response = syncRequest.responseText;
       console.log(response);
     } else {
       //When tapping into the configuration. If it's null let's assume bad things happened.
       console.log("Error syncing");
-      console.log(JSON.parse(syncRequest.responseText));
+      console.log(syncRequest.responseText);
     }
   }
 
@@ -212,7 +225,7 @@ var Apigee = (function(){
   *
   */
   Apigee.MobileAnalytics.catchCrashReport = function(crashEvent, url, line) {
-    this.logError({tag:"SDK_ERROR_LOGGER", logMessage:"Error:"+crashEvent+" for url:"+url+" on line:"+line});
+    logCrash({tag:"CRASH", logMessage:"Error:"+crashEvent+" for url:"+url+" on line:"+line});
   }
 
   /*
@@ -234,8 +247,8 @@ var Apigee = (function(){
     sessionSummary.networkCountry = UNKNOWN;
     sessionSummary.sessionId = randomUUID();
     sessionSummary.applicationVersion = "1.0";
-    
     sessionSummary.appId = this.appId.toString();
+
 
     //We're checking if it's a phonegap app.
     //If so let's use APIs exposed by phonegap to collect device info.
@@ -265,7 +278,7 @@ var Apigee = (function(){
         //Small hack to make all device names consistent.
         var ua = navigator.userAgent.toLowerCase();
         //For now detect iPhone, iPod, Android, WebOS
-        var device = "unknown";
+        var device = UNKNOWN;
         if(/ipad/.test(ua)) {
           device = "iPad";
         } else if (/iphone/.test(ua)) {
@@ -326,26 +339,25 @@ var Apigee = (function(){
               {
                   //gap_exec and any other platform specific filtering here
                   //gap_exec is used internally by phonegap, and shouldn't be logged.
-                  if( url.indexOf("/!gap_exec") === -1 ) {
+                  if( url.indexOf("/!gap_exec") === -1 && url.indexOf(apigee.apiUrl) === -1) {
                       var endTime = timeStamp();
                       var latency = endTime - startTime;
                       var summary = { 
-                                      regexUrl:url, 
-                                      start:startTime, 
-                                      end:endTime, 
-                                      numSamples:1, 
-                                      minLatency:latency, 
-                                      sumLatency:latency, 
-                                      maxLatency:latency, 
-                                      timeStamp:startTime
+                                      url:url, 
+                                      startTime:startTime.toString(), 
+                                      endTime:endTime.toString(), 
+                                      numSamples:"1", 
+                                      latency:latency.toString(), 
+                                      timeStamp:startTime.toString()
                                     };
                       if(self.status == 200) {
                           //Record the http call here
-                          summary.numErrors = 0;
+                          summary.numErrors = "0";
+                          console.log(JSON.stringify(summary));
                           apigee.logNetworkCall(summary);
                       } else {
                           //Record a connection failure here
-                          summary.numErrors = 1;
+                          summary.numErrors = "1";
                           apigee.logNetworkCall(summary);          
                       }
                   }
@@ -369,6 +381,35 @@ var Apigee = (function(){
        
           send.call(this, data);
        } 
+  }
+
+  Apigee.MobileAnalytics.prototype.patchLoggingCalls = function(){
+    //Hacky way of tapping into this and switching it around but it'll do.
+    //We assume that the first argument is the intended log message. Except assert which is the second message.
+    var self = this;
+    var original = window.console
+    window.console = {
+        log: function(){
+            self.logInfo({tag:"CONSOLE", logMessage:arguments[0]});
+            original.log.apply(original, arguments);
+        }
+        , warn: function(){
+            self.logWarn({tag:"CONSOLE", logMessage:arguments[0]});
+            original.warn.apply(original, arguments);
+        }
+        , error: function(){
+            self.logError({tag:"CONSOLE", logMessage:arguments[0]});
+            original.error.apply(original, arguments);
+        }, assert: function(){
+            self.logAssert({tag:"CONSOLE", logMessage:arguments[1]});
+            original.assert.apply(original, arguments);     
+        }, debug: function(){
+            self.logDebug({tag:"CONSOLE", logMessage:arguments[0]});
+            original.debug.apply(original, arguments);
+        }
+
+    }
+
   }
 
 
@@ -403,7 +444,7 @@ var Apigee = (function(){
   Apigee.MobileAnalytics.prototype.logVerbose = function(options) {
     var logOptions = options || {};
     logOptions.logLevel = LOGLEVELS.verbose;
-    if(this.configuration.defaultAppConfig.logLevelToMonitor <= LOGLEVELNUMBERS.verbose ) {
+    if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.verbose ) {
       this.logMessage(options);
     }
   }
@@ -419,7 +460,7 @@ var Apigee = (function(){
   Apigee.MobileAnalytics.prototype.logDebug = function(options) {
     var logOptions = options || {};
     logOptions.logLevel = LOGLEVELS.debug;
-    if(this.configuration.defaultAppConfig.logLevelToMonitor <= LOGLEVELNUMBERS.debug ) {
+    if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.debug ) {
       this.logMessage(options);
     }
   }
@@ -435,7 +476,7 @@ var Apigee = (function(){
   Apigee.MobileAnalytics.prototype.logInfo = function(options) {
     var logOptions = options || {};
     logOptions.logLevel = LOGLEVELS.info;  
-    if(this.configuration.defaultAppConfig.logLevelToMonitor <= LOGLEVELNUMBERS.info ) {
+    if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.info ) {
       this.logMessage(options);
     }
   }
@@ -451,7 +492,7 @@ var Apigee = (function(){
   Apigee.MobileAnalytics.prototype.logWarn = function(options) {
     var logOptions = options || {};
     logOptions.logMethod = LOGLEVELS.warn;
-    if(this.configuration.defaultAppConfig.logLevelToMonitor <= LOGLEVELNUMBERS.warn ) {
+    if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.warn ) {
       this.logMessage(options);
     }
   }
@@ -467,7 +508,9 @@ var Apigee = (function(){
   Apigee.MobileAnalytics.prototype.logError = function(options) {
     var logOptions = options || {};
     logOptions.logMethod = LOGLEVELS.error;
-    this.logMessage(options);
+    if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.error ) {
+      this.logMessage(options);
+    }
   }
 
   /*
@@ -481,9 +524,26 @@ var Apigee = (function(){
   Apigee.MobileAnalytics.prototype.logAssert = function(options) {
     var logOptions = options || {};
     logOptions.logMethod = LOGLEVELS.assert;
-    if(this.configuration.defaultAppConfig.logLevelToMonitor <= LOGLEVELNUMBERS.assert ) {
+    if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.assert ) {
       this.logMessage(options);
     }
+  }
+
+  /* 
+  * Internal function for encapsulating crash log catches. Not directly callable.
+  * Needed because of funkiness with the errors being thrown solely on the window
+  *
+  */
+  function logCrash(options) {
+    var log = options || {};
+    var cleansedLog = {
+      logLevel: LOGLEVELS.assert,
+      logMessage: log.logMessage,
+      tag: log.tag,
+      timeStamp: timeStamp()
+    }
+    console.log(cleansedLog);
+    logs.push(cleansedLog);
   }
 
   /*
@@ -496,6 +556,20 @@ var Apigee = (function(){
   */
   Apigee.MobileAnalytics.prototype.logNetworkCall = function(options) {
     metrics.push(options);
+  }
+
+
+  /*
+  * Gets custom config parameters. These are set by user in dashboard.
+  * 
+  * @method getConfig
+  * @public
+  * @param {string} key
+  * @returns {stirng} value
+  *
+  */
+  Apigee.MobileAnalytics.prototype.getConfig = function(key) {
+
   }
 
   //UUID Generation function unedited
@@ -540,6 +614,8 @@ var Apigee = (function(){
   function timeStamp() {
     return new Date().getTime().toString();
   }
+
+
 
   return Apigee;
 

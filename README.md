@@ -19,7 +19,6 @@ Then in your client code initialize a new instance of the Apigee.MobileAnalytics
             orgName:"",
             appName:"",
             crashReportingEnabled:true,
-            interceptNetworkCalls:true
         }
         var max = new Apigee.MobileAnalytics(options);
 

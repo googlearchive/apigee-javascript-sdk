@@ -22,13 +22,12 @@
         <meta charset="utf-8" />
         <script type="text/javascript" src="analytics.js"></script>
         <script>
-            var options = {
+            var max = new Apigee.MobileAnalytics({
                 orgName:"mdobson",
                 appName:"sandbox",
                 apiUrl:"http://pjha-ug.elasticbeanstalk.com/",
                 crashReportingEnabled:true
-            }
-            var max = new Apigee.MobileAnalytics(options);
+            })
             max.startSession();
 
             function onClickSearch() {
@@ -52,6 +51,7 @@
                     document.getElementById("webServiceTextArea").value = "Error: " + httpStatusCode;
                 }
             }
+
         </script>
         <title>Hello World</title>
     </head>
