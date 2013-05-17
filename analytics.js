@@ -51,8 +51,14 @@ var Apigee = (function(){
     
     this.syncDate = timeStamp();
 
-    //Pickup the mobile config here
-    this.downloadConfig();
+    //Can do a manual config override specifiying raw json as your config. I use this for testing. 
+    //May be useful down the road. Needs to conform to current config.
+
+    if(options.config) {
+      this.configuration = options.config;
+    } else {
+      this.downloadConfig();
+    }
 
     //Don't do anything if configuration wasn't loaded.
     if(this.configuration !== null) {
@@ -367,6 +373,8 @@ var Apigee = (function(){
                                       numSamples:"1", 
                                       latency:latency.toString(), 
                                       timeStamp:startTime.toString()
+                                      httpStatusCode:self.status,
+                                      responseDataSize:self.responseText.length
                                     };
                       if(self.status == 200) {
                           //Record the http call here
