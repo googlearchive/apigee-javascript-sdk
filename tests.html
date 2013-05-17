@@ -79,6 +79,16 @@
                         max.clearMetrics();
                     });
             })();
+            (function logMessagesTruncatedProperly(){
+                var options = {tag:"TESTCASE", logMessage:"blah blah blah blah blah blah blah blah blah blah.blah blah blah blah blah blah blah blah blah blah.blah blah blah blah blah blah blah blah blah blah.blah blah blah blah blah blah blah blah blah blah.blah blah blah blah blah blah blah blah blah blah.blah blah blah blah blah blah blah blah blah blah."};
+                max.logVerbose(options);
+                max.logDebug(options);
+
+                Test.test(max.logs()[0].logMessage.length === 250, "Log message max length is 250 chars.", "results", 
+                    function(){
+                        max.clearMetrics();
+                    });
+            })();
         </script>
     </body>
 </html>

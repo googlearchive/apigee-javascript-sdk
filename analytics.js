@@ -48,7 +48,7 @@ var Apigee = (function(){
     this.appName = options.appName;
 
     //Put this in here because I don't want sync issues with testing.
-    this.testMode = typeof options.testMode === "undefined" ? false : options.testMode; 
+    this.testMode = options.testMode || false;
     //You best know what you're doing if you're setting this for mobile analytics!
     this.apiUrl = typeof options.apiUrl === "undefined" ? "https://api.usergrid.org/" : options.apiUrl;
     
@@ -119,7 +119,7 @@ var Apigee = (function(){
           syncObject.metrics = metrics;
           
           //If there is data to sync go ahead and do it.
-          if(syncFlag && !this.testMode) {
+          if(syncFlag && !self.testMode) {
             self.sync(syncObject);
           }
 
@@ -462,7 +462,7 @@ var Apigee = (function(){
     var log = options || {};
     var cleansedLog = {
       logLevel:log.logLevel,
-      logMessage: log.logMessage,
+      logMessage: log.logMessage.substring(0, 250),
       tag: log.tag,
       timeStamp: timeStamp()
     }
@@ -578,7 +578,6 @@ var Apigee = (function(){
       tag: log.tag,
       timeStamp: timeStamp()
     }
-    console.log(cleansedLog);
     logs.push(cleansedLog);
   }
 
