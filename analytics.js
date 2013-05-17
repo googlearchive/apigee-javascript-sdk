@@ -46,6 +46,9 @@ var Apigee = (function(){
   Apigee.MobileAnalytics = function(options) {
     this.orgName = options.orgName;
     this.appName = options.appName;
+
+    //Put this in here because I don't want sync issues with testing.
+    this.testMode = typeof options.testMode === "undefined" ? false : options.testMode; 
     //You best know what you're doing if you're setting this for mobile analytics!
     this.apiUrl = typeof options.apiUrl === "undefined" ? "https://api.usergrid.org/" : options.apiUrl;
     
@@ -54,8 +57,15 @@ var Apigee = (function(){
     //Can do a manual config override specifiying raw json as your config. I use this for testing. 
     //May be useful down the road. Needs to conform to current config.
 
-    if(options.config) {
+    if(typeof options.config !== "undefined") {
       this.configuration = options.config;
+      if(this.configuration.deviceLevelOverrideEnabled === true) {
+        this.deviceConfig = this.configuration.deviceLevelAppConfig;
+      } else if(this.abtestingOverrideEnabled === true){
+        this.deviceConfig = this.configuration.abtestingAppConfig;
+      } else {
+        this.deviceConfig = this.configuration.defaultAppConfig;
+      }
     } else {
       this.downloadConfig();
     }
@@ -109,7 +119,7 @@ var Apigee = (function(){
           syncObject.metrics = metrics;
           
           //If there is data to sync go ahead and do it.
-          if(syncFlag) {
+          if(syncFlag && !this.testMode) {
             self.sync(syncObject);
           }
 
@@ -258,6 +268,7 @@ var Apigee = (function(){
     sessionSummary.sessionId = randomUUID();
     sessionSummary.applicationVersion = "1.0";
     sessionSummary.appId = this.appId.toString();
+    sessionSummary.sdkType = "javascript";
 
 
     //We're checking if it's a phonegap app.
@@ -372,7 +383,7 @@ var Apigee = (function(){
                                       endTime:endTime.toString(), 
                                       numSamples:"1", 
                                       latency:latency.toString(), 
-                                      timeStamp:startTime.toString()
+                                      timeStamp:startTime.toString(),
                                       httpStatusCode:self.status,
                                       responseDataSize:self.responseText.length
                                     };
@@ -449,7 +460,6 @@ var Apigee = (function(){
   */
   Apigee.MobileAnalytics.prototype.logMessage = function(options) {
     var log = options || {};
-    console.log(log);
     var cleansedLog = {
       logLevel:log.logLevel,
       logMessage: log.logMessage,
@@ -517,7 +527,7 @@ var Apigee = (function(){
   */
   Apigee.MobileAnalytics.prototype.logWarn = function(options) {
     var logOptions = options || {};
-    logOptions.logMethod = LOGLEVELS.warn;
+    logOptions.logLevel = LOGLEVELS.warn;
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.warn ) {
       this.logMessage(options);
     }
@@ -533,7 +543,7 @@ var Apigee = (function(){
   */
   Apigee.MobileAnalytics.prototype.logError = function(options) {
     var logOptions = options || {};
-    logOptions.logMethod = LOGLEVELS.error;
+    logOptions.logLevel = LOGLEVELS.error;
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.error ) {
       this.logMessage(options);
     }
@@ -549,7 +559,7 @@ var Apigee = (function(){
   */
   Apigee.MobileAnalytics.prototype.logAssert = function(options) {
     var logOptions = options || {};
-    logOptions.logMethod = LOGLEVELS.assert;
+    logOptions.logLevel = LOGLEVELS.assert;
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.assert ) {
       this.logMessage(options);
     }
@@ -613,6 +623,11 @@ var Apigee = (function(){
 
   Apigee.MobileAnalytics.prototype.sessionMetrics = function(){
     return this.sessionMetrics;
+  }
+
+  Apigee.MobileAnalytics.prototype.clearMetrics = function(){
+    logs = [];
+    metrics = [];
   }
 
   //UUID Generation function unedited

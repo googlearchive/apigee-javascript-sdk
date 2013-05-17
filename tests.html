@@ -21,168 +21,64 @@
     <head>
         <meta charset="utf-8" />
         <script type="text/javascript" src="analytics.js"></script>
+        <script type="text/javascript" src="testConfig.js"></script>
+        <script type="text/javascript" src="harness.js"></script>
         <script>
-            var testCaseConfig = {
-                    instaOpsApplicationId: 2,
-                    applicationUUID: "ebdb7fca-bc07-11e2-8cfd-298ec7bf4fd0",
-                    organizationUUID: "eb78c65a-bc07-11e2-aae9-41b79935a3f7",
-                    orgName: "anorgname",
-                    appName: "sandbox",
-                    fullAppName: "anorgname_sandbox",
-                    appOwner: "anon@apigee.com",
-                    createdDate: 1368475299122,
-                    lastModifiedDate: 1368475299122,
-                    monitoringDisabled: false,
-                    deleted: false,
-                    googleId: null,
-                    appleId: null,
-                    description: null,
-                    environment: "ug-max-dev",
-                    customUploadUrl: null,
-                    defaultAppConfig: {
-                        lastModifiedDate: null,
-                        networkMonitoringEnabled: true,
-                        sessionDataCaptureEnabled: true,
-                        enableLogMonitoring: true,
-                        monitorAllUrls: true,
-                        logLevelToMonitor: 3,
-                        batteryStatusCaptureEnabled: true,
-                        obfuscateIMEI: true,
-                        deviceIdCaptureEnabled: true,
-                        obfuscateDeviceId: true,
-                        deviceModelCaptureEnabled: true,
-                        locationCaptureEnabled: false,
-                        locationCaptureResolution: 1,
-                        networkCarrierCaptureEnabled: true,
-                        enableUploadWhenRoaming: false,
-                        enableUploadWhenMobile: true,
-                        agentUploadIntervalInSeconds: 60,
-                        samplingRate: 100,
-                        urlRegex: [ ],
-                        cachingEnabled: false,
-                        customConfigParameters: [ ],
-                        appConfigType: "Default",
-                        imeicaptureEnabled: true
-                    },
-                    appConfigOverrideFilters: [ ],
-                    deviceLevelAppConfig: {
-                        lastModifiedDate: null,
-                        networkMonitoringEnabled: true,
-                        sessionDataCaptureEnabled: true,
-                        enableLogMonitoring: true,
-                        monitorAllUrls: true,
-                        logLevelToMonitor: 3,
-                        batteryStatusCaptureEnabled: true,
-                        obfuscateIMEI: true,
-                        deviceIdCaptureEnabled: true,
-                        obfuscateDeviceId: true,
-                        deviceModelCaptureEnabled: true,
-                        locationCaptureEnabled: false,
-                        locationCaptureResolution: 1,
-                        networkCarrierCaptureEnabled: true,
-                        enableUploadWhenRoaming: false,
-                        enableUploadWhenMobile: true,
-                        agentUploadIntervalInSeconds: 60,
-                        samplingRate: 100,
-                        urlRegex: [ ],
-                        cachingEnabled: false,
-                        customConfigParameters: [ ],
-                        appConfigType: "Beta",
-                        imeicaptureEnabled: true
-                    },
-                    deviceLevelOverrideEnabled: false,
-                    deviceTypeAppConfig: {
-                        lastModifiedDate: null,
-                        networkMonitoringEnabled: true,
-                        sessionDataCaptureEnabled: true,
-                        enableLogMonitoring: true,
-                        monitorAllUrls: true,
-                        logLevelToMonitor: 3,
-                        batteryStatusCaptureEnabled: true,
-                        obfuscateIMEI: true,
-                        deviceIdCaptureEnabled: true,
-                        obfuscateDeviceId: true,
-                        deviceModelCaptureEnabled: true,
-                        locationCaptureEnabled: false,
-                        locationCaptureResolution: 1,
-                        networkCarrierCaptureEnabled: true,
-                        enableUploadWhenRoaming: false,
-                        enableUploadWhenMobile: true,
-                        agentUploadIntervalInSeconds: 60,
-                        samplingRate: 100,
-                        urlRegex: [ ],
-                        cachingEnabled: false,
-                        customConfigParameters: [ ],
-                        appConfigType: "Device",
-                        imeicaptureEnabled: true
-                    },
-                    deviceTypeOverrideEnabled: false,
-                    deviceNumberFilters: null,
-                    deviceIdFilters: null,
-                    deviceModelRegexFilters: null,
-                    devicePlatformRegexFilters: null,
-                    networkTypeRegexFilters: null,
-                    networkOperatorRegexFilters: null,
-                    abtestingAppConfig: {
-                        lastModifiedDate: null,
-                        networkMonitoringEnabled: true,
-                        sessionDataCaptureEnabled: true,
-                        enableLogMonitoring: true,
-                        monitorAllUrls: true,
-                        logLevelToMonitor: 3,
-                        batteryStatusCaptureEnabled: true,
-                        obfuscateIMEI: true,
-                        deviceIdCaptureEnabled: true,
-                        obfuscateDeviceId: true,
-                        deviceModelCaptureEnabled: true,
-                        locationCaptureEnabled: false,
-                        locationCaptureResolution: 1,
-                        networkCarrierCaptureEnabled: true,
-                        enableUploadWhenRoaming: false,
-                        enableUploadWhenMobile: true,
-                        agentUploadIntervalInSeconds: 60,
-                        samplingRate: 100,
-                        urlRegex: [ ],
-                        cachingEnabled: false,
-                        customConfigParameters: [ ],
-                        appConfigType: "A/B",
-                        imeicaptureEnabled: true
-                    },
-                    abtestingOverrideEnabled: false,
-                    abtestingPercentage: 0
-                }
-        </script>
-        <script>
-
             //We do a hard override of configs here for testing only. Using that feature loses much of
             //the power of mobile analytics. USE AT YOUR OWN RISK.
             var max = new Apigee.MobileAnalytics({
                 orgName:"anorgname",
                 appName:"sandbox",
+                testMode:true,
                 config:testCaseConfig
             });
             max.startSession();
         </script>
-        <script>
-            var passMessage = "Test case passed";
-            function test(expression, failureMessage, domId) {
-                if(expression) {
-                    document.getElementById(domId).innerHTML = passMessage;
-                } else {
-                    document.getElementById(domId).innerHTML = failureMessage;
-                }
-            }
-        </script>
+        <script type="text/javascript" src="analytics.js"></script>
+        
         <title>Mobile Analytics test cases</title>
     </head>
     <body>
-        <div class="app">
-            Hello world! This is a MAX test.
+        <div>
+            WOOOSH! Time to test if the SDK is working at the moment.
         </div>
-        <input style="width: 200px;" type="text" id="webSiteOrArtistName" name="webSiteOrArtistName" />
-        <br />
-        <input type="button" value="Search" onclick="onClickSearch()"/>
-        <br />
-        <textarea id="webServiceTextArea" rows="8" cols="50"></textarea>
+        <div id="results"></span>
+        <script>
+            //BEGIN TESTING!!
+            //Test that the log level monitoring configuration is correctly applied
+            (function testLogLevelMonitoring(){
+                var options = {tag:"TESTCASE", logMessage:"This is a test case"};
+                max.logVerbose(options);
+                max.logInfo(options);
+                max.logWarn(options);
+                max.logDebug(options);
+                max.logError(options);
+
+                Test.test(max.logs().length === 2, "Log level config applied.", "results", 
+                    function(){
+                        max.clearMetrics();
+                    });
+            })();
+            (function verboseLogMonitoring(){
+                var options = {tag:"TESTCASE", logMessage:"This is a test case"};
+                max.logVerbose(options);
+                max.logDebug(options);
+
+                Test.test(max.logs()[0].logLevel === "V", "Log level verbose applied.", "results", 
+                    function(){
+                        max.clearMetrics();
+                    });
+            })();
+            (function debugLogMonitoring(){
+                var options = {tag:"TESTCASE", logMessage:"This is a test case"};
+                max.logVerbose(options);
+                max.logDebug(options);
+
+                Test.test(max.logs()[1].logLevel === "D", "Log level debug applied.", "results", 
+                    function(){
+                        max.clearMetrics();
+                    });
+            })();
+        </script>
     </body>
 </html>
