@@ -584,10 +584,27 @@ var Apigee = (function(){
   * @public
   * @param {string} key
   * @returns {stirng} value
-  *
+  * 
+  * TODO: Once there is a dashboard plugged into the API implement this so users can set
+  * custom configuration parameters for their applications.
   */
   Apigee.MobileAnalytics.prototype.getConfig = function(key) {
 
+  }
+
+  //TEST HELPERS NOT REALLY MEANT TO BE USED OUTSIDE THAT CONTEXT.
+  //Simply exposes some internal data that is collected.
+
+  Apigee.MobileAnalytics.prototype.logs = function(){
+    return logs;
+  }
+
+  Apigee.MobileAnalytics.prototype.metrics = function(){
+    return metrics;
+  }
+
+  Apigee.MobileAnalytics.prototype.sessionMetrics = function(){
+    return this.sessionMetrics;
   }
 
   //UUID Generation function unedited
