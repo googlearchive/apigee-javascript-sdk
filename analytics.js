@@ -48,8 +48,6 @@ var Apigee = (function(){
     this.appName = options.appName;
     //You best know what you're doing if you're setting this for mobile analytics!
     this.apiUrl = typeof options.apiUrl === "undefined" ? "https://api.usergrid.org/" : options.apiUrl;
-    this.crashReportingEnabled = options.crashReportingEnabled || false;
-    
     
     this.syncDate = timeStamp();
 
@@ -70,7 +68,9 @@ var Apigee = (function(){
         this.appId = this.configuration.instaOpsApplicationId;
 
         //Let's monkeypatch logging calls to intercept and send to server.
-        this.patchLoggingCalls();
+        if(this.deviceConfig.enableLogMonitoring) {
+          this.patchLoggingCalls();
+        }
 
         var syncInterval = 3000;
         if (typeof this.deviceConfig.agentUploadIntervalInSeconds !== "undefined") {
@@ -101,8 +101,6 @@ var Apigee = (function(){
 
           syncObject.logs = logs;
           syncObject.metrics = metrics;
-          logs = [];
-          metrics = [];
           
           //If there is data to sync go ahead and do it.
           if(syncFlag) {
@@ -112,13 +110,12 @@ var Apigee = (function(){
         }, 3000);
 
         //Setting up the catching of errors and network calls
-        if(this.configuration.defaultAppConfig.networkMonitoringEnabled) {
+        if(this.deviceConfig.networkMonitoringEnabled) {
            this.patchNetworkCalls(XMLHttpRequest);
         }
         
-        if(this.crashReportingEnabled) {
-          window.onerror = Apigee.MobileAnalytics.catchCrashReport;
-        }
+        window.onerror = Apigee.MobileAnalytics.catchCrashReport;
+        
       }
     } else {
       console.log("Error configuration unavailable.");
@@ -188,6 +185,7 @@ var Apigee = (function(){
   *
   */
   Apigee.MobileAnalytics.prototype.sync = function(syncObject){
+    //Sterilize the sync data
     var syncData = {}
     syncData.logs = syncObject.logs;
     syncData.metrics = syncObject.metrics;
@@ -197,18 +195,24 @@ var Apigee = (function(){
     syncData.fullAppName = this.orgName + '_' + this.appName;
     syncData.instaOpsApplicationId = this.configuration.instaOpsApplicationId;
     syncData.timeStamp = timeStamp();
-    alert(JSON.stringify(syncData));
+
+    //Send it to the apmMetrics endpoint.
     var syncRequest = new XMLHttpRequest();
     var path = this.apiUrl + this.orgName + '/' + this.appName + '/apm/apmMetrics';
     syncRequest.open(VERBS.post, path, false);
     syncRequest.setRequestHeader("Accept", "application/json");
     syncRequest.setRequestHeader("Content-Type","application/json");
     syncRequest.send(JSON.stringify(syncData));
+    
+    //Only wipe data if the sync was good. Hold onto it if it was bad.
     if(syncRequest.status === 200) {
+      logs = [];
+      metrics = [];
       var response = syncRequest.responseText;
       console.log(response);
     } else {
-      //When tapping into the configuration. If it's null let's assume bad things happened.
+      //Not much we can do if there was an error syncing data.
+      //Log it to console accordingly.
       console.log("Error syncing");
       console.log(syncRequest.responseText);
     }
@@ -256,7 +260,23 @@ var Apigee = (function(){
     if (typeof window.device !== "undefined") {
       sessionSummary.devicePlatform = window.device.platform;
       sessionSummary.deviceOperatingSystem = window.device.version;
-      sessionSummary.deviceId = window.device.uuid;
+      
+      //Get the device id if we want it. If we dont, but we want it obfuscated generate
+      //a one off id and attach it to localStorage.
+      if(this.deviceConfig.deviceIdCaptureEnabled) {
+        if(this.deviceConfig.obfuscateDeviceId) {
+          sessionSummary.deviceId = generateDeviceId();
+        } else {
+          sessionSummary.deviceId = window.device.uuid;
+        }
+      } else {
+        if(this.deviceConfig.obfuscateDeviceId) {
+          sessionSummary.deviceId = generateDeviceId();
+        } else {
+          sessionSummary.deviceId = UNKNOWN;
+        }
+      }
+
       sessionSummary.deviceModel = window.device.name;
       sessionSummary.networkType = navigator.network.connection.type;
     } else {
@@ -265,12 +285,10 @@ var Apigee = (function(){
       if(typeof window.localStorage !== "undefined") {
         //If no uuid is set in localstorage create a new one, and set it as the session's deviceId
 
-        if(typeof window.localStorage.getItem("uuid") === null) {
-          sessionSummary.deviceId = window.localStorage.getItem("uuid");
+        if(this.deviceConfig.deviceIdCaptureEnabled) {
+          sessionSummary.deviceId = generateDeviceId();
         } else {
-          var uuid = randomUUID();
-          window.localStorage.setItem("uuid", uuid);
-          sessionSummary.deviceId = window.localStorage.getItem("uuid");
+          sessionSummary.deviceId = UNKNOWN;
         }
       }
       
@@ -611,11 +629,21 @@ var Apigee = (function(){
     return s.join('');
   }
 
+  //Generate an epoch timestamp string
   function timeStamp() {
     return new Date().getTime().toString();
   }
 
-
+  //Generate a device id, and attach it to localStorage.
+  function generateDeviceId(){
+    if(typeof window.localStorage.getItem("uuid") === null) {
+      return window.localStorage.getItem("uuid");
+    } else {
+      var uuid = randomUUID();
+      window.localStorage.setItem("uuid", uuid);
+      return window.localStorage.getItem("uuid");
+    }
+  }
 
   return Apigee;
 
