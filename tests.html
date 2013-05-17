@@ -22,38 +22,158 @@
         <meta charset="utf-8" />
         <script type="text/javascript" src="analytics.js"></script>
         <script>
-            var max = new Apigee.MobileAnalytics({
-                orgName:"mdobson",
-                appName:"sandbox",
-                apiUrl:"http://pjha-ug.elasticbeanstalk.com/",
-                crashReportingEnabled:true
-            })
-            max.startSession();
+            var testCaseConfig = {
+                    instaOpsApplicationId: 2,
+                    applicationUUID: "ebdb7fca-bc07-11e2-8cfd-298ec7bf4fd0",
+                    organizationUUID: "eb78c65a-bc07-11e2-aae9-41b79935a3f7",
+                    orgName: "anorgname",
+                    appName: "sandbox",
+                    fullAppName: "anorgname_sandbox",
+                    appOwner: "anon@apigee.com",
+                    createdDate: 1368475299122,
+                    lastModifiedDate: 1368475299122,
+                    monitoringDisabled: false,
+                    deleted: false,
+                    googleId: null,
+                    appleId: null,
+                    description: null,
+                    environment: "ug-max-dev",
+                    customUploadUrl: null,
+                    defaultAppConfig: {
+                        lastModifiedDate: null,
+                        networkMonitoringEnabled: true,
+                        sessionDataCaptureEnabled: true,
+                        enableLogMonitoring: true,
+                        monitorAllUrls: true,
+                        logLevelToMonitor: 3,
+                        batteryStatusCaptureEnabled: true,
+                        obfuscateIMEI: true,
+                        deviceIdCaptureEnabled: true,
+                        obfuscateDeviceId: true,
+                        deviceModelCaptureEnabled: true,
+                        locationCaptureEnabled: false,
+                        locationCaptureResolution: 1,
+                        networkCarrierCaptureEnabled: true,
+                        enableUploadWhenRoaming: false,
+                        enableUploadWhenMobile: true,
+                        agentUploadIntervalInSeconds: 60,
+                        samplingRate: 100,
+                        urlRegex: [ ],
+                        cachingEnabled: false,
+                        customConfigParameters: [ ],
+                        appConfigType: "Default",
+                        imeicaptureEnabled: true
+                    },
+                    appConfigOverrideFilters: [ ],
+                    deviceLevelAppConfig: {
+                        lastModifiedDate: null,
+                        networkMonitoringEnabled: true,
+                        sessionDataCaptureEnabled: true,
+                        enableLogMonitoring: true,
+                        monitorAllUrls: true,
+                        logLevelToMonitor: 3,
+                        batteryStatusCaptureEnabled: true,
+                        obfuscateIMEI: true,
+                        deviceIdCaptureEnabled: true,
+                        obfuscateDeviceId: true,
+                        deviceModelCaptureEnabled: true,
+                        locationCaptureEnabled: false,
+                        locationCaptureResolution: 1,
+                        networkCarrierCaptureEnabled: true,
+                        enableUploadWhenRoaming: false,
+                        enableUploadWhenMobile: true,
+                        agentUploadIntervalInSeconds: 60,
+                        samplingRate: 100,
+                        urlRegex: [ ],
+                        cachingEnabled: false,
+                        customConfigParameters: [ ],
+                        appConfigType: "Beta",
+                        imeicaptureEnabled: true
+                    },
+                    deviceLevelOverrideEnabled: false,
+                    deviceTypeAppConfig: {
+                        lastModifiedDate: null,
+                        networkMonitoringEnabled: true,
+                        sessionDataCaptureEnabled: true,
+                        enableLogMonitoring: true,
+                        monitorAllUrls: true,
+                        logLevelToMonitor: 3,
+                        batteryStatusCaptureEnabled: true,
+                        obfuscateIMEI: true,
+                        deviceIdCaptureEnabled: true,
+                        obfuscateDeviceId: true,
+                        deviceModelCaptureEnabled: true,
+                        locationCaptureEnabled: false,
+                        locationCaptureResolution: 1,
+                        networkCarrierCaptureEnabled: true,
+                        enableUploadWhenRoaming: false,
+                        enableUploadWhenMobile: true,
+                        agentUploadIntervalInSeconds: 60,
+                        samplingRate: 100,
+                        urlRegex: [ ],
+                        cachingEnabled: false,
+                        customConfigParameters: [ ],
+                        appConfigType: "Device",
+                        imeicaptureEnabled: true
+                    },
+                    deviceTypeOverrideEnabled: false,
+                    deviceNumberFilters: null,
+                    deviceIdFilters: null,
+                    deviceModelRegexFilters: null,
+                    devicePlatformRegexFilters: null,
+                    networkTypeRegexFilters: null,
+                    networkOperatorRegexFilters: null,
+                    abtestingAppConfig: {
+                        lastModifiedDate: null,
+                        networkMonitoringEnabled: true,
+                        sessionDataCaptureEnabled: true,
+                        enableLogMonitoring: true,
+                        monitorAllUrls: true,
+                        logLevelToMonitor: 3,
+                        batteryStatusCaptureEnabled: true,
+                        obfuscateIMEI: true,
+                        deviceIdCaptureEnabled: true,
+                        obfuscateDeviceId: true,
+                        deviceModelCaptureEnabled: true,
+                        locationCaptureEnabled: false,
+                        locationCaptureResolution: 1,
+                        networkCarrierCaptureEnabled: true,
+                        enableUploadWhenRoaming: false,
+                        enableUploadWhenMobile: true,
+                        agentUploadIntervalInSeconds: 60,
+                        samplingRate: 100,
+                        urlRegex: [ ],
+                        cachingEnabled: false,
+                        customConfigParameters: [ ],
+                        appConfigType: "A/B",
+                        imeicaptureEnabled: true
+                    },
+                    abtestingOverrideEnabled: false,
+                    abtestingPercentage: 0
+                }
+        </script>
+        <script>
 
-            function onClickSearch() {
-                "use strict"; 
-                var searchString = document.getElementById("webSiteOrArtistName").value;
-                //var url = "http://musicbrainz.org/ws/2/artist/?query=" + searchString;
-                var url = searchString;
-                url = encodeURI(url);
-                var isAsync = false;
-                var xmlHttpRequest = new XMLHttpRequest();
-                
-                xmlHttpRequest.open("GET", url, isAsync);
-                xmlHttpRequest.send();
-                
-                var httpStatusCode = xmlHttpRequest.status;
-                
-                if (httpStatusCode == 200) {
-                    document.getElementById("webServiceTextArea").value = xmlHttpRequest.responseText;
-                    max.logInfo({"logMessage":"jumped through good", "tag":"WEB_SERVICE_CALL"});
+            //We do a hard override of configs here for testing only. Using that feature loses much of
+            //the power of mobile analytics. USE AT YOUR OWN RISK.
+            var max = new Apigee.MobileAnalytics({
+                orgName:"anorgname",
+                appName:"sandbox",
+                config:testCaseConfig
+            });
+            max.startSession();
+        </script>
+        <script>
+            var passMessage = "Test case passed";
+            function test(expression, failureMessage, domId) {
+                if(expression) {
+                    document.getElementById(domId).innerHTML = passMessage;
                 } else {
-                    document.getElementById("webServiceTextArea").value = "Error: " + httpStatusCode;
+                    document.getElementById(domId).innerHTML = failureMessage;
                 }
             }
-
         </script>
-        <title>Hello World</title>
+        <title>Mobile Analytics test cases</title>
     </head>
     <body>
         <div class="app">
