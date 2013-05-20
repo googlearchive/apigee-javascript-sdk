@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+    <head>
+        <meta charset="utf-8" />
+        <script type="text/javascript" src="analytics.js"></script>
+        <script>
+            var max = new Apigee.MobileAnalytics({
+                orgName:"mdobson",
+                appName:"sandbox",
+                apiUrl:"http://pjha-ug.elasticbeanstalk.com/",
+            });
+            max.startSession();
+
+            function onClickSearch() {
+                "use strict"; 
+                var searchString = document.getElementById("webSiteOrArtistName").value;
+                //var url = "http://musicbrainz.org/ws/2/artist/?query=" + searchString;
+                var url = searchString;
+                url = encodeURI(url);
+                var isAsync = false;
+                var xmlHttpRequest = new XMLHttpRequest();
+                
+                xmlHttpRequest.open("GET", url, isAsync);
+                xmlHttpRequest.send();
+                
+                var httpStatusCode = xmlHttpRequest.status;
+                
+                if (httpStatusCode == 200) {
+                    document.getElementById("webServiceTextArea").value = xmlHttpRequest.responseText;
+                    max.logInfo({"logMessage":"jumped through good", "tag":"WEB_SERVICE_CALL"});
+                } else {
+                    document.getElementById("webServiceTextArea").value = "Error: " + httpStatusCode;
+                }
+            }
+
+        </script>
+        <title>Hello World</title>
+    </head>
+    <body>
+        <div class="app">
+            Hello world! This is a MAX test.
+        </div>
+        <input style="width: 200px;" type="text" id="webSiteOrArtistName" name="webSiteOrArtistName" />
+        <br />
+        <input type="button" value="Search" onclick="onClickSearch()"/>
+        <br />
+        <textarea id="webServiceTextArea" rows="8" cols="50"></textarea>
+    </body>
+</html>

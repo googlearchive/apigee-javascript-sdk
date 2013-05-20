@@ -1,0 +1,43 @@
+{
+	"orgName":"zztop",
+	"fullAppName":"zztop_lagrange",
+	"metrics":[],
+	"appName":"lagrange",
+	"logs":[
+		{
+			"logLevel":"D",
+			"logMessage":"BUG in libdispatch: 12D78 - 755 - 0x2",
+			"timeStamp":"1367534632000",
+			"tag":"user"
+		},
+		{
+			"logLevel":"D",
+			"logMessage":"BUG in libdispatch client: kevent[EVFILT_VNODE] add: \"Bad file descriptor\" - 0x9",
+			"timeStamp":"1367534632000",
+			"tag":"user"
+		}
+	],
+	"instaOpsApplicationId":1,
+	"timeStamp":"1367534635676",
+	"sessionMetrics":{
+		"networkCarrier":"UNKNOWN",
+		"sessionId":"A63E549A-265F-4891-8EEA-23A2FD6F59A6",
+		"networkType":"WIFI",
+		"deviceCountry":"UNKNOWN",
+		"batteryLevel":"-100",
+		"sessionStartTime":"1367534635025",
+		"appId":"1",
+		"localLanguage":"en",
+		"deviceOperatingSystem":"6.1",
+		"timeStamp":"1367534635675",
+		"deviceModel":"Simulator",
+		"networkSubType":"UNKNOWN",
+		"networkCountry":"UNKNOWN",
+		"deviceId":"50b29158dc6c08b455de9929fd57c13a46ab385e",
+		"applicationVersion":"1.0.7","isNetworkChanged":"false",
+		"localCountry":"United States",
+		"devicePlatform":"iPhone OS",
+		"sdkVersion":"1.6.0",
+		"appConfigType":"DEFAULT"
+	}
+}
