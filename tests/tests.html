@@ -35,14 +35,16 @@
             max.startSession();
         </script>
         <script type="text/javascript" src="analytics.js"></script>
-        
+        <link rel="stylesheet" type="text/css" href="style.css">
         <title>Mobile Analytics test cases</title>
     </head>
     <body>
-        <div>
-            WOOOSH! Time to test if the SDK is working at the moment.
+       <div class="header"></div>
+        <div class="content">
+            <div>Test results.</div>
+            <div id="results">
+            </div>
         </div>
-        <div id="results"></span>
         <script>
             //BEGIN TESTING!!
             //Test that the log level monitoring configuration is correctly applied
