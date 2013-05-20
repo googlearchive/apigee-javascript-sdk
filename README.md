@@ -37,3 +37,7 @@ You can log specific events in your SDK by using one of the many log methods. Yo
 ####Figuring out your device type
 
 The mobile analytics SDK will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the Mobile Analytics dashboard.
+
+####Tests 
+
+Basic set of test cases can be found in the `/test` folder. Just open the tests.html file, and they will all run accordingly.
