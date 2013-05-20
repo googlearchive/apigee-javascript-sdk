@@ -17,15 +17,14 @@ Then in your client code initialize a new instance of the Apigee.MobileAnalytics
 
         var options = {
             orgName:"",
-            appName:"",
-            crashReportingEnabled:true,
+            appName:""
         }
         var max = new Apigee.MobileAnalytics(options);
 
 
 ####Crash Reporting
 
-The mobile analytics SDK will monitor the window.onerror event to track if your app experiences javascript crashes. It will log all the proper debugging information in mobile analytics itself! To turn it on simply set the ```crashReportingEnabled``` property on the options object to ```true```.
+The mobile analytics SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
 
 ####Network Call Monitoring
 
