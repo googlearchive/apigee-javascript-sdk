@@ -46,6 +46,19 @@
             </div>
         </div>
         <script>
+            //Call for crash log test.
+            foo();
+
+        </script>
+        <script>
+            //Test if crash collected.
+            (function testIfCrashCollected(){
+                
+                Test.test(max.logs()[0].tag === "CRASH", "Crashes properly logged in Mobile Analytics", "results",function(){
+                        max.clearMetrics();
+                    });
+            })();
+
             //BEGIN TESTING!!
             //Test that the log level monitoring configuration is correctly applied
             (function testLogLevelMonitoring(){
@@ -61,6 +74,8 @@
                         max.clearMetrics();
                     });
             })();
+
+            //Test that the config catches verbose logs
             (function verboseLogMonitoring(){
                 var options = {tag:"TESTCASE", logMessage:"This is a test case"};
                 max.logVerbose(options);
@@ -71,6 +86,8 @@
                         max.clearMetrics();
                     });
             })();
+
+            //Test that the config catches debug logs
             (function debugLogMonitoring(){
                 var options = {tag:"TESTCASE", logMessage:"This is a test case"};
                 max.logVerbose(options);
@@ -81,6 +98,8 @@
                         max.clearMetrics();
                     });
             })();
+
+            //Test that the log message is truncated to 250 characters.
             (function logMessagesTruncatedProperly(){
                 var options = {tag:"TESTCASE", logMessage:"blah blah blah blah blah blah blah blah blah blah.blah blah blah blah blah blah blah blah blah blah.blah blah blah blah blah blah blah blah blah blah.blah blah blah blah blah blah blah blah blah blah.blah blah blah blah blah blah blah blah blah blah.blah blah blah blah blah blah blah blah blah blah."};
                 max.logVerbose(options);
@@ -90,6 +109,64 @@
                     function(){
                         max.clearMetrics();
                     });
+            })();
+
+            //Test that console logs are intercepted and logged in mobile analytics.
+            (function consoleMessagesLogged(){
+                console.debug("This is a test message.");
+                Test.test(max.logs()[0].tag === "CONSOLE", "Can trace logging that happens via console.", "results",
+                    function(){
+                        max.clearMetrics();
+                    });
+            })();
+
+            //Test that good network calls are intercepted properly.
+            (function networkCallIntercepted(){
+                var path = "http://api.apicraft.org";
+                var req = new XMLHttpRequest();
+                req.open("GET", path, false);
+                req.setRequestHeader("Accept", "application/json");
+                req.setRequestHeader("Content-Type","application/json");
+                req.send();
+                if(req.status === 200) {
+                    Test.test(max.metrics().length === 1, "Network metric collected", "results", function(){
+                        max.clearMetrics();
+                    });
+                } else {
+                    Test.test(0 === 1, "Network error cannot perform this test", "results", function(){});
+                }
+            })();
+
+            //Test that good network calls are intercepted properly.
+            (function networkCallIntercepted(){
+                var path = "http://api.apicraft.org";
+                var req = new XMLHttpRequest();
+                req.open("GET", path, false);
+                req.setRequestHeader("Accept", "application/json");
+                req.setRequestHeader("Content-Type","application/json");
+                req.send();
+                if(req.status === 200) {
+                    Test.test(max.metrics()[0].numErrors === "0", "Network metric collected, and properly indicated as success.", "results", function(){
+                        max.clearMetrics();
+                    });
+                } else {
+                    Test.test(0 === 1, "Network error cannot perform this test", "results", function(){});
+                }
+            })();
+
+            //Test that good network calls are intercepted properly.
+            (function networkCallIntercepted(){
+                var path = "http://api.apicraft.org/detroit";
+                var req = new XMLHttpRequest();
+                req.open("GET", path, false);
+                req.setRequestHeader("Accept", "application/json");
+                req.setRequestHeader("Content-Type","application/json");
+                req.send();
+                if(req.status !== 200) {
+                    Test.test(max.metrics()[0].numErrors === "1", "Network metric collected, and properly indicated as error.", "results", function(){
+                        max.clearMetrics();
+                    });
+                }
             })();
         </script>
     </body>
