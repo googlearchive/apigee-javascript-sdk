@@ -88,42 +88,42 @@ var Apigee = (function(){
           this.patchLoggingCalls();
         }
 
-        // var syncInterval = 3000;
-        // if (typeof this.deviceConfig.agentUploadIntervalInSeconds !== "undefined") {
-        //   syncInterval = this.deviceConfig.agentUploadIntervalInSeconds;
-        // }
+        var syncInterval = 3000;
+        if (typeof this.deviceConfig.agentUploadIntervalInSeconds !== "undefined") {
+          syncInterval = this.deviceConfig.agentUploadIntervalInSeconds;
+        }
         
 
         //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
-        //var self = this;
+        var self = this;
         //Old server syncing logic
-        // setInterval(function(){
-        //   var syncObject = {};
-        //   //Just in case something bad happened.
-        //   if(typeof self.sessionMetrics !== "undefined") {
-        //     syncObject.sessionMetrics = self.sessionMetrics;
-        //   }
-        //   var syncFlag = false;
-        //   self.syncDate = timeStamp();
-        //   //Go through each of the aggregated metrics
-        //   //If there are unreported metrics present add them to the object to be sent across the network
-        //   if(metrics.length > 0) {
-        //     syncFlag = true;
-        //   }
+        setInterval(function(){
+          var syncObject = {};
+          //Just in case something bad happened.
+          if(typeof self.sessionMetrics !== "undefined") {
+            syncObject.sessionMetrics = self.sessionMetrics;
+          }
+          var syncFlag = false;
+          self.syncDate = timeStamp();
+          //Go through each of the aggregated metrics
+          //If there are unreported metrics present add them to the object to be sent across the network
+          if(metrics.length > 0) {
+            syncFlag = true;
+          }
 
-        //   if(logs.length > 0) {
-        //     syncFlag = true;
-        //   }
+          if(logs.length > 0) {
+            syncFlag = true;
+          }
 
-        //   syncObject.logs = logs;
-        //   syncObject.metrics = metrics;
+          syncObject.logs = logs;
+          syncObject.metrics = metrics;
           
-        //   //If there is data to sync go ahead and do it.
-        //   if(syncFlag && !self.testMode) {
-        //     self.sync(syncObject);
-        //   }
+          //If there is data to sync go ahead and do it.
+          if(syncFlag && !self.testMode) {
+            self.sync(syncObject);
+          }
 
-        // }, syncInterval);
+        }, 3000);
 
         //Setting up the catching of errors and network calls
         if(this.deviceConfig.networkMonitoringEnabled) {
@@ -134,10 +134,24 @@ var Apigee = (function(){
         
         //setup more intelligent sync rules.
 
+        if(isPhoneGap()) {
+          document.addEventListener("pause", function(){
+            //sync
+          }, false);
+        } else if(isTrigger()) {
+          forge.event.appPaused.addListener(function(data){
+            //sync
+          }, function(error){
+            console.log("Error syncing data.");
+            console.log(error);
+          });
+        } else if (isTitanium) {
 
-        window.addEventListener("beforeunload", function(e){
-          
-        });
+        } else {
+          window.addEventListener("beforeunload", function(e){
+            //sync
+          });
+        }
 
 
         
@@ -277,7 +291,7 @@ var Apigee = (function(){
     sessionSummary.sessionId = randomUUID();
     sessionSummary.applicationVersion = "1.0";
     sessionSummary.appId = this.appId.toString();
-    sessionSummary.sdkType = "javascript";
+    //sessionSummary.sdkType = "javascript";
 
 
     //We're checking if it's a phonegap app.
@@ -439,9 +453,9 @@ var Apigee = (function(){
                                       endTime:endTime.toString(), 
                                       numSamples:"1", 
                                       latency:latency.toString(), 
-                                      timeStamp:startTime.toString(),
-                                      httpStatusCode:self.status,
-                                      responseDataSize:self.responseText.length
+                                      timeStamp:startTime.toString()
+                                      //httpStatusCode:self.status.toString(),
+                                      //responseDataSize:self.responseText.length.toString()
                                     };
                       if(self.status == 200) {
                           //Record the http call here
@@ -741,19 +755,20 @@ var Apigee = (function(){
   }
 
   //Helper. Determines if the platform device is phonegap
-  function isPhoneGap(){
-    return (typeof window.device !== "undefined" && typeof window.device.phonegap !== "undefined");
+  function isPhoneGap() {
+      return (typeof window.device !== "undefined" && typeof window.device.phonegap !== "undefined");
   }
 
   //Helper. Determines if the platform device is trigger.io
-  function isTrigger(){
-    return (typeof window.forge !== "undefined");
+  function isTrigger() {
+      return (typeof window.forge !== "undefined");
   }
 
   //Helper. Determines if the platform device is titanium.
-  function isTitanium(){
-    return (typeof Titanium !== "undefined");
+  function isTitanium() {
+      return (typeof Titanium !== "undefined");
   }
+
 
   return Apigee;
 
