@@ -88,42 +88,42 @@ var Apigee = (function(){
           this.patchLoggingCalls();
         }
 
-        var syncInterval = 3000;
-        if (typeof this.deviceConfig.agentUploadIntervalInSeconds !== "undefined") {
-          syncInterval = this.deviceConfig.agentUploadIntervalInSeconds;
-        }
+        // var syncInterval = 3000;
+        // if (typeof this.deviceConfig.agentUploadIntervalInSeconds !== "undefined") {
+        //   syncInterval = this.deviceConfig.agentUploadIntervalInSeconds;
+        // }
         
 
         //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
-        var self = this;
-        //Set up server syncing
-        setInterval(function(){
-          var syncObject = {};
-          //Just in case something bad happened.
-          if(typeof self.sessionMetrics !== "undefined") {
-            syncObject.sessionMetrics = self.sessionMetrics;
-          }
-          var syncFlag = false;
-          self.syncDate = timeStamp();
-          //Go through each of the aggregated metrics
-          //If there are unreported metrics present add them to the object to be sent across the network
-          if(metrics.length > 0) {
-            syncFlag = true;
-          }
+        //var self = this;
+        //Old server syncing logic
+        // setInterval(function(){
+        //   var syncObject = {};
+        //   //Just in case something bad happened.
+        //   if(typeof self.sessionMetrics !== "undefined") {
+        //     syncObject.sessionMetrics = self.sessionMetrics;
+        //   }
+        //   var syncFlag = false;
+        //   self.syncDate = timeStamp();
+        //   //Go through each of the aggregated metrics
+        //   //If there are unreported metrics present add them to the object to be sent across the network
+        //   if(metrics.length > 0) {
+        //     syncFlag = true;
+        //   }
 
-          if(logs.length > 0) {
-            syncFlag = true;
-          }
+        //   if(logs.length > 0) {
+        //     syncFlag = true;
+        //   }
 
-          syncObject.logs = logs;
-          syncObject.metrics = metrics;
+        //   syncObject.logs = logs;
+        //   syncObject.metrics = metrics;
           
-          //If there is data to sync go ahead and do it.
-          if(syncFlag && !self.testMode) {
-            self.sync(syncObject);
-          }
+        //   //If there is data to sync go ahead and do it.
+        //   if(syncFlag && !self.testMode) {
+        //     self.sync(syncObject);
+        //   }
 
-        }, 3000);
+        // }, syncInterval);
 
         //Setting up the catching of errors and network calls
         if(this.deviceConfig.networkMonitoringEnabled) {
@@ -131,6 +131,15 @@ var Apigee = (function(){
         }
         
         window.onerror = Apigee.MobileAnalytics.catchCrashReport;
+        
+        //setup more intelligent sync rules.
+
+
+        window.addEventListener("beforeunload", function(e){
+          
+        });
+
+
         
       }
     } else {
@@ -274,7 +283,8 @@ var Apigee = (function(){
     //We're checking if it's a phonegap app.
     //If so let's use APIs exposed by phonegap to collect device info.
     //If not let's fallback onto stuff we should collect ourselves.
-    if (typeof window.device !== "undefined") {
+    if (isPhoneGap()) {
+      //framework is phonegap.
       sessionSummary.devicePlatform = window.device.platform;
       sessionSummary.deviceOperatingSystem = window.device.version;
       
@@ -296,8 +306,54 @@ var Apigee = (function(){
 
       sessionSummary.deviceModel = window.device.name;
       sessionSummary.networkType = navigator.network.connection.type;
-    } else {
 
+    } else if (isTrigger()) {
+      //Framework is trigger
+      var os = UNKNOWN;
+      if(forge.is.ios()){
+        os = "iOS";
+      } else if(forge.is.android()) {
+        os = "Android";
+      }
+      sessionSummary.devicePlatform = UNKNOWN;
+      sessionSummary.deviceOperatingSystem = os;
+      
+      //Get the device id if we want it. Trigger.io doesn't expose device id APIs
+      if(this.deviceConfig.deviceIdCaptureEnabled) {
+        sessionSummary.deviceId = generateDeviceId();
+      } else {
+        sessionSummary.deviceId = UNKNOWN;
+      }
+
+      sessionSummary.deviceModel = UNKNOWN;
+      forge.event.connectionStateChange.addListener(function(){
+        this.sessionMetrics.networkType = forge.is.connection.wifi() ? "WIFI" : UNKNOWN;
+      });
+    } else if (isTitanium()) {
+      //Framework is appcelerator
+      sessionSummary.devicePlatform = window.Titanium.getName();
+      sessionSummary.deviceOperatingSystem = window.Titanium.getOsname();
+      
+      //Get the device id if we want it. If we dont, but we want it obfuscated generate
+      //a one off id and attach it to localStorage.
+      if(this.deviceConfig.deviceIdCaptureEnabled) {
+        if(this.deviceConfig.obfuscateDeviceId) {
+          sessionSummary.deviceId = generateDeviceId();
+        } else {
+          sessionSummary.deviceId = window.Titanium.createUUID();
+        }
+      } else {
+        if(this.deviceConfig.obfuscateDeviceId) {
+          sessionSummary.deviceId = generateDeviceId();
+        } else {
+          sessionSummary.deviceId = UNKNOWN;
+        }
+      }
+
+      sessionSummary.deviceModel = window.Titanium.getModel();
+      sessionSummary.networkType = window.Titanium.Network.getNetworkTypeName();
+    } else {
+      //Can't detect framework assume browser.
       //Here we want to check for localstorage and make sure the browser has it
       if(typeof window.localStorage !== "undefined") {
         //If no uuid is set in localstorage create a new one, and set it as the session's deviceId
@@ -682,6 +738,21 @@ var Apigee = (function(){
       window.localStorage.setItem("uuid", uuid);
       return window.localStorage.getItem("uuid");
     }
+  }
+
+  //Helper. Determines if the platform device is phonegap
+  function isPhoneGap(){
+    return (typeof window.device !== "undefined" && typeof window.device.phonegap !== "undefined");
+  }
+
+  //Helper. Determines if the platform device is trigger.io
+  function isTrigger(){
+    return (typeof window.forge !== "undefined");
+  }
+
+  //Helper. Determines if the platform device is titanium.
+  function isTitanium(){
+    return (typeof Titanium !== "undefined");
   }
 
   return Apigee;

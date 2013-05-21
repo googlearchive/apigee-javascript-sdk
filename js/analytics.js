@@ -131,6 +131,12 @@ var Apigee = (function(){
         }
         
         window.onerror = Apigee.MobileAnalytics.catchCrashReport;
+        //Let's see if there is data to sync.
+        window.onbeforeunload = function (e) {
+          alert("Whaaaat!");
+        }
+
+        
         
       }
     } else {
