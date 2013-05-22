@@ -97,33 +97,33 @@ var Apigee = (function(){
         //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
         var self = this;
         //Old server syncing logic
-        setInterval(function(){
-          var syncObject = {};
-          //Just in case something bad happened.
-          if(typeof self.sessionMetrics !== "undefined") {
-            syncObject.sessionMetrics = self.sessionMetrics;
-          }
-          var syncFlag = false;
-          self.syncDate = timeStamp();
-          //Go through each of the aggregated metrics
-          //If there are unreported metrics present add them to the object to be sent across the network
-          if(metrics.length > 0) {
-            syncFlag = true;
-          }
+        // setInterval(function(){
+        //   var syncObject = {};
+        //   //Just in case something bad happened.
+        //   if(typeof self.sessionMetrics !== "undefined") {
+        //     syncObject.sessionMetrics = self.sessionMetrics;
+        //   }
+        //   var syncFlag = false;
+        //   self.syncDate = timeStamp();
+        //   //Go through each of the aggregated metrics
+        //   //If there are unreported metrics present add them to the object to be sent across the network
+        //   if(metrics.length > 0) {
+        //     syncFlag = true;
+        //   }
 
-          if(logs.length > 0) {
-            syncFlag = true;
-          }
+        //   if(logs.length > 0) {
+        //     syncFlag = true;
+        //   }
 
-          syncObject.logs = logs;
-          syncObject.metrics = metrics;
+        //   syncObject.logs = logs;
+        //   syncObject.metrics = metrics;
           
-          //If there is data to sync go ahead and do it.
-          if(syncFlag && !self.testMode) {
-            self.sync(syncObject);
-          }
+        //   //If there is data to sync go ahead and do it.
+        //   if(syncFlag && !self.testMode) {
+        //     self.sync(syncObject);
+        //   }
 
-        }, 3000);
+        // }, 3000);
 
 
 
@@ -137,8 +137,8 @@ var Apigee = (function(){
         //setup more intelligent sync rules.
 
         if(isPhoneGap()) {
-          document.addEventListener("pause", function(){
-            //sync
+          window.addEventListener("pause", function(){
+            self.prepareSync();
           }, false);
         } else if(isTrigger()) {
           forge.event.appPaused.addListener(function(data){
