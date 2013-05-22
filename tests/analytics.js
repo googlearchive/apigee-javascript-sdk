@@ -125,6 +125,8 @@ var Apigee = (function(){
 
         }, 3000);
 
+
+
         //Setting up the catching of errors and network calls
         if(this.deviceConfig.networkMonitoringEnabled) {
            this.patchNetworkCalls(XMLHttpRequest);
@@ -149,7 +151,8 @@ var Apigee = (function(){
 
         } else {
           window.addEventListener("beforeunload", function(e){
-            //sync
+            console.log("sync");
+            self.prepareSync();
           });
         }
 
@@ -453,9 +456,9 @@ var Apigee = (function(){
                                       endTime:endTime.toString(), 
                                       numSamples:"1", 
                                       latency:latency.toString(), 
-                                      timeStamp:startTime.toString()
-                                      //httpStatusCode:self.status.toString(),
-                                      //responseDataSize:self.responseText.length.toString()
+                                      timeStamp:startTime.toString(),
+                                      httpStatusCode:self.status.toString(),
+                                      responseDataSize:self.responseText.length.toString()
                                     };
                       if(self.status == 200) {
                           //Record the http call here
@@ -519,6 +522,40 @@ var Apigee = (function(){
 
   }
 
+  /*
+  * Prepares data for syncing on window close.
+  *
+  * @method prepareSync
+  * @public 
+  *
+  */
+
+  Apigee.MobileAnalytics.prototype.prepareSync = function(){
+    var syncObject = {};
+    //Just in case something bad happened.
+    if(typeof self.sessionMetrics !== "undefined") {
+      syncObject.sessionMetrics = self.sessionMetrics;
+    }
+    var syncFlag = false;
+    this.syncDate = timeStamp();
+    //Go through each of the aggregated metrics
+    //If there are unreported metrics present add them to the object to be sent across the network
+    if(metrics.length > 0) {
+      syncFlag = true;
+    }
+
+    if(logs.length > 0) {
+      syncFlag = true;
+    }
+
+    syncObject.logs = logs;
+    syncObject.metrics = metrics;
+    
+    //If there is data to sync go ahead and do it.
+    if(syncFlag && !self.testMode) {
+      this.sync(syncObject);
+    }
+  }
 
   /*
   * Logs a user defined message.
