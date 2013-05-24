@@ -40,12 +40,18 @@ var Apigee = (function(){
   var Apigee = {};
   //Work around hack because onerror is always called in the window context so we can't store crashes internally
   //This isn't too bad because we are encapsulated.
+
+
+
+
+
   var logs = [];
   var metrics = [];
   //Constructor for mobile analytics SDK
   Apigee.MobileAnalytics = function(options) {
     this.orgName = options.orgName;
     this.appName = options.appName;
+    this.syncOnClose = options.syncOnClose || false;
 
     //Put this in here because I don't want sync issues with testing.
     this.testMode = options.testMode || false;
@@ -90,40 +96,37 @@ var Apigee = (function(){
 
         var syncInterval = 3000;
         if (typeof this.deviceConfig.agentUploadIntervalInSeconds !== "undefined") {
-          syncInterval = this.deviceConfig.agentUploadIntervalInSeconds;
+          syncInterval = this.deviceConfig.agentUploadIntervalInSeconds * 1000;
         }
         
-
         //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
         var self = this;
-        //Old server syncing logic
-        // setInterval(function(){
-        //   var syncObject = {};
-        //   //Just in case something bad happened.
-        //   if(typeof self.sessionMetrics !== "undefined") {
-        //     syncObject.sessionMetrics = self.sessionMetrics;
-        //   }
-        //   var syncFlag = false;
-        //   self.syncDate = timeStamp();
-        //   //Go through each of the aggregated metrics
-        //   //If there are unreported metrics present add them to the object to be sent across the network
-        //   if(metrics.length > 0) {
-        //     syncFlag = true;
-        //   }
-
-        //   if(logs.length > 0) {
-        //     syncFlag = true;
-        //   }
-
-        //   syncObject.logs = logs;
-        //   syncObject.metrics = metrics;
           
-        //   //If there is data to sync go ahead and do it.
-        //   if(syncFlag && !self.testMode) {
-        //     self.sync(syncObject);
-        //   }
+        if(!this.syncOnClose) {
+          //Old server syncing logic
+          setInterval(function(){
+            self.prepareSync();
+          }, syncInterval);
+        } else {
+          if(isPhoneGap()) {
+            window.addEventListener("pause", function(){
+              self.prepareSync();
+            }, false);
+          } else if(isTrigger()) {
+            forge.event.appPaused.addListener(function(data){
+              //sync
+            }, function(error){
+              console.log("Error syncing data.");
+              console.log(error);
+            });
+          } else if (isTitanium()) {
 
-        // }, 3000);
+          } else {
+            window.addEventListener("beforeunload", function(e){
+              self.prepareSync();
+            });
+          }
+        }
 
 
 
@@ -134,27 +137,7 @@ var Apigee = (function(){
         
         window.onerror = Apigee.MobileAnalytics.catchCrashReport;
         
-        //setup more intelligent sync rules.
-
-        if(isPhoneGap()) {
-          window.addEventListener("pause", function(){
-            self.prepareSync();
-          }, false);
-        } else if(isTrigger()) {
-          forge.event.appPaused.addListener(function(data){
-            //sync
-          }, function(error){
-            console.log("Error syncing data.");
-            console.log(error);
-          });
-        } else if (isTitanium) {
-
-        } else {
-          window.addEventListener("beforeunload", function(e){
-            console.log("sync");
-            self.prepareSync();
-          });
-        }
+        
 
 
         
@@ -395,12 +378,15 @@ var Apigee = (function(){
           device = "Android";
         } else if (/webos/.test(ua)) {
           device = "WebOS"
+        } else {
+          device = navigator.platform;
         }
         sessionSummary.deviceOperatingSystem = device;
       }
 
       if(typeof navigator.platform !== "undefined") {
-        sessionSummary.devicePlatform = navigator.platform;
+        var platform = "";
+        sessionSummary.devicePlatform = platform;
       }
 
       // if(typeof navigator.appVersion !== "undefined") {
