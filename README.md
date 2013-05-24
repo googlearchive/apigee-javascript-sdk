@@ -21,6 +21,8 @@ Then in your client code initialize a new instance of the Apigee.MobileAnalytics
         }
         var max = new Apigee.MobileAnalytics(options);
 
+One additional argument called `syncOnClose` may be passed in the options object. if set to true then the SDK will sync on the closing of the web page, or of your respective native app. If set to false then it will sync on the interval specified in your config file.
+
 
 ####Crash Reporting
 
@@ -37,6 +39,10 @@ You can log specific events in your SDK by using one of the many log methods. Yo
 ####Figuring out your device type
 
 The mobile analytics SDK will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the Mobile Analytics dashboard.
+
+####Examples
+
+There are two examples in the `/examples` folder. These are two small single page web apps that will demonstrate how to call the SDK logging, how crashes are tracked, and network calls are monitored.
 
 ####Tests 
 
