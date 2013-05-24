@@ -1,0 +1,39 @@
+* {
+    font-family: ars-maquette-web, 'Myriad Pro', 'Gill Sans', 'Lucida Sans', Verdana, Geneva, sans-serif;    
+}
+.header {
+    background-color:rgb(255, 67, 0);
+    height:48px;
+    width:100%;
+    top:0;
+    left:0;
+    position:absolute;
+}
+
+.logo {
+    float:left;
+    margin-left:15px;
+    margin-top:10px;
+}
+
+.content {
+    margin-top:70px;
+    margin-left:23px;
+}
+
+.result {
+    width:95%;
+    height:285px;
+    border-radius:8px;
+    margin-top:18px;
+    -webkit-box-shadow: rgba(0,0,0,0.5) 0 0 5px inset,rgba(255,255,255,0.4) 0 1px 0;
+    -moz-box-shadow: rgba(0,0,0,0.5) 0 0 5px inset,rgba(255,255,255,0.4) 0 1px 0;
+    -o-box-shadow: rgba(0,0,0,0.5) 0 0 5px inset,rgba(255,255,255,0.4) 0 1px 0;
+    box-shadow:rgba(0,0,0,0.5) 0 0 5px inset,rgba(255,255,255,0.4) 0 1px 0;
+    background-color:#ccc;   
+}
+
+#response {
+    margin-top:10px;
+    margin:5px;
+}
