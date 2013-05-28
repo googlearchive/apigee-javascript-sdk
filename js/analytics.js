@@ -37,6 +37,8 @@ var Apigee = (function(){
 
   var UNKNOWN = "UNKNOWN";
 
+  var SDKTYPE = "JavaScript";
+
   var Apigee = {};
   //Work around hack because onerror is always called in the window context so we can't store crashes internally
   //This isn't too bad because we are encapsulated.
@@ -277,7 +279,7 @@ var Apigee = (function(){
     sessionSummary.sessionId = randomUUID();
     sessionSummary.applicationVersion = "1.0";
     sessionSummary.appId = this.appId.toString();
-    //sessionSummary.sdkType = "javascript";
+    //sessionSummary.sdkType = SDKTYPE;
 
 
     //We're checking if it's a phonegap app.
