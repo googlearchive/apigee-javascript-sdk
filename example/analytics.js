@@ -305,7 +305,7 @@ var Apigee = (function(){
       }
 
       sessionSummary.deviceModel = window.device.name;
-      sessionSummary.networkType = navigator.network.connection.type;
+      sessionSummary.networkType = navigator.connection.type;
 
     } else if (isTrigger()) {
       //Framework is trigger
@@ -518,6 +518,8 @@ var Apigee = (function(){
 
   Apigee.MobileAnalytics.prototype.prepareSync = function(){
     var syncObject = {};
+    var self = this;
+    console.log("Syncing");
     //Just in case something bad happened.
     if(typeof self.sessionMetrics !== "undefined") {
       syncObject.sessionMetrics = self.sessionMetrics;
@@ -779,7 +781,7 @@ var Apigee = (function(){
 
   //Helper. Determines if the platform device is phonegap
   function isPhoneGap() {
-      return (typeof window.device !== "undefined" && typeof window.device.phonegap !== "undefined");
+      return (typeof window.device !== "undefined");
   }
 
   //Helper. Determines if the platform device is trigger.io
