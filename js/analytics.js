@@ -799,3 +799,8 @@ var Apigee = (function(){
   return Apigee;
 
 }())
+
+//Needed to make this like a Titanium module.
+if(typeof module !== "undefined") {
+  module.exports = Apigee;
+}
