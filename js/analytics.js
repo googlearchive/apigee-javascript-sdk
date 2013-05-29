@@ -328,9 +328,8 @@ var Apigee = (function(){
       }
 
       sessionSummary.deviceModel = UNKNOWN;
-      forge.event.connectionStateChange.addListener(function(){
-        this.sessionMetrics.networkType = forge.is.connection.wifi() ? "WIFI" : UNKNOWN;
-      });
+      sessionSummary.networkType = forge.is.connection.wifi() ? "WIFI" : UNKNOWN;
+     
     } else if (isTitanium()) {
       //Framework is appcelerator
       sessionSummary.devicePlatform = window.Titanium.getName();

@@ -47,3 +47,12 @@ There are two examples in the `/examples` folder. These are two small single pag
 ####Tests 
 
 Basic set of test cases can be found in the `/test` folder. Just open the tests.html file, and they will all run accordingly.
+
+####Trigger.io configuration
+
+The following plugins should be enabled:
+
+1. is
+2. event
+
+Or the SDK will not function properly!
