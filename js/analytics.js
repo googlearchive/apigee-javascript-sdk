@@ -331,28 +331,31 @@ var Apigee = (function(){
       sessionSummary.networkType = forge.is.connection.wifi() ? "WIFI" : UNKNOWN;
      
     } else if (isTitanium()) {
-      //Framework is appcelerator
-      sessionSummary.devicePlatform = window.Titanium.getName();
-      sessionSummary.deviceOperatingSystem = window.Titanium.getOsname();
-      
-      //Get the device id if we want it. If we dont, but we want it obfuscated generate
-      //a one off id and attach it to localStorage.
-      if(this.deviceConfig.deviceIdCaptureEnabled) {
-        if(this.deviceConfig.obfuscateDeviceId) {
-          sessionSummary.deviceId = generateDeviceId();
-        } else {
-          sessionSummary.deviceId = window.Titanium.createUUID();
-        }
-      } else {
-        if(this.deviceConfig.obfuscateDeviceId) {
-          sessionSummary.deviceId = generateDeviceId();
-        } else {
-          sessionSummary.deviceId = UNKNOWN;
-        }
-      }
+      var self = this;
+      Ti.App.addEventListener("analytics:platformMetrics", function(e){
+        //Framework is appcelerator      
+        self.sessionMetrics.devicePlatform = e.name;
+        self.sessionMetrics.deviceOperatingSystem = e.osname;
 
-      sessionSummary.deviceModel = window.Titanium.getModel();
-      sessionSummary.networkType = window.Titanium.Network.getNetworkTypeName();
+        //Get the device id if we want it. If we dont, but we want it obfuscated generate
+        //a one off id and attach it to localStorage.
+        if(self.deviceConfig.deviceIdCaptureEnabled) {
+          if(self.deviceConfig.obfuscateDeviceId) {
+          self.sessionMetrics.deviceId = generateDeviceId();
+          } else {
+          self.sessionMetrics.deviceId = e.uuid;
+          }
+        } else {
+          if(self.deviceConfig.obfuscateDeviceId) {
+          self.sessionMetrics.deviceId = generateDeviceId();
+          } else {
+          self.sessionMetrics.deviceId = UNKNOWN;
+          }
+        }
+
+        self.sessionMetrics.deviceModel = e.model;
+        self.sessionMetrics.networkType = e.networkType;
+      });
     } else {
       //Can't detect framework assume browser.
       //Here we want to check for localstorage and make sure the browser has it
@@ -400,6 +403,10 @@ var Apigee = (function(){
 
     }
     this.sessionMetrics = sessionSummary;
+
+    if(isTitanium()) {
+      Ti.App.fireEvent("analytics:attachReady");  
+    }
   }
 
   /*
@@ -520,7 +527,7 @@ var Apigee = (function(){
   Apigee.MobileAnalytics.prototype.prepareSync = function(){
     var syncObject = {};
     var self = this;
-    console.log("Syncing");
+    Titanium.API.info("Syncing");
     //Just in case something bad happened.
     if(typeof self.sessionMetrics !== "undefined") {
       syncObject.sessionMetrics = self.sessionMetrics;

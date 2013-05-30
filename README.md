@@ -56,3 +56,19 @@ The following plugins should be enabled:
 2. event
 
 Or the SDK will not function properly!
+
+####Titanium Configuration
+
+For the SDK to properly report device based metrics like OS and version name we need to add this snippet of code anywhere in your `app.js` file.
+
+	Ti.App.addEventListener('analytics:attachReady', function(e){
+		Ti.App.fireEvent('analytics:platformMetrics', 
+		{
+			name:Titanium.Platform.name, 
+			osname:Titanium.Platform.getOsname(), 
+			model:Titanium.Platform.getModel(), 
+			networkType:Titanium.Network.getNetworkTypeName(), 
+			uuid:Titanium.Platform.createUUID()
+		});
+	});
+
