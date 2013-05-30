@@ -1,4 +1,4 @@
-##Apigee Mobile Analytics Javascript SDK
+#Apigee Mobile Analytics Javascript SDK
 
 This is the first version of the mobile analytics javascript SDK it can help you monitor your HTML5 mobile apps with the following features.
 
@@ -7,7 +7,7 @@ This is the first version of the mobile analytics javascript SDK it can help you
 3. Simple and Advanced Logging
 4. Figuring out your device type
 
-###Getting Started
+##Getting Started
 
 To get started you simply need to add the analytics.js file to your apps html page and initialize the client like so:
 
@@ -24,31 +24,31 @@ Then in your client code initialize a new instance of the Apigee.MobileAnalytics
 One additional argument called `syncOnClose` may be passed in the options object. if set to true then the SDK will sync on the closing of the web page, or of your respective native app. If set to false then it will sync on the interval specified in your config file.
 
 
-####Crash Reporting
+##Crash Reporting
 
 The mobile analytics SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
 
-####Network Call Monitoring
+##Network Call Monitoring
 
 The SDK will also monitor your network calls to track errors and usage. This configuration is pulled from the rules that you configure on the Mobile Analytics dashboard.
 
-####Simple and Advanced Logging
+##Simple and Advanced Logging
 
 You can log specific events in your SDK by using one of the many log methods. You may also use the console logging methods to track messages. This is configured in the Mobile Analytics dashboard.
 
-####Figuring out your device type
+##Figuring out your device type
 
 The mobile analytics SDK will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the Mobile Analytics dashboard.
 
-####Examples
+##Examples
 
 There are two examples in the `/examples` folder. These are two small single page web apps that will demonstrate how to call the SDK logging, how crashes are tracked, and network calls are monitored.
 
-####Tests 
+##Tests 
 
 Basic set of test cases can be found in the `/test` folder. Just open the tests.html file, and they will all run accordingly.
 
-####Trigger.io configuration
+##Trigger.io configuration
 
 The following plugins should be enabled:
 
@@ -57,7 +57,7 @@ The following plugins should be enabled:
 
 Or the SDK will not function properly!
 
-####Titanium Configuration
+##Titanium Configuration
 
 For the SDK to properly report device based metrics like OS and version name we need to add this snippet of code anywhere in your `app.js` file.
 
@@ -72,3 +72,31 @@ For the SDK to properly report device based metrics like OS and version name we 
 		});
 	});
 
+## Contributing
+We welcome your enhancements!
+
+Like [Usergrid](https://github.com/apigee/usergrid-node-module), the Usergrid Javascript SDK is open source and licensed under the Apache License, Version 2.0.
+
+1. Fork it
+2. Create your feature branch (`git checkout -b my-new-feature`)
+3. Commit your changes (`git commit -am 'Added some feature'`)
+4. Push your changes to the upstream branch (`git push origin my-new-feature`)
+5. Create new Pull Request (make sure you describe what you did and why your mod is needed)
+
+##More information
+For more information on Apigee App Services, visit <http://apigee.com/about/developers>.
+
+## Copyright
+Copyright 2013 Apigee Corporation
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+<http://www.apache.org/licenses/LICENSE-2.0>
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
