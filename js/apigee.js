@@ -1,6 +1,6 @@
 /*
 *  This module is a collection of classes designed to make working with
-*  the Appigee App Services API as easy as possible.
+*  the Apigee App Services API as easy as possible.
 *  Learn more at http://apigee.com/docs/usergrid
 *
 *   Copyright 2012 Apigee Corporation
