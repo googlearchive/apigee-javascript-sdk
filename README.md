@@ -1,13 +1,51 @@
-#Apigee Mobile Analytics Javascript SDK
+#Apigee Mobile Javascript SDK
 
-This is the first version of the mobile analytics javascript SDK it can help you monitor your HTML5 mobile apps with the following features.
+##App Services Getting Started
 
-1. Crash Reporting
-2. Network Call Monitoring
-3. Simple and Advanced Logging
-4. Figuring out your device type
+Detailed instructions follow but if you just want a quick example of how to get started with this SDK, here’s a minimal HTML5 file that shows you how to include & initialize the SDK, as well as how to read & write data from Usergrid with it.
 
-##Getting Started
+```html
+<!DOCTYPE html>
+<html>
+	<head>
+		<!-- Don't forget to download and include the SDK -->
+		<!-- It’s available at the root of github.com/apigee/usergrid-javascript-sdk -->
+		<script src="path/to/usergrid.js"></script>
+
+		<script type="text/javascript">
+		
+			// Initializing the SDK
+			var client = new Usergrid.Client({
+				orgName:'yourorgname', // Your Usergrid organization name (or apigee.com username for App Services)
+				appName:'sandbox' // Your Usergrid app name
+			});
+
+			// Reading data
+			var books = new Usergrid.Collection({ "client":client, "type":"books" });
+			books.fetch(
+				function() { // Success
+					while(books.hasNextEntity()) {
+						var book = books.getNextEntity();
+						alert(book.get("title")); // Output the title of the book
+					}
+				}, function() { // Failure
+					alert("read failed");
+				}
+			);
+
+			// Uncomment the next 4 lines if you want to write data
+			
+			// book = { "title": "the old man and the sea" };
+			// books.addEntity(book, function (error, response) {
+			// 	if (error) { alert("write failed");
+			// 	} else { alert("write succeeded"); } });
+		</script>
+	</head>
+	<body></body>
+</html>
+```
+
+##Mobile Analytics Getting Started
 
 To get started you simply need to add the analytics.js file to your apps html page and initialize the client like so:
 
@@ -22,7 +60,6 @@ Then in your client code initialize a new instance of the Apigee.MobileAnalytics
         var max = new Apigee.MobileAnalytics(options);
 
 One additional argument called `syncOnClose` may be passed in the options object. if set to true then the SDK will sync on the closing of the web page, or of your respective native app. If set to false then it will sync on the interval specified in your config file.
-
 
 ##Crash Reporting
 
