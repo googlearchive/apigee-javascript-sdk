@@ -61,6 +61,10 @@ Then in your client code initialize a new instance of the Apigee.MobileAnalytics
 
 One additional argument called `syncOnClose` may be passed in the options object. if set to true then the SDK will sync on the closing of the web page, or of your respective native app. If set to false then it will sync on the interval specified in your config file.
 
+##More documentation
+
+Head over to the [Apigee Mobile SDK wiki](https://github.com/apigee/mobileanalytics-javascript-sdk/wiki) to learn more about how to use App Services in JavaScript!
+
 ##Crash Reporting
 
 The mobile analytics SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
