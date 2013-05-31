@@ -2363,6 +2363,38 @@ var Apigee = (function(){
 
     }
 
+    if(isTitanium()) {
+      //Patch console.log to work in Titanium as well.
+      var originalTitanium = Ti.API;
+      window.console.log = function(){
+        originalTitanium.info.apply(originalTitanium, arguments);
+      };
+
+      Ti.API = {
+        info: function() {
+          self.logInfo({tag:"CONSOLE_TITANIUM", logMessage:arguments[0]});
+          originalTitanium.info.apply(originalTitanium, arguments);
+        },
+        log: function() {
+          var level = arguments[0];
+          if(level === "info") {
+            self.logInfo({tag:"CONSOLE_TITANIUM", logMessage:arguments[1]});
+          } else if(level === "warn") {
+            self.logWarn({tag:"CONSOLE_TITANIUM", logMessage:arguments[1]});
+          } else if(level === "error") {
+            self.logError({tag:"CONSOLE_TITANIUM", logMessage:arguments[1]});
+          } else if(level === "debug") {
+            self.logDebug({tag:"CONSOLE_TITANIUM", logMessage:arguments[1]});
+          } else if(level === "trace") {
+            self.logAssert({tag:"CONSOLE_TITANIUM", logMessage:arguments[1]});
+          } else {
+            self.logInfo({tag:"CONSOLE_TITANIUM", logMessage:arguments[1]});
+          }
+          originalTitanium.log.apply(originalTitanium, arguments);
+        }
+      }
+    }
+
   }
 
   /*
