@@ -2,22 +2,22 @@
 
 ##App Services Getting Started
 
-Detailed instructions follow but if you just want a quick example of how to get started with this SDK, here’s a minimal HTML5 file that shows you how to include & initialize the SDK, as well as how to read & write data from Usergrid with it.
+Detailed instructions follow but if you just want a quick example of how to get started with this SDK, here’s a minimal HTML5 file that shows you how to include & initialize the SDK, as well as how to read & write data from Apigee App Services with it.
 
 ```html
 <!DOCTYPE html>
 <html>
 	<head>
 		<!-- Don't forget to download and include the SDK -->
-		<!-- It’s available at the root of github.com/apigee/usergrid-javascript-sdk -->
-		<script src="path/to/usergrid.js"></script>
+		<!-- It’s available at the root of github.com/apigee/mobileanalytics-javascript-sdk/js -->
+		<script src="path/to/apigee.js"></script>
 
 		<script type="text/javascript">
 		
 			// Initializing the SDK
 			var client = new Apigee.Client({
-				orgName:'yourorgname', // Your Usergrid organization name (or apigee.com username for App Services)
-				appName:'sandbox' // Your Usergrid app name
+				orgName:'yourorgname', // Your Apigee.com username for App Services
+				appName:'sandbox' // Your Apigee App Services app name
 			});
 
 			// Reading data
@@ -49,7 +49,7 @@ Detailed instructions follow but if you just want a quick example of how to get 
 
 To get started you simply need to add the analytics.js file to your apps html page and initialize the client like so:
 
-    <script type="text/javascript" src="js/analytics.js"></script>
+    <script type="text/javascript" src="js/apigee.js"></script>
 
 Then in your client code initialize a new instance of the Apigee.MobileAnalytics object.
 
