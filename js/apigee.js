@@ -2134,12 +2134,9 @@ var Apigee = (function(){
     if(this.deviceConfig.locationCaptureEnabled) {
       if (typeof navigator.geolocation !== "undefined") {
         navigator.geolocation.getCurrentPosition(function(position){
-          self.sessionMetrics.location = position.coords;
-        });
-        //Small hack. If we deny access to the location API then we have to assign it to unknown.
-        this.sessionSummary.location = UNKNOWN;
-      } else {
-        sessionSummary.loc = UNKNOWN;
+          self.sessionMetrics.latitude = position.coords.latitude;
+          self.sessionMetrics.longitude = position.coords.longitude;
+        }); 
       }
     }
 
