@@ -1895,7 +1895,6 @@ var Apigee = (function(){
   var metrics = [];
   var Apigee = Usergrid;
 
-
   //BEGIN MAX SDK
 
   //Constructor for mobile analytics SDK
@@ -2117,6 +2116,7 @@ var Apigee = (function(){
   */
   Apigee.MobileAnalytics.prototype.startSession = function() {
     //If the user agent string exists on the device
+    var self = this;
     var sessionSummary = {};
     sessionSummary.timeStamp = timeStamp();
     //Lets set all the automatically unknowns
@@ -2130,6 +2130,18 @@ var Apigee = (function(){
     sessionSummary.appId = this.appId.toString();
     //sessionSummary.sdkType = SDKTYPE;
 
+
+    if(this.deviceConfig.locationCaptureEnabled) {
+      if (typeof navigator.geolocation !== "undefined") {
+        navigator.geolocation.getCurrentPosition(function(position){
+          self.sessionMetrics.location = position.coords;
+        });
+        //Small hack. If we deny access to the location API then we have to assign it to unknown.
+        this.sessionSummary.location = UNKNOWN;
+      } else {
+        sessionSummary.loc = UNKNOWN;
+      }
+    }
 
     //We're checking if it's a phonegap app.
     //If so let's use APIs exposed by phonegap to collect device info.
