@@ -23,15 +23,16 @@ Detailed instructions follow but if you just want a quick example of how to get 
 			// Reading data
 			var books = new Apigee.Collection({ "client":client, "type":"books" });
 			books.fetch(
-				function() { // Success
-					while(books.hasNextEntity()) {
-						var book = books.getNextEntity();
-						alert(book.get("title")); // Output the title of the book
+				function(err, data) { // Success
+					if (err) {
+						alert("read failed");
+					} else {
+						while(books.hasNextEntity()) {
+							var book = books.getNextEntity();
+							alert(book.get("title")); // Output the title of the book
+						}
 					}
-				}, function() { // Failure
-					alert("read failed");
-				}
-			);
+				});
 
 			// Uncomment the next 4 lines if you want to write data
 			
