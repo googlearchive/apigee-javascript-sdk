@@ -26,11 +26,11 @@
         <script>
             //We do a hard override of configs here for testing only. Using that feature loses much of
             //the power of mobile analytics. USE AT YOUR OWN RISK.
-            //testMode:true,
-            //config:testCaseConfig,
             var max = new Apigee.MobileAnalytics({
                 orgName:"mdobson",
                 appName:"sandbox",
+                testMode:true,
+                config:testCaseConfig,
                 apiUrl:"http://pjha-ug.elasticbeanstalk.com/"
             });
             max.startSession();
@@ -73,7 +73,7 @@
             (function testIfCrashCollected(){
                 
                 Test.test(max.logs()[0].tag === "CRASH", "Crashes properly logged in Mobile Analytics", "results",function(){
-                        //max.clearMetrics();
+                        max.clearMetrics();
                     });
             })();
 
@@ -89,7 +89,7 @@
 
                 Test.test(max.logs().length === 2, "Log level config applied.", "results", 
                     function(){
-                        //max.clearMetrics();
+                        max.clearMetrics();
                     });
             })();
 
@@ -101,7 +101,7 @@
 
                 Test.test(max.logs()[0].logLevel === "V", "Log level verbose applied.", "results", 
                     function(){
-                        //max.clearMetrics();
+                        max.clearMetrics();
                     });
             })();
 
@@ -113,7 +113,7 @@
 
                 Test.test(max.logs()[1].logLevel === "D", "Log level debug applied.", "results", 
                     function(){
-                        //max.clearMetrics();
+                        max.clearMetrics();
                     });
             })();
 
@@ -125,7 +125,7 @@
 
                 Test.test(max.logs()[0].logMessage.length === 250, "Log message max length is 250 chars.", "results", 
                     function(){
-                        //max.clearMetrics();
+                        max.clearMetrics();
                     });
             })();
 
@@ -134,7 +134,7 @@
                 console.debug("This is a test message.");
                 Test.test(max.logs()[0].tag === "CONSOLE", "Can trace logging that happens via console.", "results",
                     function(){
-                        //max.clearMetrics();
+                        max.clearMetrics();
                     });
             })();
 
@@ -148,7 +148,7 @@
                 req.send();
                 if(req.status === 200) {
                     Test.test(max.metrics().length === 1, "Network metric collected", "results", function(){
-                        //max.clearMetrics();
+                        max.clearMetrics();
                     });
                 } else {
                     Test.test(0 === 1, "Network error cannot perform this test", "results", function(){});
@@ -165,7 +165,7 @@
                 req.send();
                 if(req.status === 200) {
                     Test.test(max.metrics()[0].numErrors === "0", "Network metric collected, and properly indicated as success.", "results", function(){
-                        //max.clearMetrics();
+                        max.clearMetrics();
                     });
                 } else {
                     Test.test(0 === 1, "Network error cannot perform this test", "results", function(){});
@@ -182,7 +182,7 @@
                 req.send();
                 if(req.status !== 200) {
                     Test.test(max.metrics()[0].numErrors === "1", "Network metric collected, and properly indicated as error.", "results", function(){
-                        //max.clearMetrics();
+                        max.clearMetrics();
                     });
                 }
             })();
