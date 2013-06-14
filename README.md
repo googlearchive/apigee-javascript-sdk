@@ -48,6 +48,8 @@ Detailed instructions follow but if you just want a quick example of how to get 
 
 ##Mobile Analytics Getting Started
 
+**Note:** Please note that this functionality is Beta only.  
+
 To get started you simply need to add the analytics.js file to your apps html page and initialize the client like so:
 
     <script type="text/javascript" src="js/apigee.js"></script>
