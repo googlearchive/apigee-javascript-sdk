@@ -2146,7 +2146,7 @@ var Apigee = (function(){
     if (isPhoneGap()) {
       //framework is phonegap.
       sessionSummary.devicePlatform = window.device.platform;
-      sessionSummary.deviceOperatingSystem = window.device.version;
+      sessionSummary.deviceOSVersion = window.device.version;
       
       //Get the device id if we want it. If we dont, but we want it obfuscated generate
       //a one off id and attach it to localStorage.
@@ -2176,7 +2176,7 @@ var Apigee = (function(){
         os = "Android";
       }
       sessionSummary.devicePlatform = UNKNOWN;
-      sessionSummary.deviceOperatingSystem = os;
+      sessionSummary.deviceOSVersion = os;
       
       //Get the device id if we want it. Trigger.io doesn't expose device id APIs
       if(this.deviceConfig.deviceIdCaptureEnabled) {
@@ -2193,7 +2193,7 @@ var Apigee = (function(){
       Ti.App.addEventListener("analytics:platformMetrics", function(e){
         //Framework is appcelerator      
         self.sessionMetrics.devicePlatform = e.name;
-        self.sessionMetrics.deviceOperatingSystem = e.osname;
+        self.sessionMetrics.deviceOSVersion = e.osname;
 
         //Get the device id if we want it. If we dont, but we want it obfuscated generate
         //a one off id and attach it to localStorage.
@@ -2243,13 +2243,14 @@ var Apigee = (function(){
         } else {
           device = navigator.platform;
         }
-        sessionSummary.deviceOperatingSystem = device;
+        sessionSummary.platform = device;
       }
 
       if(typeof navigator.platform !== "undefined") {
         var platform = "";
         sessionSummary.devicePlatform = platform;
       }
+      sessionSummary.deviceOSVersion = UNKNOWN;
 
       // if(typeof navigator.appVersion !== "undefined") {
       //   sessionSummary.appVersion = navigator.appVersion;
