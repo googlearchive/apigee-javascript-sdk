@@ -2229,28 +2229,65 @@ var Apigee = (function(){
       
       if(typeof navigator.userAgent !== "undefined") {
         //Small hack to make all device names consistent.
-        var ua = navigator.userAgent.toLowerCase();
-        //For now detect iPhone, iPod, Android, WebOS
-        var device = UNKNOWN;
-        if(/ipad/.test(ua)) {
-          device = "iPad";
-        } else if (/iphone/.test(ua)) {
-          device = "iPhone";
-        } else if (/android/.test(ua)) {
-          device = "Android";
-        } else if (/webos/.test(ua)) {
-          device = "WebOS"
-        } else {
-          device = navigator.platform;
-        }
-        sessionSummary.platform = device;
-      }
 
-      if(typeof navigator.platform !== "undefined") {
-        var platform = "";
-        sessionSummary.devicePlatform = platform;
+        var ua = navigator.userAgent;
+        var browserName  = navigator.appName;
+        var nameOffset,verOffset,ix;
+
+        // In Opera, the true version is after "Opera" or after "Version"
+        if ((verOffset=ua.indexOf("Opera"))!=-1) {
+         browserName = "Opera";
+         fullVersion = ua.substring(verOffset+6);
+         if ((verOffset=ua.indexOf("Version"))!=-1) 
+           fullVersion = ua.substring(verOffset+8);
+        }
+        // In MSIE, the true version is after "MSIE" in userAgent
+        else if ((verOffset=ua.indexOf("MSIE"))!=-1) {
+         browserName = "Microsoft Internet Explorer";
+         fullVersion = ua.substring(verOffset+5);
+        }
+        // In Chrome, the true version is after "Chrome" 
+        else if ((verOffset=ua.indexOf("Chrome"))!=-1) {
+         browserName = "Chrome";
+         fullVersion = ua.substring(verOffset+7);
+        }
+        // In Safari, the true version is after "Safari" or after "Version" 
+        else if ((verOffset=ua.indexOf("Safari"))!=-1) {
+         browserName = "Safari";
+         fullVersion = ua.substring(verOffset+7);
+         if ((verOffset=ua.indexOf("Version"))!=-1) 
+           fullVersion = ua.substring(verOffset+8);
+        }
+        // In Firefox, the true version is after "Firefox" 
+        else if ((verOffset=ua.indexOf("Firefox"))!=-1) {
+         browserName = "Firefox";
+         fullVersion = ua.substring(verOffset+8);
+        }
+        // In most other browsers, "name/version" is at the end of userAgent 
+        else if ( (nameOffset=ua.lastIndexOf(' ')+1) < 
+                  (verOffset=ua.lastIndexOf('/')) ) 
+        {
+         browserName = ua.substring(nameOffset,verOffset);
+         fullVersion = ua.substring(verOffset+1);
+         if (browserName.toLowerCase()==browserName.toUpperCase()) {
+          browserName = navigator.appName;
+         }
+        }
+        // trim the fullVersion string at semicolon/space if present
+        if ((ix=fullVersion.indexOf(";"))!=-1){
+          fullVersion=fullVersion.substring(0,ix);
+        }
+        if ((ix=fullVersion.indexOf(" "))!=-1) {
+          fullVersion=fullVersion.substring(0,ix);
+        }
+
+        sessionSummary.devicePlatform = browserName;
+        sessionSummary.deviceOSVersion = fullVersion;
+      } else {
+        sessionSummary.devicePlatform = UNKNOWN;
+        sessionSummary.deviceOSVersion = UNKNOWN;
       }
-      sessionSummary.deviceOSVersion = UNKNOWN;
+      
 
       // if(typeof navigator.appVersion !== "undefined") {
       //   sessionSummary.appVersion = navigator.appVersion;
