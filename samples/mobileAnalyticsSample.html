@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="initial-scale=1.0, user-scalable=no">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black">
+  <title>Test</title>
+  <link rel="stylesheet" href="https://d10ajoocuyu32n.cloudfront.net/mobile/1.3.1/jquery.mobile-1.3.1.min.css">
+  
+  <!-- Extra Codiqa features -->
+  <link rel="stylesheet" href="https://codiqa.com/view/adeb8234/css">
+  
+  <!-- jQuery and jQuery Mobile -->
+  <script src="https://d10ajoocuyu32n.cloudfront.net/jquery-1.9.1.min.js"></script>
+  <script src="https://d10ajoocuyu32n.cloudfront.net/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
+
+  <!-- Extra Codiqa features -->
+  <script src="https://d10ajoocuyu32n.cloudfront.net/codiqa.ext.js"></script>
+   
+  <script src="https://codiqa.com/view/adeb8234/js"></script>
+
+  <script src="../js/apigee.js"></script>
+  <script>
+    var max = new Apigee.MobileAnalytics({
+        orgName:"mdobson",
+        appName:"sandbox",
+        apiUrl:"http://pjha-ug.elasticbeanstalk.com/"
+    });
+    max.startSession();
+  </script>
+  <script>
+    $(document).ready(function(){
+      $("#req").on("click", function(e){
+        var url = "https://api.usergrid.com/"+$("#org").val()+'/'+$("#app").val();
+        $.get(url, function(data){ alert(data)});
+      });
+
+      $("#log").on("click", function(e){
+        max.logDebug({tag:"CLICKS", logMessage:$("#message").val()});
+      });
+
+      $("#crash").on("click", function(e){
+        foo();
+      });
+    });
+  </script>
+</head>
+<body>
+  <!-- Home -->
+  <div data-role="page" id="page1">
+      <div data-theme="e" data-role="header">
+          <h3>
+              Mobile Analytics
+          </h3>
+      </div>
+      <div data-role="content">
+          <div data-role="fieldcontain">
+              <label for="textinput1">
+                  orgName
+              </label>
+              <input name="" placeholder="" value="mdobson" type="text" id="org">
+          </div>
+          <div data-role="fieldcontain">
+              <label for="textinput2">
+                  appName
+              </label>
+              <input name="" placeholder="" value="sandbox" type="text" id="app">
+          </div>
+          <a data-role="button" href="#page1" id="req">
+              Make a request
+          </a>
+          <div data-role="fieldcontain">
+              <label for="textinput3">
+                  Message
+              </label>
+              <input name="" placeholder="" value="" type="text" id="message">
+          </div>
+          <a data-role="button" href="#page1" id="log">
+              Log a message
+          </a>
+          <a data-role="button" href="#page1" id="crash">
+              Crash the app
+          </a>
+      </div>
+  </div>
+  <!-- Test -->
+  <div data-role="page" id="page2">
+      <div data-role="content">
+      </div>
+  </div>
+</body>
+</html>
