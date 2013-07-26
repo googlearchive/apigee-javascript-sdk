@@ -1,0 +1,27 @@
+# Exclude the build directory
+build/*
+  
+# Exclude temp nibs and swap files
+*~.nib
+*.swp
+  
+# Exclude OS X folder attributes
+.DS_Store
+  
+# Exclude user-specific XCode 3 and 4 files
+*.mode1
+*.mode1v3
+*.mode2v3
+*.perspective
+*.perspectivev3
+*.pbxuser
+*.xcworkspace
+xcuserdata
+
+# Build files
+CordovaLib/CordovaLib.xcodeproj/xcuserdata/tim.xcuserdatad/xcschemes/CordovaLib.xcscheme
+CordovaLib/CordovaLib.xcodeproj/xcuserdata/tim.xcuserdatad/xcschemes/xcschememanagement.plist
+Targets.xcodeproj/project.xcworkspace/xcuserdata/tim.xcuserdatad/UserInterfaceState.xcuserstate
+Targets.xcodeproj/xcuserdata/tim.xcuserdatad/xcschemes/Targets.xcscheme
+Targets.xcodeproj/xcuserdata/tim.xcuserdatad/xcschemes/xcschememanagement.plist
+Targets.xcodeproj/project.xcworkspace/xcuserdata/apigee.xcuserdatad/UserInterfaceState.xcuserstate
