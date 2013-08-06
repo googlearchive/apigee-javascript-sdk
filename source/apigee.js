@@ -720,10 +720,11 @@ var Usergrid = (function(){
   //PUSH
   Usergrid.Client.prototype.registerDevice = function(options, callback) {
     if (options) {
+      var notifierId = options.notifier+".notifier.id";
       var device = {
         "type":"devices",
         "uuid":this.getDeviceUUID(),
-        options.notifier+".notifier.id":options.deviceToken
+        notifierId:options.deviceToken
       }  
  
       var entityOptions = {
@@ -740,7 +741,26 @@ var Usergrid = (function(){
  
   Usergrid.prototype.sendPushToDevice = function(options, callback) {
     if (options) {
- 
+      var notifierName = options.notifier;
+      var pushEntity = {
+          "type":options.path
+        }
+      if (options.deviceType === "android") {
+        
+        pushEntity.payloads = {
+          notifierName: options.message
+        }
+      } else if (options.deviceType === "ios") {
+        pushEntity.payloads = {
+          notifierName: {
+            "aps": {
+              "alert":options.message,
+              "sound":options.sound
+            }
+          }
+        }
+      }
+      this.createEntity(pushEntity, callback);
     } else {
       callback(true);
     }
