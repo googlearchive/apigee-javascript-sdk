@@ -1,9 +1,5 @@
 #Apigee Mobile Javascript SDK -- Beta
 
-##Need a CDN to link to? Have no fear!
-
-The apigee js CDN is at : LINK ADD IT!
-
 
 ##App Services Getting Started
 
