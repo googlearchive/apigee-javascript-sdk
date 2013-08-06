@@ -717,7 +717,15 @@ var Usergrid = (function(){
     return curl;
   }
 
-  //PUSH
+  /*
+  *  Function to register a device with Apigee. Call directly with options object.
+  *
+  *  @method registerDevice
+  *  @public
+  *  @param {object} options
+  *  @param {function} callback
+  *  @return {callback} callback(err, data)
+  */
   Usergrid.Client.prototype.registerDevice = function(options, callback) {
     if (options) {
       var notifierId = options.notifier+".notifier.id";
@@ -738,29 +746,49 @@ var Usergrid = (function(){
       callback(true);
     }
   }
- 
+  
+  /*
+  *  Function to send push notification to a specified path. Call directly.
+  *
+  *  @method sendPushToDevice
+  *  @public
+  *  @param {object} options
+  *  @param {function} callback
+  *  @return {callback} callback(err, data)
+  */
+
   Usergrid.prototype.sendPushToDevice = function(options, callback) {
     if (options) {
       var notifierName = options.notifier;
-      var pushEntity = {
-          "type":options.path
-        }
-      if (options.deviceType === "android") {
-        
-        pushEntity.payloads = {
-          notifierName: options.message
-        }
-      } else if (options.deviceType === "ios") {
-        pushEntity.payloads = {
-          notifierName: {
-            "aps": {
-              "alert":options.message,
-              "sound":options.sound
+      var notifierLookupOptions = {
+        "type":"notifier",
+        "name":options.notifier
+      }
+      this.getEntity(options, function(error, result){
+        if (error) {
+          callback(error, result);
+        } else {
+          var pushEntity = {
+            "type":options.path
+          }
+          if (result.get("provider") === "android") {
+            
+            pushEntity.payloads = {
+              notifierName: options.message
+            }
+          } else if (result.get("provider") === "apple") {
+            pushEntity.payloads = {
+              notifierName: {
+                "aps": {
+                  "alert":options.message,
+                  "sound":options.sound
+                }
+              }
             }
           }
+          this.createEntity(pushEntity, callback);
         }
-      }
-      this.createEntity(pushEntity, callback);
+      });
     } else {
       callback(true);
     }
@@ -803,6 +831,13 @@ var Usergrid = (function(){
     return s.join('');
   }
  
+  /*
+  *  Function to get the assigned Apigee UUID of the device. Call directly to retrieve this information.
+  *
+  *  @method getDeviceUUID
+  *  @public
+  *  @return {string} uuid
+  */
   Usergrid.Client.prototype.getDeviceUUID = function(){
     if(typeof window.localStorage.getItem("deviceUUID") === null) {
       return window.localStorage.getItem("deviceUUID");
