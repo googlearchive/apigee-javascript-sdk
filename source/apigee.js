@@ -731,16 +731,17 @@ var Usergrid = (function(){
       var notifierId = options.notifier+".notifier.id";
       var device = {
         "type":"devices",
-        "uuid":this.getDeviceUUID(),
-        notifierId:options.deviceToken
-      }  
+        "uuid":this.getDeviceUUID()
+      }
+
+      device[notifierId] = options.deviceToken;
  
       var entityOptions = {
         client: this,
         data:device
       }
  
-      var deviceEntity = new Usergrid.Entity(options);
+      var deviceEntity = new Usergrid.Entity(entityOptions);
       deviceEntity.save(callback);
     } else {
       callback(true);
@@ -757,42 +758,46 @@ var Usergrid = (function(){
   *  @return {callback} callback(err, data)
   */
 
-  Usergrid.prototype.sendPushToDevice = function(options, callback) {
+  Usergrid.Client.prototype.sendPushToDevice = function(options, callback) {
     if (options) {
       var notifierName = options.notifier;
       var notifierLookupOptions = {
         "type":"notifier",
         "name":options.notifier
       }
-      this.getEntity(options, function(error, result){
+      var self = this;
+      this.getEntity(notifierLookupOptions, function(error, result){
         if (error) {
           callback(error, result);
         } else {
           var pushEntity = {
             "type":options.path
           }
-          if (result.get("provider") === "android") {
-            
-            pushEntity.payloads = {
-              notifierName: options.message
-            }
+          if (result.get("provider") === "google") {
+                pushEntity["payloads"] = {};
+                pushEntity["payloads"][notifierName] = options.message;
           } else if (result.get("provider") === "apple") {
-            pushEntity.payloads = {
-              notifierName: {
+                     pushEntity["payloads"] = {}
+                     pushEntity["payloads"][notifierName] = {
                 "aps": {
-                  "alert":options.message,
-                  "sound":options.sound
+                    "alert":options.message,
+                    "sound":options.sound
                 }
-              }
-            }
+             }
           }
-          this.createEntity(pushEntity, callback);
+         var entityOptions = {
+           client:self,
+           data:pushEntity
+         };
+          var notification = new Usergrid.Entity(entityOptions);
+          notification.save(callback);
         }
       });
     } else {
       callback(true);
     }
   }
+
  
   /* randomUUID.js - Version 1.0
   *
@@ -839,7 +844,7 @@ var Usergrid = (function(){
   *  @return {string} uuid
   */
   Usergrid.Client.prototype.getDeviceUUID = function(){
-    if(typeof window.localStorage.getItem("deviceUUID") === null) {
+    if(typeof window.localStorage.getItem("deviceUUID") === "string") {
       return window.localStorage.getItem("deviceUUID");
     } else {
       var uuid = randomUUID();
