@@ -205,7 +205,7 @@ var Usergrid = (function(){
 
     var group = new Usergrid.Group(options);
     group.fetch(function(err, data){
-      var okToSave = (err && 'service_resource_not_found' === data.error || 'no_name_specified' === data.error || 'null_pointer' === data.error) || (!err && getOnExist);
+      var okToSave = (err && 'service_resource_not_found' === data.error || 'null_pointer' === data.error) || (!err && getOnExist);
       if (okToSave) {
         group.save(function(err, data){
           if (typeof(callback) === 'function') {
@@ -254,7 +254,7 @@ var Usergrid = (function(){
     var entity = new Usergrid.Entity(options);
     entity.fetch(function(err, data) {
       //if the fetch doesn't find what we are looking for, or there is no error, do a save
-      var okToSave = (err && 'service_resource_not_found' === data.error || 'no_name_specified' === data.error || 'null_pointer' === data.error) || (!err && getOnExist);
+      var okToSave = (err && 'service_resource_not_found' === data.error || 'null_pointer' === data.error) || (!err && getOnExist);
       if(okToSave) {
         entity.set(options.data); //add the data again just in case
         entity.save(function(err, data) {
