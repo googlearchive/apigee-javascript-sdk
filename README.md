@@ -1,4 +1,4 @@
-#Apigee Mobile Javascript SDK -- Beta
+#Apigee Mobile JavaScript SDK -- Beta
 
 
 ##App Services Getting Started
@@ -120,7 +120,7 @@ For the SDK to properly report device based metrics like OS and version name we 
 ## Contributing
 We welcome your enhancements!
 
-Like [Usergrid](https://github.com/apigee/usergrid-node-module), the Usergrid Javascript SDK is open source and licensed under the Apache License, Version 2.0.
+Like [Usergrid](https://github.com/apigee/usergrid-node-module), the Usergrid JavaScript SDK is open source and licensed under the Apache License, Version 2.0.
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
