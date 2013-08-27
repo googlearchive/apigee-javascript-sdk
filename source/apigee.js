@@ -2041,7 +2041,7 @@ var Apigee = (function(){
     //Put this in here because I don't want sync issues with testing.
     this.testMode = options.testMode || false;
     //You best know what you're doing if you're setting this for mobile analytics!
-    this.apiUrl = typeof options.apiUrl === "undefined" ? "https://api.usergrid.org/" : options.apiUrl;
+    this.URI = typeof options.URI === "undefined" ? "https://api.usergrid.org/" : options.URI;
     
     this.syncDate = timeStamp();
 
@@ -2143,7 +2143,7 @@ var Apigee = (function(){
   */
   Apigee.MobileAnalytics.prototype.downloadConfig = function(callback){
     var configRequest = new XMLHttpRequest();
-    var path = this.apiUrl + this.orgName + '/' + this.appName + '/apm/apigeeMobileConfig';
+    var path = this.URI + '/' + this.orgName + '/' + this.appName + '/apm/apigeeMobileConfig';
     //If we have a function lets load the config async else do it sync.
     if(typeof callback === "function") {
       configRequest.open(VERBS.get, path, true);
@@ -2208,7 +2208,7 @@ var Apigee = (function(){
 
     //Send it to the apmMetrics endpoint.
     var syncRequest = new XMLHttpRequest();
-    var path = this.apiUrl + this.orgName + '/' + this.appName + '/apm/apmMetrics';
+    var path = this.URI + '/' + this.orgName + '/' + this.appName + '/apm/apmMetrics';
     syncRequest.open(VERBS.post, path, false);
     syncRequest.setRequestHeader("Accept", "application/json");
     syncRequest.setRequestHeader("Content-Type","application/json");
@@ -2472,7 +2472,7 @@ var Apigee = (function(){
               {
                   //gap_exec and any other platform specific filtering here
                   //gap_exec is used internally by phonegap, and shouldn't be logged.
-                  if( url.indexOf("/!gap_exec") === -1 && url.indexOf(apigee.apiUrl) === -1) {
+                  if( url.indexOf("/!gap_exec") === -1 && url.indexOf(apigee.URI) === -1) {
                       var endTime = timeStamp();
                       var latency = endTime - startTime;
                       var summary = { 
