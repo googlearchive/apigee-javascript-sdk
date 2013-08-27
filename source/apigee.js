@@ -34,7 +34,7 @@ var Usergrid = (function(){
 
   Usergrid.Client = function(options) {
     //usergrid enpoint
-    this.URI = options.URI || 'https://api.usergrid.com';
+    this.URI = options.URI || 'http://apigee-internal-prod.jupiter.apigee.net'; //'https://api.usergrid.com';
 
     //Find your Orgname and Appname in the Admin portal (http://apigee.com/usergrid)
     this.orgName = options.orgName;
@@ -2041,7 +2041,7 @@ var Apigee = (function(){
     //Put this in here because I don't want sync issues with testing.
     this.testMode = options.testMode || false;
     //You best know what you're doing if you're setting this for mobile analytics!
-    this.URI = typeof options.URI === "undefined" ? "https://api.usergrid.org/" : options.URI;
+    this.URI = typeof options.URI === "undefined" ? "http://apigee-internal-prod.jupiter.apigee.net" : options.URI;
     
     this.syncDate = timeStamp();
 
