@@ -9,15 +9,20 @@
         <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
         <script src="../bin/apigee.min.js"></script>
         <script type="text/javascript">
-        
+
+            //We start by creating an instance of Apigee.Client to carry our App Services credentials        
             var apigee = new Apigee.Client({
                 orgName:'YOUR APIGEE.COM USERNAME',
                 appName:'sandbox'
             });
-
+            
             // If you lock down your sandbox or use any other app
             // a user login is required to access the data.
-            apigee.login("myuser","mypass");
+            //apigee.login("myuser","mypass");
+
+            // We now define my_books within the global scope
+            var my_books = new Apigee.Collection( { "client":apigee, "type":"books" } );
+
 
             $(document).ready(function () {
                 $('#create-button').bind('click', createBook);
@@ -26,9 +31,6 @@
             });
 
             function loadBooks (location) {
-                // We now define my_books within the local scope
-                // so we can pass it our latitude & longitude
-                var my_books = new Apigee.Collection( { "client":apigee, "type":"books", "qs":{"ql":"location within 15000 of "+location.coords.latitude+","+location.coords.longitude} } );
                 
                 my_books.fetch( // Actual network call
 
@@ -54,7 +56,7 @@
 
             function createBook() {
 
-                new_book = { "title":$("#title-field").val(),
+                new_book = { "name":$("#title-field").val(),
                             "author":$("#author-field").val() };
 
                 my_books.addEntity(new_book, function (error, response) {
