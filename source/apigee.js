@@ -1012,8 +1012,15 @@ var Usergrid = (function(){
     var type = this.get('type');
     var self = this;
 
-    //if a uuid is available, use that, otherwise, use the name
-    if (this.get('uuid')) {
+    //Check for an entity type, then if a uuid is available, use that, otherwise, use the name
+    
+    if (type === undefined) {
+    	var error = 'cannot fetch entity, no entity type specified';
+        if (self._client.logging) {
+			console.log(error);
+        }
+        return callback(true, error, self)
+    }else if (this.get('uuid')) {
       type += '/' + this.get('uuid');
     } else {
       if (type === 'users') {
@@ -1035,7 +1042,7 @@ var Usergrid = (function(){
           if (typeof(callback) === 'function') {
             var error = 'cannot fetch entity, no name specified';
             if (self._client.logging) {
-              console.log(error);
+				console.log(error);
             }
             return callback(true, error, self)
           }
