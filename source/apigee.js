@@ -2472,7 +2472,7 @@ var Apigee = (function(){
               {
                   //gap_exec and any other platform specific filtering here
                   //gap_exec is used internally by phonegap, and shouldn't be logged.
-                  if( url.indexOf("/!gap_exec") === -1 && url.indexOf(apigee.URI) === -1) {
+                  if( url.indexOf("/!gap_exec") === -1 ) { //&& url.indexOf(apigee.URI) === -1) {
                       var endTime = timeStamp();
                       var latency = endTime - startTime;
                       var summary = { 
@@ -2495,6 +2495,8 @@ var Apigee = (function(){
                           summary.numErrors = "1";
                           apigee.logNetworkCall(summary);          
                       }
+                  } else {
+					  console.log('ignoring network perf for url ' + url);
                   }
               }
    
