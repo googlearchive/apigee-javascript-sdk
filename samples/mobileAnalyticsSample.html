@@ -20,19 +20,19 @@
    
   <script src="https://codiqa.com/view/adeb8234/js"></script>
 
-  <script src="../bin/apigee.min.js"></script>
+  <script src="../source/apigee.js"></script>
   <script>
     var max = new Apigee.MobileAnalytics({
-        orgName:"mdobson",
+        orgName:"pdardeau",
         appName:"sandbox",
-        apiUrl:"http://pjha-ug.elasticbeanstalk.com/"
+        apiUrl:"http://apigee-internal-prod.jupiter.apigee.net"
     });
     max.startSession();
   </script>
   <script>
     $(document).ready(function(){
       $("#req").on("click", function(e){
-        var url = "https://api.usergrid.com/"+$("#org").val()+'/'+$("#app").val();
+        var url = "http://apigee-internal-prod.jupiter.apigee.net/"+$("#org").val()+'/'+$("#app").val();
         $.get(url, function(data){ alert(data)});
       });
 
