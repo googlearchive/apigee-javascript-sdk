@@ -34,13 +34,15 @@
       $("#req").on("click", function(e){
         var url = "http://apigee-internal-prod.jupiter.apigee.net/"+$("#org").val()+'/'+$("#app").val();
         var jqxhr = $.get(url, function(data){
-			alert('successfully reached ' + url);
+			//alert('successfully reached ' + url);
 		})
 		.fail(function() { alert("error. unable to reach " + url); });
       });
 
       $("#log").on("click", function(e){
-        max.logDebug({tag:"CLICKS", logMessage:$("#message").val()});
+		var messageToLog = $("#message").val();
+        max.logDebug({tag:"CLICKS", logMessage:messageToLog});
+		console.log(messageToLog + ' (via console)');
       });
 
       $("#crash").on("click", function(e){

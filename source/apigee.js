@@ -2472,7 +2472,9 @@ var Apigee = (function(){
               {
                   //gap_exec and any other platform specific filtering here
                   //gap_exec is used internally by phonegap, and shouldn't be logged.
-                  if( url.indexOf("/!gap_exec") === -1 ) { //&& url.indexOf(apigee.URI) === -1) {
+				  var monitoringURL = apigee.getMonitoringURL();
+				  
+                  if( url.indexOf("/!gap_exec") === -1 && url.indexOf(monitoringURL) === -1) {
                       var endTime = timeStamp();
                       var latency = endTime - startTime;
                       var summary = { 
@@ -2759,6 +2761,20 @@ var Apigee = (function(){
   Apigee.MobileAnalytics.prototype.logNetworkCall = function(options) {
     metrics.push(options);
   }
+  
+  
+  /*
+  * Retrieves monitoring URL.
+  *
+  * @method getMonitoringURL
+  * @public
+  * @returns {string} value
+  *
+  */
+  Apigee.MobileAnalytics.prototype.getMonitoringURL = function() {
+    return this.URI + '/' + this.orgName + '/' + this.appName + '/apm/';
+  }
+
 
 
   /*
