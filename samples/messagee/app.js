@@ -31,12 +31,17 @@ $(document).ready(function () {
   /*******************************************************************
   * create client and set up vars
   ********************************************************************/
-  var client = new Apigee.Client({
+  
+  var client_creds = {
     orgName:'ApigeeOrg', //your orgname goes here (not case sensitive)
     appName:'MessageeApp', //your appname goes here (not case sensitive)
     logging: true, //optional - turn on logging, off by default
     buildCurl: true //optional - turn on curl commands, off by default
-  });
+  };
+  var client = new Apigee.Client(client_creds); //Apigee data client object
+  var maxClient = new Apigee.MobileAnalytics(client_creds); //Apigee monitoring client object
+
+  maxClient.startSession(); //start logging app usage, crash and error data
 
   var appUser;
   var fullFeedView = true;
