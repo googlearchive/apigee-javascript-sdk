@@ -252,9 +252,9 @@ var Usergrid = (function(){
       data:options
     }
     var entity = new Usergrid.Entity(options);
-    entity.fetch(function(err, data) {
+    entity.fetch(function(err, errorMsg, data) {
       //if the fetch doesn't find what we are looking for, or there is no error, do a save
-      var okToSave = (err && 'service_resource_not_found' === data.error || 'no_name_specified' === data.error || 'null_pointer' === data.error) || (!err && getOnExist);
+      var okToSave = (err && 'service_resource_not_found' === data.error || 'cannot fetch entity, no name specified' === errorMsg || 'null_pointer' === data.error) || (!err && getOnExist);
       if(okToSave) {
         entity.set(options.data); //add the data again just in case
         entity.save(function(err, data) {
@@ -270,7 +270,7 @@ var Usergrid = (function(){
     });
 
   }
-
+  
   /*
    *  Main function for restoring an entity from serialized data.
    *
@@ -1012,8 +1012,15 @@ var Usergrid = (function(){
     var type = this.get('type');
     var self = this;
 
-    //if a uuid is available, use that, otherwise, use the name
-    if (this.get('uuid')) {
+    //Check for an entity type, then if a uuid is available, use that, otherwise, use the name
+    
+    if (type === undefined) {
+    	var error = 'cannot fetch entity, no entity type specified';
+        if (self._client.logging) {
+			console.log(error);
+        }
+        return callback(true, error, self)
+    }else if (this.get('uuid')) {
       type += '/' + this.get('uuid');
     } else {
       if (type === 'users') {
@@ -1035,7 +1042,7 @@ var Usergrid = (function(){
           if (typeof(callback) === 'function') {
             var error = 'cannot fetch entity, no name specified';
             if (self._client.logging) {
-              console.log(error);
+				console.log(error);
             }
             return callback(true, error, self)
           }
