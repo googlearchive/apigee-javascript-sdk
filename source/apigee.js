@@ -2479,7 +2479,7 @@ var Apigee = (function(){
               {
                   //gap_exec and any other platform specific filtering here
                   //gap_exec is used internally by phonegap, and shouldn't be logged.
-				  var monitoringURL = apigee.getMonitoringURL();
+                  var monitoringURL = apigee.getMonitoringURL();
 				  
                   if( url.indexOf("/!gap_exec") === -1 && url.indexOf(monitoringURL) === -1) {
                       var endTime = timeStamp();
