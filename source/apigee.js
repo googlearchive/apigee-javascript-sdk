@@ -252,9 +252,9 @@ var Usergrid = (function(){
       data:options
     }
     var entity = new Usergrid.Entity(options);
-    entity.fetch(function(err, data) {
+    entity.fetch(function(err, errorMsg, data) {
       //if the fetch doesn't find what we are looking for, or there is no error, do a save
-      var okToSave = (err && 'service_resource_not_found' === data.error || 'null_pointer' === data.error) || (!err && getOnExist);
+      var okToSave = (err && 'service_resource_not_found' === data.error || 'cannot fetch entity, no name specified' === errorMsg || 'null_pointer' === data.error) || (!err && getOnExist);
       if(okToSave) {
         entity.set(options.data); //add the data again just in case
         entity.save(function(err, data) {
@@ -270,7 +270,7 @@ var Usergrid = (function(){
     });
 
   }
-
+  
   /*
    *  Main function for restoring an entity from serialized data.
    *
@@ -1012,8 +1012,15 @@ var Usergrid = (function(){
     var type = this.get('type');
     var self = this;
 
-    //if a uuid is available, use that, otherwise, use the name
-    if (this.get('uuid')) {
+    //Check for an entity type, then if a uuid is available, use that, otherwise, use the name
+    
+    if (type === undefined) {
+    	var error = 'cannot fetch entity, no entity type specified';
+        if (self._client.logging) {
+			console.log(error);
+        }
+        return callback(true, error, self)
+    }else if (this.get('uuid')) {
       type += '/' + this.get('uuid');
     } else {
       if (type === 'users') {
@@ -1035,7 +1042,7 @@ var Usergrid = (function(){
           if (typeof(callback) === 'function') {
             var error = 'cannot fetch entity, no name specified';
             if (self._client.logging) {
-              console.log(error);
+				console.log(error);
             }
             return callback(true, error, self)
           }
@@ -2033,7 +2040,7 @@ var Apigee = (function(){
   //BEGIN MAX SDK
 
   //Constructor for mobile analytics SDK
-  Apigee.MobileAnalytics = function(options) {
+  Apigee.MonitoringClient = function(options) {
     this.orgName = options.orgName;
     this.appName = options.appName;
     this.syncOnClose = options.syncOnClose || false;
@@ -2120,7 +2127,7 @@ var Apigee = (function(){
            this.patchNetworkCalls(XMLHttpRequest);
         }
         
-        window.onerror = Apigee.MobileAnalytics.catchCrashReport;
+        window.onerror = Apigee.MonitoringClient.catchCrashReport;
         
         
 
@@ -2141,7 +2148,7 @@ var Apigee = (function(){
   * NOTE: Passing in a callback makes this call async. Wires it all up for you.
   *
   */
-  Apigee.MobileAnalytics.prototype.downloadConfig = function(callback){
+  Apigee.MonitoringClient.prototype.downloadConfig = function(callback){
     var configRequest = new XMLHttpRequest();
     var path = this.URI + '/' + this.orgName + '/' + this.appName + '/apm/apigeeMobileConfig';
     //If we have a function lets load the config async else do it sync.
@@ -2187,14 +2194,14 @@ var Apigee = (function(){
 
 
   /*
-  * Function for syncing data back to the server. Currently called in the Apigee.MobileAnalytics constructor using setInterval.
+  * Function for syncing data back to the server. Currently called in the Apigee.MonitoringClient constructor using setInterval.
   * 
   * @method sync
   * @public
   * @params {object} syncObject
   *
   */
-  Apigee.MobileAnalytics.prototype.sync = function(syncObject){
+  Apigee.MonitoringClient.prototype.sync = function(syncObject){
     //Sterilize the sync data
     var syncData = {}
     syncData.logs = syncObject.logs;
@@ -2238,7 +2245,7 @@ var Apigee = (function(){
   * @param {string} line
   *
   */
-  Apigee.MobileAnalytics.catchCrashReport = function(crashEvent, url, line) {
+  Apigee.MonitoringClient.catchCrashReport = function(crashEvent, url, line) {
     logCrash({tag:"CRASH", logMessage:"Error:"+crashEvent+" for url:"+url+" on line:"+line});
   }
 
@@ -2249,7 +2256,7 @@ var Apigee = (function(){
   * @public 
   *
   */
-  Apigee.MobileAnalytics.prototype.startSession = function() {
+  Apigee.MonitoringClient.prototype.startSession = function() {
     //If the user agent string exists on the device
     var self = this;
     var sessionSummary = {};
@@ -2448,7 +2455,7 @@ var Apigee = (function(){
   * @param {XMLHttpRequest} XHR
   *
   */
-  Apigee.MobileAnalytics.prototype.patchNetworkCalls = function(XHR){
+  Apigee.MonitoringClient.prototype.patchNetworkCalls = function(XHR){
        "use strict";
        var apigee = this;
        var open = XHR.prototype.open;
@@ -2522,7 +2529,7 @@ var Apigee = (function(){
        } 
   }
 
-  Apigee.MobileAnalytics.prototype.patchLoggingCalls = function(){
+  Apigee.MonitoringClient.prototype.patchLoggingCalls = function(){
     //Hacky way of tapping into this and switching it around but it'll do.
     //We assume that the first argument is the intended log message. Except assert which is the second message.
     var self = this;
@@ -2591,7 +2598,7 @@ var Apigee = (function(){
   *
   */
 
-  Apigee.MobileAnalytics.prototype.prepareSync = function(){
+  Apigee.MonitoringClient.prototype.prepareSync = function(){
     var syncObject = {};
     var self = this;
     //Just in case something bad happened.
@@ -2627,7 +2634,7 @@ var Apigee = (function(){
   * @param {object} options
   *
   */
-  Apigee.MobileAnalytics.prototype.logMessage = function(options) {
+  Apigee.MonitoringClient.prototype.logMessage = function(options) {
     var log = options || {};
     var cleansedLog = {
       logLevel:log.logLevel,
@@ -2646,7 +2653,7 @@ var Apigee = (function(){
   * @param {object} options
   *
   */
-  Apigee.MobileAnalytics.prototype.logVerbose = function(options) {
+  Apigee.MonitoringClient.prototype.logVerbose = function(options) {
     var logOptions = options || {};
     logOptions.logLevel = LOGLEVELS.verbose;
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.verbose ) {
@@ -2662,7 +2669,7 @@ var Apigee = (function(){
   * @param {object} options
   *
   */
-  Apigee.MobileAnalytics.prototype.logDebug = function(options) {
+  Apigee.MonitoringClient.prototype.logDebug = function(options) {
     var logOptions = options || {};
     logOptions.logLevel = LOGLEVELS.debug;
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.debug ) {
@@ -2678,7 +2685,7 @@ var Apigee = (function(){
   * @param {object} options
   *
   */
-  Apigee.MobileAnalytics.prototype.logInfo = function(options) {
+  Apigee.MonitoringClient.prototype.logInfo = function(options) {
     var logOptions = options || {};
     logOptions.logLevel = LOGLEVELS.info;  
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.info ) {
@@ -2694,7 +2701,7 @@ var Apigee = (function(){
   * @param {object} options
   *
   */
-  Apigee.MobileAnalytics.prototype.logWarn = function(options) {
+  Apigee.MonitoringClient.prototype.logWarn = function(options) {
     var logOptions = options || {};
     logOptions.logLevel = LOGLEVELS.warn;
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.warn ) {
@@ -2710,7 +2717,7 @@ var Apigee = (function(){
   * @param {object} options
   *
   */
-  Apigee.MobileAnalytics.prototype.logError = function(options) {
+  Apigee.MonitoringClient.prototype.logError = function(options) {
     var logOptions = options || {};
     logOptions.logLevel = LOGLEVELS.error;
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.error ) {
@@ -2726,7 +2733,7 @@ var Apigee = (function(){
   * @param {object} options
   *
   */
-  Apigee.MobileAnalytics.prototype.logAssert = function(options) {
+  Apigee.MonitoringClient.prototype.logAssert = function(options) {
     var logOptions = options || {};
     logOptions.logLevel = LOGLEVELS.assert;
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.assert ) {
@@ -2758,7 +2765,7 @@ var Apigee = (function(){
   * @param {object} options
   *
   */
-  Apigee.MobileAnalytics.prototype.logNetworkCall = function(options) {
+  Apigee.MonitoringClient.prototype.logNetworkCall = function(options) {
     metrics.push(options);
   }
   
@@ -2788,26 +2795,26 @@ var Apigee = (function(){
   * TODO: Once there is a dashboard plugged into the API implement this so users can set
   * custom configuration parameters for their applications.
   */
-  Apigee.MobileAnalytics.prototype.getConfig = function(key) {
+  Apigee.MonitoringClient.prototype.getConfig = function(key) {
 
   }
 
   //TEST HELPERS NOT REALLY MEANT TO BE USED OUTSIDE THAT CONTEXT.
   //Simply exposes some internal data that is collected.
 
-  Apigee.MobileAnalytics.prototype.logs = function(){
+  Apigee.MonitoringClient.prototype.logs = function(){
     return logs;
   }
 
-  Apigee.MobileAnalytics.prototype.metrics = function(){
+  Apigee.MonitoringClient.prototype.metrics = function(){
     return metrics;
   }
 
-  Apigee.MobileAnalytics.prototype.sessionMetrics = function(){
+  Apigee.MonitoringClient.prototype.sessionMetrics = function(){
     return this.sessionMetrics;
   }
 
-  Apigee.MobileAnalytics.prototype.clearMetrics = function(){
+  Apigee.MonitoringClient.prototype.clearMetrics = function(){
     logs = [];
     metrics = [];
   }
