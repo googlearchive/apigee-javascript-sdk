@@ -853,13 +853,13 @@ var Usergrid = (function(){
     }
   }
 
-  /*
-  *  A class to Model a Usergrid Entity.
-  *  Set the type of entity in the 'data' json object
-  *
-  *  @constructor
-  *  @param {object} options {client:client, data:{'type':'collection_type', 'key':'value'}, uuid:uuid}}
-  */
+/*
+*  A class to Model a Usergrid Entity.
+*  Set the type and uuid of entity in the 'data' json object
+*
+*  @constructor
+*  @param {object} options {client:client, data:{'type':'collection_type', uuid:'uuid', 'key':'value'}}
+*/
   Usergrid.Entity = function(options) {
     if(options){
       this._client = options.client;
