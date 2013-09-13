@@ -2778,7 +2778,7 @@ var Apigee = (function(){
   * @returns {string} value
   *
   */
-  Apigee.MobileAnalytics.prototype.getMonitoringURL = function() {
+  Apigee.MonitoringClient.prototype.getMonitoringURL = function() {
     return this.URI + '/' + this.orgName + '/' + this.appName + '/apm/';
   }
 
