@@ -23,36 +23,50 @@
   <script src="../source/apigee.js"></script>
   <script>
     var max = new Apigee.MonitoringClient({
-        orgName:"pdardeau",
-        appName:"sandbox",
-        apiUrl:"http://apigee-internal-prod.jupiter.apigee.net"
+   		//Replace 'YOUR_ORG' and 'YOUR_APP' with your Apigee organization and application names
+        orgName:"YOUR_ORG",
+        appName:"YOUR_APP",
+        //URI:"http://apigee-internal-prod.jupiter.apigee.net" //uncomment and change if logging to somewhere other than default Apigee server
     });
     max.startSession();
   </script>
   <script>
-    $(document).ready(function(){
-      $("#req").on("click", function(e){
-        var url = "http://apigee-internal-prod.jupiter.apigee.net/"+$("#org").val()+'/'+$("#app").val();
-        var jqxhr = $.get(url, function(data){
-			//alert('successfully reached ' + url);
-		})
-		.fail(function() { alert("error. unable to reach " + url); });
-      });
+  
+	    $(document).ready(function(){	      
+	      $("#org").val(max.orgName);
+	      $("#app").val(max.appName);
+	      
+	      $("#org, #app").on("change",function(){
+			max.orgName = $("#org").val();
+			max.appName = $("#app").val();			
+			max.downloadConfig();
+			max.startSession();
+	      });
+	      	      	      
+	      $("#req").on("click", function(e){
+	        var url = max.URI+"/"+$("#org").val()+'/'+$("#app").val();
+	        var jqxhr = $.get(url, function(data){
+				//alert('successfully reached ' + url);
+			})
+			.fail(function() { alert("error. unable to reach " + url); });
+	      });
+	
+	      $("#log").on("click", function(e){
+			var messageToLog = $("#message").val();
+	        max.logDebug({tag:"CLICKS", logMessage:messageToLog});
+			console.log(messageToLog + ' (via console)');
+	      });
+	
+	      $("#crash").on("click", function(e){
+	        foo();
+	      });
+	    });
 
-      $("#log").on("click", function(e){
-		var messageToLog = $("#message").val();
-        max.logDebug({tag:"CLICKS", logMessage:messageToLog});
-		console.log(messageToLog + ' (via console)');
-      });
-
-      $("#crash").on("click", function(e){
-        foo();
-      });
-    });
   </script>
 </head>
 <body>
-  <!-- Home -->
+
+</script>  <!-- Home -->
   <div data-role="page" id="page1">
       <div data-theme="e" data-role="header">
           <h3>
@@ -64,13 +78,13 @@
               <label for="textinput1">
                   orgName
               </label>
-              <input name="" placeholder="" value="mdobson" type="text" id="org">
+              <input name="" placeholder="" value="Your org name" id="org">
           </div>
           <div data-role="fieldcontain">
               <label for="textinput2">
                   appName
               </label>
-              <input name="" placeholder="" value="sandbox" type="text" id="app">
+              <input name="" placeholder="" value="Your app name" type="text" id="app">
           </div>
           <a data-role="button" href="#page1" id="req">
               Make a request
