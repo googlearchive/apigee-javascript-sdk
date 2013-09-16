@@ -2037,9 +2037,9 @@ var Apigee = (function(){
   var metrics = [];
   var Apigee = Usergrid;
 
-  //BEGIN MAX SDK
+  //BEGIN APIGEE MONITORING SDK
 
-  //Constructor for mobile analytics SDK
+  //Constructor for Apigee Monitoring SDK
   Apigee.MonitoringClient = function(options) {
     this.orgName = options.orgName;
     this.appName = options.appName;
@@ -2047,7 +2047,7 @@ var Apigee = (function(){
 
     //Put this in here because I don't want sync issues with testing.
     this.testMode = options.testMode || false;
-    //You best know what you're doing if you're setting this for mobile analytics!
+    //You best know what you're doing if you're setting this for Apigee Monitoring!
     this.URI = typeof options.URI === "undefined" ? "http://apigee-internal-prod.jupiter.apigee.net" : options.URI;
     
     this.syncDate = timeStamp();
@@ -2140,7 +2140,7 @@ var Apigee = (function(){
   }
   
   /*
-  * Function for downloading the current mobile analytics configuration.
+  * Function for downloading the current Apigee Monitoring configuration.
   *
   * @method downloadConfig
   * @public
@@ -2250,7 +2250,7 @@ var Apigee = (function(){
   }
 
   /*
-  * Registers a device with mobile analytics. Generates a new UUID for a device and collects relevant info on it.
+  * Registers a device with Apigee Monitoring. Generates a new UUID for a device and collects relevant info on it.
   *
   * @method registerDevice
   * @public 
