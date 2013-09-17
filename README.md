@@ -10,7 +10,7 @@ Detailed instructions follow but if you just want a quick example of how to get 
 <html>
 	<head>
 		<!-- Don't forget to download and include the SDK -->
-		<!-- It’s available at the root of github.com/apigee/mobileanalytics-javascript-sdk/js -->
+		<!-- It’s available at github.com/apigee/apigee-javascript-sdk/source/apigee.js -->
 		<script src="path/to/apigee.js"></script>
 
 		<script type="text/javascript">
@@ -60,7 +60,7 @@ App monitoring will be enabled by default by initializing the `Apigee.Client` ob
 
 ##More documentation
 
-Head over to the [Apigee Mobile SDK wiki](https://github.com/apigee/mobileanalytics-javascript-sdk/wiki) to learn more about how to use App Services in JavaScript!
+Head over to the [Apigee Mobile SDK wiki](https://github.com/apigee/apigee-javascript-sdk/wiki) to learn more about how to use App Services in JavaScript!
 
 ##Crash Reporting
 
