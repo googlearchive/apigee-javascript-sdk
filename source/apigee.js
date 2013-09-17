@@ -2036,6 +2036,7 @@ var Apigee = (function(){
   var logs = [];
   var metrics = [];
   var Apigee = Usergrid;
+  Apigee.CLIENT_VERSION = "2.0.1";
 
   //BEGIN APIGEE MONITORING SDK
 
