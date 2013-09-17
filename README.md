@@ -47,9 +47,9 @@ Detailed instructions follow but if you just want a quick example of how to get 
 </html>
 ```
 
-##Mobile Analytics Getting Started
+##App Monitoring Getting Started
 
-Mobile analytics will be enabled by default by initializing the `Apigee.Client` object. You can also use the following methods for logging calls.
+App monitoring will be enabled by default by initializing the `Apigee.Client` object. You can also use the following methods for logging calls.
 
 - `logVerbose()`
 - `logDebug()`
@@ -64,19 +64,19 @@ Head over to the [Apigee Mobile SDK wiki](https://github.com/apigee/mobileanalyt
 
 ##Crash Reporting
 
-The mobile analytics SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
+The app monitoring SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
 
 ##Network Call Monitoring
 
-The SDK will also monitor your network calls to track errors and usage. This configuration is pulled from the rules that you configure on the Mobile Analytics dashboard.
+The SDK will also monitor your network calls to track errors and usage. This configuration is pulled from the rules that you configure on the App Monitoring dashboard.
 
 ##Simple and Advanced Logging
 
-You can log specific events in your SDK by using one of the many log methods. You may also use the console logging methods to track messages. This is configured in the Mobile Analytics dashboard.
+You can log specific events in your SDK by using one of the many log methods. You may also use the console logging methods to track messages. This is configured in the App Monitoring dashboard.
 
 ##Figuring out your device type
 
-The mobile analytics SDK will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the Mobile Analytics dashboard.
+App monitoring will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the App Monitoring dashboard.
 
 ##Examples
 
