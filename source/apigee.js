@@ -48,6 +48,12 @@ var Usergrid = (function(){
     this._callTimeout =  options.callTimeout || 30000; //default to 30 seconds
     this._callTimeoutCallback =  options.callTimeoutCallback || null;
     this.logoutCallback =  options.logoutCallback || null;
+
+    //Init mobile analytics.
+    if (!options.disableAnalytics) {
+      this.monitor = new Apigee.MonitoringClient(options);
+      this.monitor.startSession();
+    }
   };
 
   /*
@@ -1988,6 +1994,78 @@ var Usergrid = (function(){
       }
     }
     return tail.join("&");
+  }
+
+  /*
+  * Logs a user defined verbose message.
+  *
+  * @method logDebug
+  * @public 
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logVerbose = function(options) {
+    this.monitor.logVerbose(options);
+  }
+
+  /*
+  * Logs a user defined debug message.
+  *
+  * @method logDebug
+  * @public 
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logDebug = function(options) {
+    this.monitor.logDebug(options);
+  }
+
+  /*
+  * Logs a user defined informational message.
+  *
+  * @method logInfo
+  * @public 
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logInfo = function(options) {
+    this.monitor.logInfo(options);
+  }
+
+  /*
+  * Logs a user defined warning message.
+  *
+  * @method logWarn
+  * @public 
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logWarn = function(options) {
+    this.monitor.logWarn(options);
+  }
+
+  /*
+  * Logs a user defined error message.
+  *
+  * @method logError
+  * @public 
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logError = function(options) {
+    this.monitor.logError(options);
+  }
+
+  /*
+  * Logs a user defined assert message.
+  *
+  * @method logAssert
+  * @public 
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logAssert = function(options) {
+    this.monitor.logAssert(options);
   }
 
   //END USERGRID SDK

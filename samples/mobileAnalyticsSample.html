@@ -6,29 +6,18 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <title>Test</title>
-  <link rel="stylesheet" href="https://d10ajoocuyu32n.cloudfront.net/mobile/1.3.1/jquery.mobile-1.3.1.min.css">
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+  <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
   
-  <!-- Extra Codiqa features -->
-  <link rel="stylesheet" href="https://codiqa.com/view/adeb8234/css">
-  
-  <!-- jQuery and jQuery Mobile -->
-  <script src="https://d10ajoocuyu32n.cloudfront.net/jquery-1.9.1.min.js"></script>
-  <script src="https://d10ajoocuyu32n.cloudfront.net/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
-
-  <!-- Extra Codiqa features -->
-  <script src="https://d10ajoocuyu32n.cloudfront.net/codiqa.ext.js"></script>
-   
-  <script src="https://codiqa.com/view/adeb8234/js"></script>
-
   <script src="../source/apigee.js"></script>
   <script>
-    var monitoringClient = new Apigee.MonitoringClient({
+    var monitoringClient = new Apigee.Client({
     	//Replace 'YOUR_ORG' and 'YOUR_APP' with your Apigee organization and application names
         orgName:"YOUR_ORG",
         appName:"YOUR_APP",
         //URI:"https://api.usergrid.com" //uncomment and change if logging to somewhere other than default Apigee server
     });
-    monitoringClient.startSession();
   </script>
   <script>
     $(document).ready(function(){
@@ -37,8 +26,6 @@
       $("#org, #app").on("change",function(){
 	monitoringClient.orgName = $("#org").val();
 	monitoringClient.appName = $("#app").val();			
-	monitoringClient.downloadConfig();
-	monitoringClient.startSession();
       });
       
       $("#req").on("click", function(e){
