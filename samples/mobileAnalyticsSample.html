@@ -44,8 +44,9 @@
       $("#req").on("click", function(e){
         var url = monitoringClient.URI+"/"+$("#org").val()+'/'+$("#app").val();
         $.get(url, function(data){ 
-        	//alert(data)
+        	alert('successfully reached ' + url);
         });
+        .fail(function() { alert("error. unable to reach " + url); });
       });
 
       $("#log").on("click", function(e){
