@@ -31,46 +31,41 @@
     monitoringClient.startSession();
   </script>
   <script>
-  
-	    $(document).ready(function(){	      
-	      $("#org").val(monitoringClient.orgName);
-	      $("#app").val(monitoringClient.appName);
+$(document).ready(function(){
+      $("#org").val(monitoringClient.orgName);
+      $("#app").val(monitoringClient.appName);
 
-	      $("#org, #app").on("change",function(){
-			monitoringClient.orgName = $("#org").val();
-			monitoringClient.appName = $("#app").val();			
-			monitoringClient.downloadConfig();
-			monitoringClient.startSession();
-	      });
+      $("#org, #app").on("change",function(){
+		monitoringClient.orgName = $("#org").val();
+		monitoringClient.appName = $("#app").val();			
+		monitoringClient.downloadConfig();
+		monitoringClient.startSession();
+      $("#req").on("click", function(e){
+        var url = "http://apigee-internal-prod.jupiter.apigee.net/"+$("#org").val()+'/'+$("#app").val();
+        var jqxhr = $.get(url, function(data){
+			//alert('successfully reached ' + url);
+		})
+		.fail(function() { alert("error. unable to reach " + url); });
+      });
 
-	      $("#req").on("click", function(e){
-	        var url = monitoringClient.URI+"/"+$("#org").val()+'/'+$("#app").val();
-	        var jqxhr = $.get(url, function(data){
-				//alert('successfully reached ' + url);
-			})
-			.fail(function() { alert("error. unable to reach " + url); });
-	      });
+      $("#log").on("click", function(e){
+		var messageToLog = $("#message").val();
+        monitoringClient.logDebug({tag:"CLICKS", logMessage:messageToLog});
+		console.log(messageToLog + ' (via console)');
+      });
 
-	      $("#log").on("click", function(e){
-			var messageToLog = $("#message").val();
-	        monitoringClient.logDebug({tag:"CLICKS", logMessage:messageToLog});
-			console.log(messageToLog + ' (via console)');
-	      });
-
-	      $("#crash").on("click", function(e){
-	        foo();
-	      });
-	    });
-
+      $("#crash").on("click", function(e){
+        foo();
+      });
+    });
   </script>
 </head>
 <body>
-
-</script>  <!-- Home -->
+  <!-- Home -->
   <div data-role="page" id="page1">
       <div data-theme="e" data-role="header">
           <h3>
-              Mobile Analytics
+              Apigee Mobile Monitoring
           </h3>
       </div>
       <div data-role="content">
@@ -78,7 +73,7 @@
               <label for="textinput1">
                   orgName
               </label>
-              <input name="" placeholder="" value="Your org name" id="org">
+              <input name="" placeholder="" value="Your org name" type="text" id="org">
           </div>
           <div data-role="fieldcontain">
               <label for="textinput2">
