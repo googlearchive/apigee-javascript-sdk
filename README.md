@@ -64,7 +64,7 @@ Head over to the [Apigee Mobile SDK wiki](https://github.com/apigee/mobileanalyt
 
 ##Crash Reporting
 
-The mobile analytics SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
+The app monitoring SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
 
 ##Network Call Monitoring
 
