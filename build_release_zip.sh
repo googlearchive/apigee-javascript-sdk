@@ -15,7 +15,7 @@ fi
 
 SDK_VERSION="$1"
 
-SDK_SOURCE_VERSION=`grep Apigee.CLIENT_VERSION source/apigee.js | awk '{print $3}' | cut -d'"' -f2`
+SDK_SOURCE_VERSION=`grep Usergrid.SDK_VERSION source/apigee.js | awk '{print $3}' | cut -d"'" -f2`
 
 if [ "${SDK_VERSION}" != "${SDK_SOURCE_VERSION}" ]; then
   echo "Error: sdk source version (${SDK_SOURCE_VERSION}) doesn't match specified version (${SDK_VERSION})"
