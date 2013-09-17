@@ -30,7 +30,7 @@ var Usergrid = (function(){
 
   window.Usergrid = window.Usergrid || {};
   Usergrid = Usergrid || {};
-  Usergrid.USERGRID_SDK_VERSION = '0.10.06';
+  Usergrid.SDK_VERSION = '2.0.1';
 
   Usergrid.Client = function(options) {
     //usergrid enpoint
@@ -2114,7 +2114,6 @@ var Apigee = (function(){
   var logs = [];
   var metrics = [];
   var Apigee = Usergrid;
-  Apigee.CLIENT_VERSION = "2.0.1";
 
   //BEGIN APIGEE MONITORING SDK
 
