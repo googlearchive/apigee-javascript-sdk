@@ -22,27 +22,36 @@
 
   <script src="../source/apigee.js"></script>
   <script>
-    var max = new Apigee.MonitoringClient({
-        orgName:"pdardeau",
-        appName:"sandbox",
-        apiUrl:"http://apigee-internal-prod.jupiter.apigee.net"
+    var monitoringClient = new Apigee.MonitoringClient({
+    	//Replace 'YOUR_ORG' and 'YOUR_APP' with your Apigee organization and application names
+        orgName:"YOUR_ORG",
+        appName:"YOUR_APP",
+        //URI:"https://api.usergrid.com" //uncomment and change if logging to somewhere other than default Apigee server
     });
-    max.startSession();
+    monitoringClient.startSession();
   </script>
   <script>
     $(document).ready(function(){
+      $("#org").val(monitoringClient.orgName);
+      $("#app").val(monitoringClient.appName);
+      $("#org, #app").on("change",function(){
+	monitoringClient.orgName = $("#org").val();
+	monitoringClient.appName = $("#app").val();			
+	monitoringClient.downloadConfig();
+	monitoringClient.startSession();
+      });
+      
       $("#req").on("click", function(e){
-        var url = "http://apigee-internal-prod.jupiter.apigee.net/"+$("#org").val()+'/'+$("#app").val();
-        var jqxhr = $.get(url, function(data){
-			//alert('successfully reached ' + url);
-		})
-		.fail(function() { alert("error. unable to reach " + url); });
+        var url = monitoringClient.URI+"/"+$("#org").val()+'/'+$("#app").val();
+        $.get(url, function(data){ 
+        	//alert(data)
+        });
       });
 
       $("#log").on("click", function(e){
-		var messageToLog = $("#message").val();
-        max.logDebug({tag:"CLICKS", logMessage:messageToLog});
-		console.log(messageToLog + ' (via console)');
+        var messageToLog = $("#message").val();
+        monitoringClient.logDebug({tag:"CLICKS", logMessage:$("#message").val()});
+        console.log(messageToLog + ' (via console)');
       });
 
       $("#crash").on("click", function(e){
@@ -64,13 +73,13 @@
               <label for="textinput1">
                   orgName
               </label>
-              <input name="" placeholder="" value="mdobson" type="text" id="org">
+              <input name="" placeholder="" value="Your org" type="text" id="org">
           </div>
           <div data-role="fieldcontain">
               <label for="textinput2">
                   appName
               </label>
-              <input name="" placeholder="" value="sandbox" type="text" id="app">
+              <input name="" placeholder="" value="Your app" type="text" id="app">
           </div>
           <a data-role="button" href="#page1" id="req">
               Make a request
