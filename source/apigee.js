@@ -204,7 +204,7 @@ var Usergrid = (function(){
     }
 
     var group = new Usergrid.Group(options);
-    group.fetch(function(err, errorMsg data){
+    group.fetch(function(err, errorMsg, data){
       var okToSave = (err && 'service_resource_not_found' === data.error || 'cannot fetch entity, no name specified' === errorMsg || 'null_pointer' === data.error) || (!err && getOnExist);
       if (okToSave) {
         group.save(function(err, data){
