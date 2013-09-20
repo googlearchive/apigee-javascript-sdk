@@ -140,10 +140,12 @@ var Usergrid = (function(){
           console.log('Error ('+ xhr.status +')(' + error + '): ' + error_description )
         }
         if ( (error == "auth_expired_session_token") ||
-             (error == "unauthorized")   ||
-             (error == "auth_missing_credentials")   ||
-             (error == "auth_invalid")) {
-          //this error type means the user is not authorized. If a logout function is defined, call it
+          (error == "auth_missing_credentials")   ||
+          (error == "auth_unverified_oath")       ||
+          (error == "expired_token")              ||
+          (error == "unauthorized")               ||
+          (error == "auth_invalid")) {
+        //these errors mean the user is not authorized for whatever reason. If a logout function is defined, call it
           //if the user has specified a logout callback:
           if (typeof(self.logoutCallback) === 'function') {
             return self.logoutCallback(true, response);
@@ -204,21 +206,21 @@ var Usergrid = (function(){
     }
 
     var group = new Usergrid.Group(options);
-    group.fetch(function(err, errorMsg, data){
-      var okToSave = (err && 'service_resource_not_found' === data.error || 'cannot fetch entity, no name specified' === errorMsg || 'null_pointer' === data.error) || (!err && getOnExist);
+    group.fetch(function(err, data){
+    var okToSave = (err && 'service_resource_not_found' === data.error || 'no_name_specified' === data.error || 'null_pointer' === data.error) || (!err && getOnExist);
       if (okToSave) {
         group.save(function(err, data){
-          if (typeof(callback) === 'function') {
-            callback(err, group);
-          }
-        });
-      } else {
-        if(typeof(callback) === 'function') {
+        if (typeof(callback) === 'function') {
           callback(err, group);
         }
+      });
+    } else {
+      if(typeof(callback) === 'function') {
+        callback(err, group);
       }
-    });
-  }
+    }
+  });
+}
 
   /*
   *  Main function for creating new entities - should be called directly.
@@ -270,7 +272,7 @@ var Usergrid = (function(){
     });
 
   }
-  
+
   /*
    *  Main function for restoring an entity from serialized data.
    *
@@ -735,19 +737,19 @@ var Usergrid = (function(){
       }
 
       device[notifierId] = options.deviceToken;
- 
+
       var entityOptions = {
         client: this,
         data:device
       }
- 
+
       var deviceEntity = new Usergrid.Entity(entityOptions);
       deviceEntity.save(callback);
     } else {
       callback(true);
     }
   }
-  
+
   /*
   *  Function to send push notification to a specified path. Call directly.
   *
@@ -798,7 +800,7 @@ var Usergrid = (function(){
     }
   }
 
- 
+
   /* randomUUID.js - Version 1.0
   *
   * Copyright 2008, Robert Kieffer
@@ -812,30 +814,30 @@ var Usergrid = (function(){
   * For more information, or to comment on this, please go to:
   * http://www.broofa.com/blog/?p=151
   */
-   
+
   /**
   * Create and return a "version 4" RFC-4122 UUID string.
   */
   function randomUUID() {
     var s = [], itoh = '0123456789ABCDEF';
-   
+
     // Make array of random hex digits. The UUID only has 32 digits in it, but we
     // allocate an extra items to make room for the '-'s we'll be inserting.
     for (var i = 0; i <36; i++) s[i] = Math.floor(Math.random()*0x10);
-   
+
     // Conform to RFC-4122, section 4.4
     s[14] = 4;  // Set 4 high bits of time_high field to version
     s[19] = (s[19] & 0x3) | 0x8;  // Specify 2 high bits of clock sequence
-   
+
     // Convert to hex chars
     for (var i = 0; i <36; i++) s[i] = itoh[s[i]];
-   
+
     // Insert '-'s
     s[8] = s[13] = s[18] = s[23] = '-';
-   
+
     return s.join('');
   }
- 
+
   /*
   *  Function to get the assigned Apigee UUID of the device. Call directly to retrieve this information.
   *
@@ -1013,7 +1015,7 @@ var Usergrid = (function(){
     var self = this;
 
     //Check for an entity type, then if a uuid is available, use that, otherwise, use the name
-    
+
     if (type === undefined) {
     	var error = 'cannot fetch entity, no entity type specified';
         if (self._client.logging) {
@@ -2049,10 +2051,10 @@ var Apigee = (function(){
     this.testMode = options.testMode || false;
     //You best know what you're doing if you're setting this for Apigee monitoring!
     this.URI = typeof options.URI === "undefined" ? "https://api.usergrid.org" : options.URI;
-    
+
     this.syncDate = timeStamp();
 
-    //Can do a manual config override specifiying raw json as your config. I use this for testing. 
+    //Can do a manual config override specifiying raw json as your config. I use this for testing.
     //May be useful down the road. Needs to conform to current config.
 
     if(typeof options.config !== "undefined") {
@@ -2070,9 +2072,9 @@ var Apigee = (function(){
 
     //Don't do anything if configuration wasn't loaded.
     if(this.configuration !== null) {
-      
+
       //Ensure that we want to sample data from this device.
-      var sampleSeed = 0; 
+      var sampleSeed = 0;
       if(this.deviceConfig.samplingRate < 100) {
         sampleSeed = Math.floor(Math.random() * 101)
       }
@@ -2090,10 +2092,10 @@ var Apigee = (function(){
         if (typeof this.deviceConfig.agentUploadIntervalInSeconds !== "undefined") {
           syncInterval = this.deviceConfig.agentUploadIntervalInSeconds * 1000;
         }
-        
+
         //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
         var self = this;
-          
+
         if(!this.syncOnClose) {
           //Old server syncing logic
           setInterval(function(){
@@ -2126,19 +2128,19 @@ var Apigee = (function(){
         if(this.deviceConfig.networkMonitoringEnabled) {
            this.patchNetworkCalls(XMLHttpRequest);
         }
-        
+
         window.onerror = Apigee.MonitoringClient.catchCrashReport;
-        
-        
 
 
-        
+
+
+
       }
     } else {
       console.log("Error configuration unavailable.");
     }
   }
-  
+
   /*
   * Function for downloading the current Apigee monitoring configuration.
   *
@@ -2195,7 +2197,7 @@ var Apigee = (function(){
 
   /*
   * Function for syncing data back to the server. Currently called in the Apigee.MonitoringClient constructor using setInterval.
-  * 
+  *
   * @method sync
   * @public
   * @params {object} syncObject
@@ -2220,7 +2222,7 @@ var Apigee = (function(){
     syncRequest.setRequestHeader("Accept", "application/json");
     syncRequest.setRequestHeader("Content-Type","application/json");
     syncRequest.send(JSON.stringify(syncData));
-    
+
     //Only wipe data if the sync was good. Hold onto it if it was bad.
     if(syncRequest.status === 200) {
       logs = [];
@@ -2239,7 +2241,7 @@ var Apigee = (function(){
   * Function that is called during the window.onerror handler. Grabs all parameters sent by that function.
   *
   * @method catchCrashReport
-  * @public 
+  * @public
   * @param {string} crashEvent
   * @param {string} url
   * @param {string} line
@@ -2253,7 +2255,7 @@ var Apigee = (function(){
   * Registers a device with Apigee monitoring. Generates a new UUID for a device and collects relevant info on it.
   *
   * @method registerDevice
-  * @public 
+  * @public
   *
   */
   Apigee.MonitoringClient.prototype.startSession = function() {
@@ -2278,7 +2280,7 @@ var Apigee = (function(){
         navigator.geolocation.getCurrentPosition(function(position){
           self.sessionMetrics.latitude = position.coords.latitude;
           self.sessionMetrics.longitude = position.coords.longitude;
-        }); 
+        });
       }
     }
 
@@ -2289,7 +2291,7 @@ var Apigee = (function(){
       //framework is phonegap.
       sessionSummary.devicePlatform = window.device.platform;
       sessionSummary.deviceOSVersion = window.device.version;
-      
+
       //Get the device id if we want it. If we dont, but we want it obfuscated generate
       //a one off id and attach it to localStorage.
       if(this.deviceConfig.deviceIdCaptureEnabled) {
@@ -2319,7 +2321,7 @@ var Apigee = (function(){
       }
       sessionSummary.devicePlatform = UNKNOWN;
       sessionSummary.deviceOSVersion = os;
-      
+
       //Get the device id if we want it. Trigger.io doesn't expose device id APIs
       if(this.deviceConfig.deviceIdCaptureEnabled) {
         sessionSummary.deviceId = generateDeviceId();
@@ -2329,11 +2331,11 @@ var Apigee = (function(){
 
       sessionSummary.deviceModel = UNKNOWN;
       sessionSummary.networkType = forge.is.connection.wifi() ? "WIFI" : UNKNOWN;
-     
+
     } else if (isTitanium()) {
       var self = this;
       Ti.App.addEventListener("analytics:platformMetrics", function(e){
-        //Framework is appcelerator      
+        //Framework is appcelerator
         self.sessionMetrics.devicePlatform = e.name;
         self.sessionMetrics.deviceOSVersion = e.osname;
 
@@ -2368,7 +2370,7 @@ var Apigee = (function(){
           sessionSummary.deviceId = UNKNOWN;
         }
       }
-      
+
       if(typeof navigator.userAgent !== "undefined") {
         //Small hack to make all device names consistent.
 
@@ -2380,7 +2382,7 @@ var Apigee = (function(){
         if ((verOffset=ua.indexOf("Opera"))!=-1) {
          browserName = "Opera";
          fullVersion = ua.substring(verOffset+6);
-         if ((verOffset=ua.indexOf("Version"))!=-1) 
+         if ((verOffset=ua.indexOf("Version"))!=-1)
            fullVersion = ua.substring(verOffset+8);
         }
         // In MSIE, the true version is after "MSIE" in userAgent
@@ -2388,26 +2390,26 @@ var Apigee = (function(){
          browserName = "Microsoft Internet Explorer";
          fullVersion = ua.substring(verOffset+5);
         }
-        // In Chrome, the true version is after "Chrome" 
+        // In Chrome, the true version is after "Chrome"
         else if ((verOffset=ua.indexOf("Chrome"))!=-1) {
          browserName = "Chrome";
          fullVersion = ua.substring(verOffset+7);
         }
-        // In Safari, the true version is after "Safari" or after "Version" 
+        // In Safari, the true version is after "Safari" or after "Version"
         else if ((verOffset=ua.indexOf("Safari"))!=-1) {
          browserName = "Safari";
          fullVersion = ua.substring(verOffset+7);
-         if ((verOffset=ua.indexOf("Version"))!=-1) 
+         if ((verOffset=ua.indexOf("Version"))!=-1)
            fullVersion = ua.substring(verOffset+8);
         }
-        // In Firefox, the true version is after "Firefox" 
+        // In Firefox, the true version is after "Firefox"
         else if ((verOffset=ua.indexOf("Firefox"))!=-1) {
          browserName = "Firefox";
          fullVersion = ua.substring(verOffset+8);
         }
-        // In most other browsers, "name/version" is at the end of userAgent 
-        else if ( (nameOffset=ua.lastIndexOf(' ')+1) < 
-                  (verOffset=ua.lastIndexOf('/')) ) 
+        // In most other browsers, "name/version" is at the end of userAgent
+        else if ( (nameOffset=ua.lastIndexOf(' ')+1) <
+                  (verOffset=ua.lastIndexOf('/')) )
         {
          browserName = ua.substring(nameOffset,verOffset);
          fullVersion = ua.substring(verOffset+1);
@@ -2429,7 +2431,7 @@ var Apigee = (function(){
         sessionSummary.devicePlatform = UNKNOWN;
         sessionSummary.deviceOSVersion = UNKNOWN;
       }
-      
+
 
       // if(typeof navigator.appVersion !== "undefined") {
       //   sessionSummary.appVersion = navigator.appVersion;
@@ -2443,7 +2445,7 @@ var Apigee = (function(){
     this.sessionMetrics = sessionSummary;
 
     if(isTitanium()) {
-      Ti.App.fireEvent("analytics:attachReady");  
+      Ti.App.fireEvent("analytics:attachReady");
     }
   }
 
@@ -2451,7 +2453,7 @@ var Apigee = (function(){
   * Method to encapsulate the monkey patching of AJAX methods. We pass in the XMLHttpRequest object for monkey patching.
   *
   * @method catchCrashReport
-  * @public 
+  * @public
   * @param {XMLHttpRequest} XHR
   *
   */
@@ -2460,20 +2462,20 @@ var Apigee = (function(){
        var apigee = this;
        var open = XHR.prototype.open;
        var send = XHR.prototype.send;
-       
+
        XHR.prototype.open = function(method, url, async, user, pass) {
           this._method = method;
           this._url = url;
           open.call(this, method, url, async, user, pass);
        };
-       
+
        XHR.prototype.send = function(data) {
           var self = this;
           var startTime;
           var oldOnReadyStateChange;
           var method = this._method;
           var url = this._url;
-       
+
           function onReadyStateChange() {
               if(self.readyState == 4) // complete
               {
@@ -2482,12 +2484,12 @@ var Apigee = (function(){
                   if( url.indexOf("/!gap_exec") === -1 && url.indexOf(apigee.URI) === -1) {
                       var endTime = timeStamp();
                       var latency = endTime - startTime;
-                      var summary = { 
-                                      url:url, 
-                                      startTime:startTime.toString(), 
-                                      endTime:endTime.toString(), 
-                                      numSamples:"1", 
-                                      latency:latency.toString(), 
+                      var summary = {
+                                      url:url,
+                                      startTime:startTime.toString(),
+                                      endTime:endTime.toString(),
+                                      numSamples:"1",
+                                      latency:latency.toString(),
                                       timeStamp:startTime.toString(),
                                       httpStatusCode:self.status.toString(),
                                       responseDataSize:self.responseText.length.toString()
@@ -2500,19 +2502,19 @@ var Apigee = (function(){
                       } else {
                           //Record a connection failure here
                           summary.numErrors = "1";
-                          apigee.logNetworkCall(summary);          
+                          apigee.logNetworkCall(summary);
                       }
                   }
               }
-   
+
               if(oldOnReadyStateChange) {
                   oldOnReadyStateChange();
               }
           }
-       
+
           if(!this.noIntercept) {
               startTime = timeStamp();
-       
+
               if(this.addEventListener) {
                   this.addEventListener("readystatechange", onReadyStateChange, false);
               } else {
@@ -2520,9 +2522,9 @@ var Apigee = (function(){
                   this.onreadystatechange = onReadyStateChange;
               }
           }
-       
+
           send.call(this, data);
-       } 
+       }
   }
 
   Apigee.MonitoringClient.prototype.patchLoggingCalls = function(){
@@ -2544,7 +2546,7 @@ var Apigee = (function(){
             original.error.apply(original, arguments);
         }, assert: function(){
             self.logAssert({tag:"CONSOLE", logMessage:arguments[1]});
-            original.assert.apply(original, arguments);     
+            original.assert.apply(original, arguments);
         }, debug: function(){
             self.logDebug({tag:"CONSOLE", logMessage:arguments[0]});
             original.debug.apply(original, arguments);
@@ -2590,7 +2592,7 @@ var Apigee = (function(){
   * Prepares data for syncing on window close.
   *
   * @method prepareSync
-  * @public 
+  * @public
   *
   */
 
@@ -2615,7 +2617,7 @@ var Apigee = (function(){
 
     syncObject.logs = logs;
     syncObject.metrics = metrics;
-    
+
     //If there is data to sync go ahead and do it.
     if(syncFlag && !self.testMode) {
       this.sync(syncObject);
@@ -2626,7 +2628,7 @@ var Apigee = (function(){
   * Logs a user defined message.
   *
   * @method logMessage
-  * @public 
+  * @public
   * @param {object} options
   *
   */
@@ -2645,7 +2647,7 @@ var Apigee = (function(){
   * Logs a user defined verbose message.
   *
   * @method logDebug
-  * @public 
+  * @public
   * @param {object} options
   *
   */
@@ -2661,7 +2663,7 @@ var Apigee = (function(){
   * Logs a user defined debug message.
   *
   * @method logDebug
-  * @public 
+  * @public
   * @param {object} options
   *
   */
@@ -2677,13 +2679,13 @@ var Apigee = (function(){
   * Logs a user defined informational message.
   *
   * @method logInfo
-  * @public 
+  * @public
   * @param {object} options
   *
   */
   Apigee.MonitoringClient.prototype.logInfo = function(options) {
     var logOptions = options || {};
-    logOptions.logLevel = LOGLEVELS.info;  
+    logOptions.logLevel = LOGLEVELS.info;
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.info ) {
       this.logMessage(options);
     }
@@ -2693,7 +2695,7 @@ var Apigee = (function(){
   * Logs a user defined warning message.
   *
   * @method logWarn
-  * @public 
+  * @public
   * @param {object} options
   *
   */
@@ -2709,7 +2711,7 @@ var Apigee = (function(){
   * Logs a user defined error message.
   *
   * @method logError
-  * @public 
+  * @public
   * @param {object} options
   *
   */
@@ -2725,7 +2727,7 @@ var Apigee = (function(){
   * Logs a user defined assert message.
   *
   * @method logAssert
-  * @public 
+  * @public
   * @param {object} options
   *
   */
@@ -2737,7 +2739,7 @@ var Apigee = (function(){
     }
   }
 
-  /* 
+  /*
   * Internal function for encapsulating crash log catches. Not directly callable.
   * Needed because of funkiness with the errors being thrown solely on the window
   *
@@ -2757,7 +2759,7 @@ var Apigee = (function(){
   * Logs a network call.
   *
   * @method logNetworkCall
-  * @public 
+  * @public
   * @param {object} options
   *
   */
@@ -2768,12 +2770,12 @@ var Apigee = (function(){
 
   /*
   * Gets custom config parameters. These are set by user in dashboard.
-  * 
+  *
   * @method getConfig
   * @public
   * @param {string} key
   * @returns {stirng} value
-  * 
+  *
   * TODO: Once there is a dashboard plugged into the API implement this so users can set
   * custom configuration parameters for their applications.
   */
@@ -2802,7 +2804,7 @@ var Apigee = (function(){
   }
 
   //UUID Generation function unedited
-   
+
   /* randomUUID.js - Version 1.0
   *
   * Copyright 2008, Robert Kieffer
@@ -2816,27 +2818,27 @@ var Apigee = (function(){
   * For more information, or to comment on this, please go to:
   * http://www.broofa.com/blog/?p=151
   */
-   
+
   /**
   * Create and return a "version 4" RFC-4122 UUID string.
   */
   function randomUUID() {
     var s = [], itoh = '0123456789ABCDEF';
-   
+
     // Make array of random hex digits. The UUID only has 32 digits in it, but we
     // allocate an extra items to make room for the '-'s we'll be inserting.
     for (var i = 0; i <36; i++) s[i] = Math.floor(Math.random()*0x10);
-   
+
     // Conform to RFC-4122, section 4.4
     s[14] = 4;  // Set 4 high bits of time_high field to version
     s[19] = (s[19] & 0x3) | 0x8;  // Specify 2 high bits of clock sequence
-   
+
     // Convert to hex chars
     for (var i = 0; i <36; i++) s[i] = itoh[s[i]];
-   
+
     // Insert '-'s
     s[8] = s[13] = s[18] = s[23] = '-';
-   
+
     return s.join('');
   }
 
