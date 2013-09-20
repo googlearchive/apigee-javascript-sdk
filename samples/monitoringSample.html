@@ -6,38 +6,40 @@
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
   <title>Test</title>
-  <link rel="stylesheet" href="https://d10ajoocuyu32n.cloudfront.net/mobile/1.3.1/jquery.mobile-1.3.1.min.css">
+  <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+  <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+  <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
   
-  <!-- Extra Codiqa features -->
-  <link rel="stylesheet" href="https://codiqa.com/view/adeb8234/css">
-  
-  <!-- jQuery and jQuery Mobile -->
-  <script src="https://d10ajoocuyu32n.cloudfront.net/jquery-1.9.1.min.js"></script>
-  <script src="https://d10ajoocuyu32n.cloudfront.net/mobile/1.3.1/jquery.mobile-1.3.1.min.js"></script>
-
-  <!-- Extra Codiqa features -->
-  <script src="https://d10ajoocuyu32n.cloudfront.net/codiqa.ext.js"></script>
-   
-  <script src="https://codiqa.com/view/adeb8234/js"></script>
-
-  <script src="../bin/apigee.min.js"></script>
+  <script src="../source/apigee.js"></script>
   <script>
-    var max = new Apigee.MobileAnalytics({
-        orgName:"mdobson",
-        appName:"sandbox",
-        apiUrl:"http://pjha-ug.elasticbeanstalk.com/"
+    var monitoringClient = new Apigee.Client({
+    	//Replace 'YOUR_ORG' and 'YOUR_APP' with your Apigee organization and application names
+        orgName:"YOUR_ORG",
+        appName:"YOUR_APP",
+        //URI:"https://api.usergrid.com" //uncomment and change if logging to somewhere other than default Apigee server
     });
-    max.startSession();
   </script>
   <script>
     $(document).ready(function(){
+      $("#org").val(monitoringClient.orgName);
+      $("#app").val(monitoringClient.appName);
+      $("#org, #app").on("change",function(){
+	monitoringClient.orgName = $("#org").val();
+	monitoringClient.appName = $("#app").val();			
+      });
+      
       $("#req").on("click", function(e){
-        var url = "https://api.usergrid.com/"+$("#org").val()+'/'+$("#app").val();
-        $.get(url, function(data){ alert(data)});
+        var url = monitoringClient.URI+"/"+$("#org").val()+'/'+$("#app").val();
+        $.get(url, function(data){ 
+        	alert('successfully reached ' + url);
+        });
+        .fail(function() { alert("error. unable to reach " + url); });
       });
 
       $("#log").on("click", function(e){
-        max.logDebug({tag:"CLICKS", logMessage:$("#message").val()});
+        var messageToLog = $("#message").val();
+        monitoringClient.logDebug({tag:"CLICKS", logMessage:$("#message").val()});
+        console.log(messageToLog + ' (via console)');
       });
 
       $("#crash").on("click", function(e){
@@ -51,7 +53,7 @@
   <div data-role="page" id="page1">
       <div data-theme="e" data-role="header">
           <h3>
-              Mobile Analytics
+              App Monitoring
           </h3>
       </div>
       <div data-role="content">
@@ -59,13 +61,13 @@
               <label for="textinput1">
                   orgName
               </label>
-              <input name="" placeholder="" value="mdobson" type="text" id="org">
+              <input name="" placeholder="" value="Your org" type="text" id="org">
           </div>
           <div data-role="fieldcontain">
               <label for="textinput2">
                   appName
               </label>
-              <input name="" placeholder="" value="sandbox" type="text" id="app">
+              <input name="" placeholder="" value="Your app" type="text" id="app">
           </div>
           <a data-role="button" href="#page1" id="req">
               Make a request

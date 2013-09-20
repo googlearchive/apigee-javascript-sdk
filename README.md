@@ -10,7 +10,7 @@ Detailed instructions follow but if you just want a quick example of how to get 
 <html>
 	<head>
 		<!-- Don't forget to download and include the SDK -->
-		<!-- It’s available at the root of github.com/apigee/mobileanalytics-javascript-sdk/js -->
+		<!-- It’s available at github.com/apigee/apigee-javascript-sdk/source/apigee.js -->
 		<script src="path/to/apigee.js"></script>
 
 		<script type="text/javascript">
@@ -47,43 +47,36 @@ Detailed instructions follow but if you just want a quick example of how to get 
 </html>
 ```
 
-##Mobile Analytics Getting Started
+##App Monitoring Getting Started
 
-**Note:** Please note that this functionality is Beta only.  
+App monitoring will be enabled by default by initializing the `Apigee.Client` object. You can also use the following methods for logging calls.
 
-To get started you simply need to add the analytics.js file to your apps html page and initialize the client like so:
-
-    <script type="text/javascript" src="js/apigee.js"></script>
-
-Then in your client code initialize a new instance of the Apigee.MobileAnalytics object.
-
-        var options = {
-            orgName:"",
-            appName:""
-        }
-        var max = new Apigee.MobileAnalytics(options);
-
-One additional argument called `syncOnClose` may be passed in the options object. if set to true then the SDK will sync on the closing of the web page, or of your respective native app. If set to false then it will sync on the interval specified in your config file.
+- `logVerbose()`
+- `logDebug()`
+- `logInfo()`
+- `logWarn()`
+- `logError()`
+- `logAssert()`
 
 ##More documentation
 
-Head over to the [Apigee Mobile SDK wiki](https://github.com/apigee/mobileanalytics-javascript-sdk/wiki) to learn more about how to use App Services in JavaScript!
+Head over to the [Apigee Mobile SDK wiki](https://github.com/apigee/apigee-javascript-sdk/wiki) to learn more about how to use App Services in JavaScript!
 
 ##Crash Reporting
 
-The mobile analytics SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
+The app monitoring SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
 
 ##Network Call Monitoring
 
-The SDK will also monitor your network calls to track errors and usage. This configuration is pulled from the rules that you configure on the Mobile Analytics dashboard.
+The SDK will also monitor your network calls to track errors and usage. This configuration is pulled from the rules that you configure on the App Monitoring dashboard.
 
 ##Simple and Advanced Logging
 
-You can log specific events in your SDK by using one of the many log methods. You may also use the console logging methods to track messages. This is configured in the Mobile Analytics dashboard.
+You can log specific events in your SDK by using one of the many log methods. You may also use the console logging methods to track messages. This is configured in the App Monitoring dashboard.
 
 ##Figuring out your device type
 
-The mobile analytics SDK will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the Mobile Analytics dashboard.
+App monitoring will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the App Monitoring dashboard.
 
 ##Examples
 
