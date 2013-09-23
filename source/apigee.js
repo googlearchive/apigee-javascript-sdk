@@ -54,7 +54,7 @@ var Usergrid = (function(){
     this.logoutCallback =  options.logoutCallback || null;
 
     //Init mobile analytics.
-    if (options.disableAnalytics) {
+    if (!options.disableAnalytics) {
       this.monitor = new Apigee.MonitoringClient(options);
       this.monitor.startSession();
     }
