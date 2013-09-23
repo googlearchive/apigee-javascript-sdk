@@ -38,10 +38,10 @@ $(document).ready(function () {
     logging: true, //optional - turn on logging, off by default
     buildCurl: true //optional - turn on curl commands, off by default
   };
-  var client = new Apigee.Client(client_creds); //Apigee data client object
-  var maxClient = new Apigee.MobileAnalytics(client_creds); //Apigee monitoring client object
+  var client = new Apigee.Client(client_creds); //Instantiates the Apigee data client
+  var monitoringClient = new Apigee.MonitoringClient(client_creds); //Instantiates the Apigee monitoring client
 
-  maxClient.startSession(); //start logging app usage, crash and error data
+  monitoringClient.startSession(); //start logging app usage, crash and error data
 
   var appUser;
   var fullFeedView = true;

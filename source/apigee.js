@@ -52,6 +52,12 @@ var Usergrid = (function(){
     this._callTimeout =  options.callTimeout || 30000; //default to 30 seconds
     this._callTimeoutCallback =  options.callTimeoutCallback || null;
     this.logoutCallback =  options.logoutCallback || null;
+
+    //Init mobile analytics.
+    if (options.disableAnalytics) {
+      this.monitor = new Apigee.MonitoringClient(options);
+      this.monitor.startSession();
+    }
   };
 
   /*
@@ -2377,6 +2383,78 @@ var Usergrid = (function(){
     return tail.join("&");
   }
 
+  /*
+  * Logs a user defined verbose message.
+  *
+  * @method logDebug
+  * @public
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logVerbose = function(options) {
+    this.monitor.logVerbose(options);
+  }
+
+  /*
+  * Logs a user defined debug message.
+  *
+  * @method logDebug
+  * @public
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logDebug = function(options) {
+    this.monitor.logDebug(options);
+  }
+
+  /*
+  * Logs a user defined informational message.
+  *
+  * @method logInfo
+  * @public
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logInfo = function(options) {
+    this.monitor.logInfo(options);
+  }
+
+  /*
+  * Logs a user defined warning message.
+  *
+  * @method logWarn
+  * @public
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logWarn = function(options) {
+    this.monitor.logWarn(options);
+  }
+
+  /*
+  * Logs a user defined error message.
+  *
+  * @method logError
+  * @public
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logError = function(options) {
+    this.monitor.logError(options);
+  }
+
+  /*
+  * Logs a user defined assert message.
+  *
+  * @method logAssert
+  * @public
+  * @param {object} options
+  *
+  */
+  Usergrid.Client.prototype.logAssert = function(options) {
+    this.monitor.logAssert(options);
+  }
+
   //END USERGRID SDK
   return Usergrid;
 
@@ -2426,7 +2504,7 @@ var Apigee = (function(){
 
   //BEGIN APIGEE MONITORING SDK
 
-  //Constructor for Apigee monitoring SDK
+  //Constructor for Apigee Monitoring SDK
   Apigee.MonitoringClient = function(options) {
     this.orgName = options.orgName;
     this.appName = options.appName;
@@ -2527,7 +2605,7 @@ var Apigee = (function(){
   }
 
   /*
-  * Function for downloading the current Apigee monitoring configuration.
+  * Function for downloading the current Apigee Monitoring configuration.
   *
   * @method downloadConfig
   * @public
@@ -2637,7 +2715,7 @@ var Apigee = (function(){
   }
 
   /*
-  * Registers a device with Apigee monitoring. Generates a new UUID for a device and collects relevant info on it.
+  * Registers a device with Apigee Monitoring. Generates a new UUID for a device and collects relevant info on it.
   *
   * @method registerDevice
   * @public
@@ -2866,7 +2944,9 @@ var Apigee = (function(){
               {
                   //gap_exec and any other platform specific filtering here
                   //gap_exec is used internally by phonegap, and shouldn't be logged.
-                  if( url.indexOf("/!gap_exec") === -1 && url.indexOf(apigee.URI) === -1) {
+                  var monitoringURL = apigee.getMonitoringURL();
+
+                  if( url.indexOf("/!gap_exec") === -1 && url.indexOf(monitoringURL) === -1) {
                       var endTime = timeStamp();
                       var latency = endTime - startTime;
                       var summary = {
@@ -2889,6 +2969,8 @@ var Apigee = (function(){
                           summary.numErrors = "1";
                           apigee.logNetworkCall(summary);
                       }
+                  } else {
+					  console.log('ignoring network perf for url ' + url);
                   }
               }
 
@@ -3151,6 +3233,20 @@ var Apigee = (function(){
   Apigee.MonitoringClient.prototype.logNetworkCall = function(options) {
     metrics.push(options);
   }
+
+
+  /*
+  * Retrieves monitoring URL.
+  *
+  * @method getMonitoringURL
+  * @public
+  * @returns {string} value
+  *
+  */
+  Apigee.MonitoringClient.prototype.getMonitoringURL = function() {
+    return this.URI + '/' + this.orgName + '/' + this.appName + '/apm/';
+  }
+
 
 
   /*
