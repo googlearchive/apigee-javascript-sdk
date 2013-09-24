@@ -15,7 +15,7 @@ fi
 
 SDK_VERSION="$1"
 
-SDK_SOURCE_VERSION=`grep Usergrid.SDK_VERSION source/apigee.js | awk '{print $3}' | cut -d"'" -f2`
+SDK_SOURCE_VERSION=`grep Usergrid.USERGRID_SDK_VERSION source/apigee.js | awk '{print $3}' | cut -d"'" -f2`
 
 if [ "${SDK_VERSION}" != "${SDK_SOURCE_VERSION}" ]; then
   echo "Error: sdk source version (${SDK_SOURCE_VERSION}) doesn't match specified version (${SDK_VERSION})"
@@ -30,10 +30,10 @@ mkdir lib
 minify source/apigee.js lib/apigee.min.js
 
 LIBRARY_BASE_NAME="apigee-javascript"
-ZIP_BASE_NAME="${LIBRARY_BASE_NAME}--sdk"
+ZIP_BASE_NAME="${LIBRARY_BASE_NAME}-sdk"
 ZIP_FILE_NAME="${ZIP_BASE_NAME}.zip"
 TOP_LEVEL_ZIP_DIR="zip"
-DEST_ZIP_DIR="${TOP_LEVEL_ZIP_DIR}/${LIBRARY_BASE_NAME}--sdk-${SDK_VERSION}"
+DEST_ZIP_DIR="${TOP_LEVEL_ZIP_DIR}/${LIBRARY_BASE_NAME}-sdk-${SDK_VERSION}"
 
 if [ -d "${DEST_ZIP_DIR}" ]; then
   find "${DEST_ZIP_DIR}" -type f -exec rm {} \;
