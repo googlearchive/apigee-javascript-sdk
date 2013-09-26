@@ -53,11 +53,14 @@ var Usergrid = (function(){
     this._callTimeoutCallback =  options.callTimeoutCallback || null;
     this.logoutCallback =  options.logoutCallback || null;
 
-    //Init mobile analytics.
-    if (options.disableAnalytics) {
-      this.monitor = new Apigee.MonitoringClient(options);
-      this.monitor.startSession();
-    }
+    //Init app monitoring
+	// app monitoring temporarily disabled (until server environment is ready)
+	/*
+    *if (options.disableAnalytics) {
+    *  this.monitor = new Apigee.MonitoringClient(options);
+    *  this.monitor.startSession();
+    *}
+	*/
   };
 
   /*
