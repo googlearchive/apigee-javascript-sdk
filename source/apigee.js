@@ -30,11 +30,11 @@ var Usergrid = (function(){
 
   window.Usergrid = window.Usergrid || {};
   Usergrid = Usergrid || {};
-  Usergrid.USERGRID_SDK_VERSION = '2.0.3';
+  Usergrid.USERGRID_SDK_VERSION = '2.0.4-SNAPSHOT';
 
   Usergrid.Client = function(options) {
     //usergrid enpoint
-    this.URI = options.URI || 'https://api.usergrid.com';
+    this.URI = options.URI || 'http://apigee-internal-prod.jupiter.apigee.net'; //'https://api.usergrid.com';
 
     //Find your Orgname and Appname in the Admin portal (http://apigee.com/usergrid)
     if (options.orgName) {
@@ -52,6 +52,33 @@ var Usergrid = (function(){
     this._callTimeout =  options.callTimeout || 30000; //default to 30 seconds
     this._callTimeoutCallback =  options.callTimeoutCallback || null;
     this.logoutCallback =  options.logoutCallback || null;
+	
+    if (typeof navigator.geolocation !== "undefined") {
+	  var self = this;
+      navigator.geolocation.getCurrentPosition(function(position){
+	    var locationData = {
+		  latitude:position.coords.latitude,
+		  longitude:position.coords.longitude
+		}
+		  
+		var entityData = {
+		  "type":"devices",
+		  "uuid":self.getDeviceUUID(),
+	      "deviceModel":"UNKNOWN",
+		  "devicePlatform":"JavaScript",
+		  "deviceOSVersion":"UNKNOWN",
+		  "location":locationData
+		}
+		  
+	    var options = {
+	      client:self,
+	      data:entityData
+	    }
+		  
+	    var deviceEntity = new Usergrid.Entity(options);
+	    deviceEntity.save(null);
+      });
+    }
 
     //Init mobile analytics.
     if (!options.disableAnalytics) {
