@@ -30,7 +30,7 @@ var Usergrid = (function(){
 
   window.Usergrid = window.Usergrid || {};
   Usergrid = Usergrid || {};
-  Usergrid.USERGRID_SDK_VERSION = '2.0.3';
+  Usergrid.USERGRID_SDK_VERSION = '2.0.4-SNAPSHOT';
 
   Usergrid.Client = function(options) {
     //usergrid enpoint
@@ -47,20 +47,45 @@ var Usergrid = (function(){
     //other options
     this.buildCurl = options.buildCurl || false;
     this.logging = options.logging || false;
+	this.monitoringEnabled = options.monitoringEnabled || false;
 
     //timeout and callbacks
     this._callTimeout =  options.callTimeout || 30000; //default to 30 seconds
     this._callTimeoutCallback =  options.callTimeoutCallback || null;
     this.logoutCallback =  options.logoutCallback || null;
+	
+    if (typeof navigator.geolocation !== "undefined") {
+	  var self = this;
+      navigator.geolocation.getCurrentPosition(function(position){
+	    var locationData = {
+		  latitude:position.coords.latitude,
+		  longitude:position.coords.longitude
+		}
+		  
+		var entityData = {
+		  "type":"devices",
+		  "uuid":self.getDeviceUUID(),
+	      "deviceModel":"UNKNOWN",
+		  "devicePlatform":"JavaScript",
+		  "deviceOSVersion":"UNKNOWN",
+		  "location":locationData
+		}
+		  
+	    var deviceLocationOptions = {
+	      client:self,
+	      data:entityData
+	    }
+		  
+	    var deviceEntity = new Usergrid.Entity(deviceLocationOptions);
+	    deviceEntity.save(null);
+      });
+    }
 
-    //Init app monitoring
-	// app monitoring temporarily disabled (until server environment is ready)
-	/*
-    *if (options.disableAnalytics) {
-    *  this.monitor = new Apigee.MonitoringClient(options);
-    *  this.monitor.startSession();
-    *}
-	*/
+    //Init app monitoring.
+    if (this.monitoringEnabled) {
+      this.monitor = new Apigee.MonitoringClient(options);
+      this.monitor.startSession();
+    }
   };
 
   /*
@@ -2476,7 +2501,7 @@ var Apigee = (function(){
     head:"HEAD"
   };
 
-  var ANALYTICS_SDKVERSION = "0.0.1";
+  var MONITORING_SDKVERSION = "0.0.1";
 
   var LOGLEVELS = {
     verbose: "V",
