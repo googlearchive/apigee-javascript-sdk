@@ -34,7 +34,7 @@ var Usergrid = (function(){
 
   Usergrid.Client = function(options) {
     //usergrid enpoint
-    this.URI = options.URI || 'http://apigee-internal-prod.jupiter.apigee.net'; //'https://api.usergrid.com';
+    this.URI = options.URI || 'https://api.usergrid.com';
 
     //Find your Orgname and Appname in the Admin portal (http://apigee.com/usergrid)
     if (options.orgName) {
@@ -47,6 +47,7 @@ var Usergrid = (function(){
     //other options
     this.buildCurl = options.buildCurl || false;
     this.logging = options.logging || false;
+	this.monitoringEnabled = options.monitoringEnabled || false;
 
     //timeout and callbacks
     this._callTimeout =  options.callTimeout || 30000; //default to 30 seconds
@@ -70,18 +71,18 @@ var Usergrid = (function(){
 		  "location":locationData
 		}
 		  
-	    var options = {
+	    var deviceLocationOptions = {
 	      client:self,
 	      data:entityData
 	    }
 		  
-	    var deviceEntity = new Usergrid.Entity(options);
+	    var deviceEntity = new Usergrid.Entity(deviceLocationOptions);
 	    deviceEntity.save(null);
       });
     }
 
-    //Init mobile analytics.
-    if (!options.disableAnalytics) {
+    //Init app monitoring.
+    if (this.monitoringEnabled) {
       this.monitor = new Apigee.MonitoringClient(options);
       this.monitor.startSession();
     }
@@ -2500,7 +2501,7 @@ var Apigee = (function(){
     head:"HEAD"
   };
 
-  var ANALYTICS_SDKVERSION = "0.0.1";
+  var MONITORING_SDKVERSION = "0.0.1";
 
   var LOGLEVELS = {
     verbose: "V",
