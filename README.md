@@ -51,19 +51,11 @@ Detailed instructions follow but if you just want a quick example of how to get 
 
 **Note:** Please note that this functionality is Beta only.  
 
-To get started you simply need to add the analytics.js file to your apps html page and initialize the client like so:
+A new instance of Apigee.Monitoring client will automatically be created for you when Apigee.Client is instantiated, and can be accessed using the 'monitor' member variable.
 
-    <script type="text/javascript" src="js/apigee.js"></script>
+For example, in the 'App Services Getting Started' code above, you would access App Monitoring methods through 'client.monitor'.
 
-Then in your client code initialize a new instance of the Apigee.MobileAnalytics object.
-
-        var options = {
-            orgName:"",
-            appName:""
-        }
-        var max = new Apigee.MobileAnalytics(options);
-
-One additional argument called `syncOnClose` may be passed in the options object. if set to true then the SDK will sync on the closing of the web page, or of your respective native app. If set to false then it will sync on the interval specified in your config file.
+One additional argument called `syncOnClose` may be passed to Apigee.Client. if set to true then the SDK will sync on the closing of the web page, or of your respective native app. If set to false then it will sync on the interval specified in your config file.
 
 ##More documentation
 
