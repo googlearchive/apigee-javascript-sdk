@@ -51,9 +51,19 @@ Detailed instructions follow but if you just want a quick example of how to get 
 
 **Note:** Please note that this functionality is Beta only.  
 
-A new instance of Apigee.Monitoring client will automatically be created for you when Apigee.Client is instantiated, and can be accessed using the 'monitor' member variable.
+To start Apigee App Monitoring, pass 'monitoringEnabled:true' to Apigee.Client when it is instantiated. A new instance of Apigee.Monitoring client will automatically be created for you. You can then access App Monitoring methods using the 'monitor' member variable of the Apigee.Client object.
 
-For example, in the 'App Services Getting Started' code above, you would access App Monitoring methods through 'client.monitor'.
+For example, you would modify the 'App Services Getting Started' code above as follows:
+
+```html
+// Initializing the SDK
+var client = new Apigee.Client({
+	orgName:'yourorgname', // Your Apigee.com username for App Services
+	appName:'sandbox', // Your Apigee App Services app name
+	monitoringEnabled:true
+});
+```
+This will enable you to access the App Monitoring functions of the SDK using 'client.monitor'.
 
 One additional argument called `syncOnClose` may be passed to Apigee.Client. if set to true then the SDK will sync on the closing of the web page, or of your respective native app. If set to false then it will sync on the interval specified in your config file.
 
