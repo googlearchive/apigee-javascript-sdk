@@ -54,6 +54,7 @@ var Usergrid = (function(){
     this._callTimeoutCallback =  options.callTimeoutCallback || null;
     this.logoutCallback =  options.logoutCallback || null;
 	
+	/*
     if (typeof navigator.geolocation !== "undefined") {
 	  var self = this;
       navigator.geolocation.getCurrentPosition(function(position){
@@ -80,6 +81,7 @@ var Usergrid = (function(){
 	    deviceEntity.save(null);
       });
     }
+	*/
 
     //Init app monitoring.
     if (this.monitoringEnabled) {
