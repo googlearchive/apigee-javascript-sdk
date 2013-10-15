@@ -30,7 +30,7 @@ var Usergrid = (function(){
 
   window.Usergrid = window.Usergrid || {};
   Usergrid = Usergrid || {};
-  Usergrid.USERGRID_SDK_VERSION = '2.0.4-SNAPSHOT';
+  Usergrid.USERGRID_SDK_VERSION = '2.0.4';
 
   Usergrid.Client = function(options) {
     //usergrid enpoint
@@ -47,7 +47,7 @@ var Usergrid = (function(){
     //other options
     this.buildCurl = options.buildCurl || false;
     this.logging = options.logging || false;
-	this.monitoringEnabled = options.monitoringEnabled || false;
+	this.monitoringEnabled = options.monitoringEnabled || true;
 
     //timeout and callbacks
     this._callTimeout =  options.callTimeout || 30000; //default to 30 seconds
