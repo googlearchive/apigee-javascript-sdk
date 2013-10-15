@@ -2757,6 +2757,7 @@ var Apigee = (function(){
     var sessionSummary = {};
     sessionSummary.timeStamp = timeStamp();
     //Lets set all the automatically unknowns
+	sessionSummary.networkType = UNKNOWN;
     sessionSummary.networkCarrier = UNKNOWN;
     sessionSummary.deviceCountry = UNKNOWN;
     sessionSummary.batteryLevel = "-100";
@@ -2765,7 +2766,14 @@ var Apigee = (function(){
     sessionSummary.sessionId = randomUUID();
     sessionSummary.applicationVersion = "1.0";
     sessionSummary.appId = this.appId.toString();
-    //sessionSummary.sdkType = SDKTYPE;
+	sessionSummary.sessionStartTime = sessionSummary.timeStamp;
+    sessionSummary.sdkType = SDKTYPE;
+	sessionSummary.localLanguage = UNKNOWN;
+	sessionSummary.deviceModel = UNKNOWN;
+	sessionSummary.deviceOSVersion = UNKNOWN;
+	sessionSummary.localCountry = UNKNOWN;
+	sessionSummary.devicePlatform = UNKNOWN;
+	sessionSummary.appConfigType = UNKNOWN;
 
 
     if(this.deviceConfig.locationCaptureEnabled) {
