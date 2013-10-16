@@ -52,4 +52,11 @@ do
   fi
 done
 
+# have build_release_zip.sh?
+if [ -f "${DEST_ZIP_DIR}/build_release_zip.sh" ]; then
+	# delete it
+	rm "${DEST_ZIP_DIR}/build_release_zip.sh"
+fi
+
+# create the zip file
 cd ${TOP_LEVEL_ZIP_DIR} && zip -r -y ${ZIP_FILE_NAME} .
