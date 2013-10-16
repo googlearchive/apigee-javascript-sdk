@@ -1,4 +1,4 @@
-#Apigee Mobile JavaScript SDK -- Beta
+#Apigee Mobile JavaScript SDK
 
 
 ##App Services Getting Started
