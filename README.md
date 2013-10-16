@@ -1,4 +1,4 @@
-#Apigee Mobile JavaScript SDK
+#Apigee JavaScript SDK
 
 
 ##App Services Getting Started
@@ -49,7 +49,7 @@ Detailed instructions follow but if you just want a quick example of how to get 
 
 ##App Monitoring Getting Started
 
-App monitoring will be enabled by default by initializing the `Apigee.Client` object. You can also use the following methods for logging calls.
+App monitoring is enabled by default by initializing the `Apigee.Client` object. You can also use the following methods for logging calls.
 
 - `logVerbose()`
 - `logDebug()`
@@ -64,7 +64,7 @@ Head over to the [Apigee Mobile SDK wiki](https://github.com/apigee/apigee-javas
 
 ##Crash Reporting
 
-The app monitoring SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
+The app monitoring portion of the SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
 
 ##Network Call Monitoring
 
@@ -113,7 +113,7 @@ For the SDK to properly report device based metrics like OS and version name we 
 ## Contributing
 We welcome your enhancements!
 
-Like [Usergrid](https://github.com/apigee/usergrid-node-module), the Usergrid JavaScript SDK is open source and licensed under the Apache License, Version 2.0.
+Like [Usergrid](https://github.com/apigee/usergrid-node-module), the Apigee JavaScript SDK is open source and licensed under the Apache License, Version 2.0.
 
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
