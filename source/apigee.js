@@ -2543,7 +2543,7 @@ var Apigee = (function(){
     //Put this in here because I don't want sync issues with testing.
     this.testMode = options.testMode || false;
     //You best know what you're doing if you're setting this for Apigee monitoring!
-    this.URI = typeof options.URI === "undefined" ? "https://api.usergrid.org" : options.URI;
+    this.URI = typeof options.URI === "undefined" ? "https://api.usergrid.com" : options.URI;
 
     this.syncDate = timeStamp();
 
@@ -2560,11 +2560,12 @@ var Apigee = (function(){
         this.deviceConfig = this.configuration.defaultAppConfig;
       }
     } else {
+      this.configuration = null;
       this.downloadConfig();
     }
-
+    
     //Don't do anything if configuration wasn't loaded.
-    if(this.configuration !== null) {
+    if((this.configuration !== null) && (this.configuration !== "undefined")) {
 
       //Ensure that we want to sample data from this device.
       var sampleSeed = 0;
@@ -2581,9 +2582,9 @@ var Apigee = (function(){
           this.patchLoggingCalls();
         }
 
-        var syncInterval = 3000;
+        var syncIntervalMillis = 3000;
         if (typeof this.deviceConfig.agentUploadIntervalInSeconds !== "undefined") {
-          syncInterval = this.deviceConfig.agentUploadIntervalInSeconds * 1000;
+          syncIntervalMillis = this.deviceConfig.agentUploadIntervalInSeconds * 1000;
         }
 
         //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
@@ -2593,7 +2594,7 @@ var Apigee = (function(){
           //Old server syncing logic
           setInterval(function(){
             self.prepareSync();
-          }, syncInterval);
+          }, syncIntervalMillis);
         } else {
           if(isPhoneGap()) {
             window.addEventListener("pause", function(){
@@ -2616,21 +2617,16 @@ var Apigee = (function(){
         }
 
 
-
         //Setting up the catching of errors and network calls
         if(this.deviceConfig.networkMonitoringEnabled) {
            this.patchNetworkCalls(XMLHttpRequest);
         }
 
         window.onerror = Apigee.MonitoringClient.catchCrashReport;
-
-
-
-
-
+        
       }
     } else {
-      console.log("Error configuration unavailable.");
+      console.log("Error: Apigee APM configuration unavailable.");
     }
   }
 
@@ -2646,45 +2642,46 @@ var Apigee = (function(){
   Apigee.MonitoringClient.prototype.downloadConfig = function(callback){
     var configRequest = new XMLHttpRequest();
     var path = this.URI + '/' + this.orgName + '/' + this.appName + '/apm/apigeeMobileConfig';
+	
     //If we have a function lets load the config async else do it sync.
     if(typeof callback === "function") {
       configRequest.open(VERBS.get, path, true);
-      configRequest.setRequestHeader("Accept", "application/json");
-      configRequest.setRequestHeader("Content-Type","application/json");
-      configRequest.onreadystatechange = onreadystatechange;
-      configRequest.send();
     } else {
       configRequest.open(VERBS.get, path, false);
-      configRequest.setRequestHeader("Accept", "application/json");
-      configRequest.setRequestHeader("Content-Type","application/json");
-      configRequest.send();
-      if(configRequest.status === 200) {
-        var config = JSON.parse(configRequest.responseText);
-        this.configuration = config;
-        if(config.deviceLevelOverrideEnabled === true) {
-          this.deviceConfig = config.deviceLevelAppConfig;
-        } else if(this.abtestingOverrideEnabled === true){
-          this.deviceConfig = config.abtestingAppConfig;
-        } else {
-          this.deviceConfig = config.defaultAppConfig;
-        }
-      } else {
-        //When tapping into the configuration. If it's null let's assume bad things happened.
-        this.configuration = null;
-      }
     }
 
+    var self = this;
+
+    configRequest.setRequestHeader("Accept", "application/json");
+    configRequest.setRequestHeader("Content-Type","application/json");
+    configRequest.onreadystatechange = onReadyStateChange;
+    configRequest.send();
+	
     //A little async magic. Let's return the AJAX issue from downloading the configs.
     //Or we can return the parsed out config.
     function onReadyStateChange() {
       if(configRequest.readyState === 4) {
-        if(configRequest.status === 200) {
-          callback(null, JSON.parse(configRequest.responseText));
-        } else {
-          callback(configRequest.statusText);
-        }
-      }
-    }
+		    if(typeof callback === "function") {
+          if(configRequest.status === 200) {
+            callback(null, JSON.parse(configRequest.responseText));
+        	} else {
+          	callback(configRequest.statusText);
+        	}
+		    } else {
+			    if(configRequest.status === 200) {
+		        var config = JSON.parse(configRequest.responseText);
+		        self.configuration = config;
+		        if(config.deviceLevelOverrideEnabled === true) {
+		          self.deviceConfig = config.deviceLevelAppConfig;
+		        } else if(self.abtestingOverrideEnabled === true){
+		          self.deviceConfig = config.abtestingAppConfig;
+		        } else {
+		          self.deviceConfig = config.defaultAppConfig;
+		        }
+			    }
+		    }  // callback is not a function
+      }  // readyState === 4
+    }  // onReadyStateChange
   }
 
 
@@ -2752,12 +2749,16 @@ var Apigee = (function(){
   *
   */
   Apigee.MonitoringClient.prototype.startSession = function() {
+	  if((this.configuration === null) || (this.configuration === "undefined")) {
+		  return;
+	  }
+	  
     //If the user agent string exists on the device
     var self = this;
     var sessionSummary = {};
     sessionSummary.timeStamp = timeStamp();
     //Lets set all the automatically unknowns
-	sessionSummary.networkType = UNKNOWN;
+    sessionSummary.networkType = UNKNOWN;
     sessionSummary.networkCarrier = UNKNOWN;
     sessionSummary.deviceCountry = UNKNOWN;
     sessionSummary.batteryLevel = "-100";
@@ -2766,14 +2767,14 @@ var Apigee = (function(){
     sessionSummary.sessionId = randomUUID();
     sessionSummary.applicationVersion = "1.0";
     sessionSummary.appId = this.appId.toString();
-	sessionSummary.sessionStartTime = sessionSummary.timeStamp;
+    sessionSummary.sessionStartTime = sessionSummary.timeStamp;
     sessionSummary.sdkType = SDKTYPE;
-	sessionSummary.localLanguage = UNKNOWN;
-	sessionSummary.deviceModel = UNKNOWN;
-	sessionSummary.deviceOSVersion = UNKNOWN;
-	sessionSummary.localCountry = UNKNOWN;
-	sessionSummary.devicePlatform = UNKNOWN;
-	sessionSummary.appConfigType = UNKNOWN;
+    sessionSummary.localLanguage = UNKNOWN;
+    sessionSummary.deviceModel = UNKNOWN;
+    sessionSummary.deviceOSVersion = UNKNOWN;
+    sessionSummary.localCountry = UNKNOWN;
+    sessionSummary.devicePlatform = UNKNOWN;
+    sessionSummary.appConfigType = UNKNOWN;
 
 
     if(this.deviceConfig.locationCaptureEnabled) {
@@ -3008,7 +3009,7 @@ var Apigee = (function(){
                           apigee.logNetworkCall(summary);
                       }
                   } else {
-					  console.log('ignoring network perf for url ' + url);
+                    console.log('ignoring network perf for url ' + url);
                   }
               }
 
