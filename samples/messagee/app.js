@@ -38,10 +38,8 @@ $(document).ready(function () {
     logging: true, //optional - turn on logging, off by default
     buildCurl: true //optional - turn on curl commands, off by default
   };
-  var client = new Apigee.Client(client_creds); //Instantiates the Apigee data client
-  var monitoringClient = new Apigee.MonitoringClient(client_creds); //Instantiates the Apigee monitoring client
-
-  monitoringClient.startSession(); //start logging app usage, crash and error data
+  //Instantiates the Apigee data client and Apigee.MonitoringClient
+  var client = new Apigee.Client(client_creds); 
 
   var appUser;
   var fullFeedView = true;
