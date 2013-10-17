@@ -85,8 +85,12 @@ var Usergrid = (function(){
 
     //Init app monitoring.
     if (this.monitoringEnabled) {
-      this.monitor = new Apigee.MonitoringClient(options);
-      this.monitor.startSession();
+      try{
+	this.monitor = new Apigee.MonitoringClient(options);
+	this.monitor.startSession();
+      }catch(e){
+     	console.log(e);	
+      }
     }
   };
 
