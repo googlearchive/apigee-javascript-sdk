@@ -10,7 +10,7 @@ Detailed instructions follow but if you just want a quick example of how to get 
 <html>
 	<head>
 		<!-- Don't forget to download and include the SDK -->
-		<!-- It’s available at github.com/apigee/apigee-javascript-sdk/source/apigee.js -->
+		<!-- It’s available at https://raw.github.com/apigee/apigee-javascript-sdk/master/source/apigee.js -->
 		<script src="path/to/apigee.js"></script>
 
 		<script type="text/javascript">
