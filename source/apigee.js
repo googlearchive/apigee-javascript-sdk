@@ -47,49 +47,49 @@ var Usergrid = (function(){
     //other options
     this.buildCurl = options.buildCurl || false;
     this.logging = options.logging || false;
-	this.monitoringEnabled = options.monitoringEnabled || true;
+  this.monitoringEnabled = options.monitoringEnabled || true;
 
     //timeout and callbacks
     this._callTimeout =  options.callTimeout || 30000; //default to 30 seconds
     this._callTimeoutCallback =  options.callTimeoutCallback || null;
     this.logoutCallback =  options.logoutCallback || null;
-	
-	/*
+  
+  /*
     if (typeof navigator.geolocation !== "undefined") {
-	  var self = this;
+    var self = this;
       navigator.geolocation.getCurrentPosition(function(position){
-	    var locationData = {
-		  latitude:position.coords.latitude,
-		  longitude:position.coords.longitude
-		}
-		  
-		var entityData = {
-		  "type":"devices",
-		  "uuid":self.getDeviceUUID(),
-	      "deviceModel":"UNKNOWN",
-		  "devicePlatform":"JavaScript",
-		  "deviceOSVersion":"UNKNOWN",
-		  "location":locationData
-		}
-		  
-	    var deviceLocationOptions = {
-	      client:self,
-	      data:entityData
-	    }
-		  
-	    var deviceEntity = new Usergrid.Entity(deviceLocationOptions);
-	    deviceEntity.save(null);
+      var locationData = {
+      latitude:position.coords.latitude,
+      longitude:position.coords.longitude
+    }
+      
+    var entityData = {
+      "type":"devices",
+      "uuid":self.getDeviceUUID(),
+        "deviceModel":"UNKNOWN",
+      "devicePlatform":"JavaScript",
+      "deviceOSVersion":"UNKNOWN",
+      "location":locationData
+    }
+      
+      var deviceLocationOptions = {
+        client:self,
+        data:entityData
+      }
+      
+      var deviceEntity = new Usergrid.Entity(deviceLocationOptions);
+      deviceEntity.save(null);
       });
     }
-	*/
+  */
 
     //Init app monitoring.
     if (this.monitoringEnabled) {
       try{
-	this.monitor = new Apigee.MonitoringClient(options);
-	this.monitor.startSession();
+  this.monitor = new Apigee.MonitoringClient(options);
+  this.monitor.startSession();
       }catch(e){
-     	console.log(e);	
+      console.log(e); 
       }
     }
   };
@@ -1202,9 +1202,9 @@ var Usergrid = (function(){
     //Check for an entity type, then if a uuid is available, use that, otherwise, use the name
 
     if (type === undefined) {
-    	var error = 'cannot fetch entity, no entity type specified';
+      var error = 'cannot fetch entity, no entity type specified';
         if (self._client.logging) {
-			console.log(error);
+      console.log(error);
         }
         return callback(true, error, self)
     }else if (this.get('uuid')) {
@@ -2627,7 +2627,7 @@ var Apigee = (function(){
         }
 
         window.onerror = Apigee.MonitoringClient.catchCrashReport;
-        
+        this.startSession();
       }
     } else {
       console.log("Error: Apigee APM configuration unavailable.");
@@ -2646,7 +2646,7 @@ var Apigee = (function(){
   Apigee.MonitoringClient.prototype.downloadConfig = function(callback){
     var configRequest = new XMLHttpRequest();
     var path = this.URI + '/' + this.orgName + '/' + this.appName + '/apm/apigeeMobileConfig';
-	
+  
     //If we have a function lets load the config async else do it sync.
     if(typeof callback === "function") {
       configRequest.open(VERBS.get, path, true);
@@ -2660,30 +2660,31 @@ var Apigee = (function(){
     configRequest.setRequestHeader("Content-Type","application/json");
     configRequest.onreadystatechange = onReadyStateChange;
     configRequest.send();
-	
+  
     //A little async magic. Let's return the AJAX issue from downloading the configs.
     //Or we can return the parsed out config.
     function onReadyStateChange() {
       if(configRequest.readyState === 4) {
-		    if(typeof callback === "function") {
+        if(typeof callback === "function") {
           if(configRequest.status === 200) {
             callback(null, JSON.parse(configRequest.responseText));
-        	} else {
-          	callback(configRequest.statusText);
-        	}
-		    } else {
-			    if(configRequest.status === 200) {
-		        var config = JSON.parse(configRequest.responseText);
-		        self.configuration = config;
-		        if(config.deviceLevelOverrideEnabled === true) {
-		          self.deviceConfig = config.deviceLevelAppConfig;
-		        } else if(self.abtestingOverrideEnabled === true){
-		          self.deviceConfig = config.abtestingAppConfig;
-		        } else {
-		          self.deviceConfig = config.defaultAppConfig;
-		        }
-			    }
-		    }  // callback is not a function
+          } else {
+            callback(configRequest.statusText);
+          }
+        } else {
+          if(configRequest.status === 200) {
+            var config = JSON.parse(configRequest.responseText);
+            self.configuration = config;
+            if(config.deviceLevelOverrideEnabled === true) {
+              self.deviceConfig = config.deviceLevelAppConfig;
+            } else if(self.abtestingOverrideEnabled === true){
+              self.deviceConfig = config.abtestingAppConfig;
+            } else {
+              self.deviceConfig = config.defaultAppConfig;
+            }
+                        self.sync();
+          }
+        }  // callback is not a function
       }  // readyState === 4
     }  // onReadyStateChange
   }
@@ -2753,10 +2754,10 @@ var Apigee = (function(){
   *
   */
   Apigee.MonitoringClient.prototype.startSession = function() {
-	  if((this.configuration === null) || (this.configuration === "undefined")) {
-		  return;
-	  }
-	  
+    if((this.configuration === null) || (this.configuration === "undefined")) {
+      return;
+    }
+    
     //If the user agent string exists on the device
     var self = this;
     var sessionSummary = {};
@@ -3318,7 +3319,7 @@ var Apigee = (function(){
     return metrics;
   }
 
-  Apigee.MonitoringClient.prototype.sessionMetrics = function(){
+  Apigee.MonitoringClient.prototype.getSessionMetrics = function(){
     return this.sessionMetrics;
   }
 
