@@ -2627,7 +2627,8 @@ var Apigee = (function(){
         }
 
         window.onerror = Apigee.MonitoringClient.catchCrashReport;
-        
+        this.startSession();
+        this.prepareSync();
       }
     } else {
       console.log("Error: Apigee APM configuration unavailable.");
@@ -3318,7 +3319,7 @@ var Apigee = (function(){
     return metrics;
   }
 
-  Apigee.MonitoringClient.prototype.sessionMetrics = function(){
+  Apigee.MonitoringClient.prototype.getSessionMetrics = function(){
     return this.sessionMetrics;
   }
 
