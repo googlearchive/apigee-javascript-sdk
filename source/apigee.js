@@ -2761,7 +2761,9 @@ var Apigee = (function(){
     //If the user agent string exists on the device
     var self = this;
     var sessionSummary = {};
-
+    //timeStamp goes first because it is used in other properties
+    sessionSummary.timeStamp = timeStamp();
+    //defaults for other properties
     sessionSummary.appConfigType = UNKNOWN;
     sessionSummary.appId = this.appId.toString();
     sessionSummary.applicationVersion = "1.0";
@@ -2780,7 +2782,6 @@ var Apigee = (function(){
     sessionSummary.sdkType = SDKTYPE;
     sessionSummary.sessionId = randomUUID();
     sessionSummary.sessionStartTime = sessionSummary.timeStamp;
-    sessionSummary.timeStamp = timeStamp();
 
 
     if(this.deviceConfig.locationCaptureEnabled) {
