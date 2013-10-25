@@ -2761,25 +2761,26 @@ var Apigee = (function(){
     //If the user agent string exists on the device
     var self = this;
     var sessionSummary = {};
-    sessionSummary.timeStamp = timeStamp();
-    //Lets set all the automatically unknowns
-    sessionSummary.networkType = UNKNOWN;
-    sessionSummary.networkCarrier = UNKNOWN;
-    sessionSummary.deviceCountry = UNKNOWN;
-    sessionSummary.batteryLevel = "-100";
-    sessionSummary.networkSubType = UNKNOWN;
-    sessionSummary.networkCountry = UNKNOWN;
-    sessionSummary.sessionId = randomUUID();
-    sessionSummary.applicationVersion = "1.0";
+    
+    sessionSummary.appConfigType = UNKNOWN;
     sessionSummary.appId = this.appId.toString();
-    sessionSummary.sessionStartTime = sessionSummary.timeStamp;
-    sessionSummary.sdkType = SDKTYPE;
-    sessionSummary.localLanguage = UNKNOWN;
+    sessionSummary.applicationVersion = "1.0";
+    sessionSummary.batteryLevel = "-100";
+    sessionSummary.deviceCountry = UNKNOWN;
+    sessionSummary.deviceId = UNKNOWN;
     sessionSummary.deviceModel = UNKNOWN;
     sessionSummary.deviceOSVersion = UNKNOWN;
-    sessionSummary.localCountry = UNKNOWN;
     sessionSummary.devicePlatform = UNKNOWN;
-    sessionSummary.appConfigType = UNKNOWN;
+    sessionSummary.localCountry = UNKNOWN;
+    sessionSummary.localLanguage = UNKNOWN;
+    sessionSummary.networkCarrier = UNKNOWN;
+    sessionSummary.networkCountry = UNKNOWN;
+    sessionSummary.networkSubType = UNKNOWN;
+    sessionSummary.networkType = UNKNOWN;
+    sessionSummary.sdkType = SDKTYPE;
+    sessionSummary.sessionId = randomUUID();
+    sessionSummary.sessionStartTime = sessionSummary.timeStamp;
+    sessionSummary.timeStamp = timeStamp();
 
 
     if(this.deviceConfig.locationCaptureEnabled) {
