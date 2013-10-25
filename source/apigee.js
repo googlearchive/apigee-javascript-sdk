@@ -2761,7 +2761,7 @@ var Apigee = (function(){
     //If the user agent string exists on the device
     var self = this;
     var sessionSummary = {};
-    
+
     sessionSummary.appConfigType = UNKNOWN;
     sessionSummary.appId = this.appId.toString();
     sessionSummary.applicationVersion = "1.0";
@@ -2871,74 +2871,16 @@ var Apigee = (function(){
       //Here we want to check for localstorage and make sure the browser has it
       if(typeof window.localStorage !== "undefined") {
         //If no uuid is set in localstorage create a new one, and set it as the session's deviceId
-
         if(this.deviceConfig.deviceIdCaptureEnabled) {
           sessionSummary.deviceId = generateDeviceId();
-        } else {
-          sessionSummary.deviceId = UNKNOWN;
         }
       }
 
       if(typeof navigator.userAgent !== "undefined") {
         //Small hack to make all device names consistent.
-
-        var ua = navigator.userAgent;
-        var browserName  = navigator.appName;
-        var nameOffset,verOffset,ix;
-
-        // In Opera, the true version is after "Opera" or after "Version"
-        if ((verOffset=ua.indexOf("Opera"))!=-1) {
-         browserName = "Opera";
-         fullVersion = ua.substring(verOffset+6);
-         if ((verOffset=ua.indexOf("Version"))!=-1)
-           fullVersion = ua.substring(verOffset+8);
-        }
-        // In MSIE, the true version is after "MSIE" in userAgent
-        else if ((verOffset=ua.indexOf("MSIE"))!=-1) {
-         browserName = "Microsoft Internet Explorer";
-         fullVersion = ua.substring(verOffset+5);
-        }
-        // In Chrome, the true version is after "Chrome"
-        else if ((verOffset=ua.indexOf("Chrome"))!=-1) {
-         browserName = "Chrome";
-         fullVersion = ua.substring(verOffset+7);
-        }
-        // In Safari, the true version is after "Safari" or after "Version"
-        else if ((verOffset=ua.indexOf("Safari"))!=-1) {
-         browserName = "Safari";
-         fullVersion = ua.substring(verOffset+7);
-         if ((verOffset=ua.indexOf("Version"))!=-1)
-           fullVersion = ua.substring(verOffset+8);
-        }
-        // In Firefox, the true version is after "Firefox"
-        else if ((verOffset=ua.indexOf("Firefox"))!=-1) {
-         browserName = "Firefox";
-         fullVersion = ua.substring(verOffset+8);
-        }
-        // In most other browsers, "name/version" is at the end of userAgent
-        else if ( (nameOffset=ua.lastIndexOf(' ')+1) <
-                  (verOffset=ua.lastIndexOf('/')) )
-        {
-         browserName = ua.substring(nameOffset,verOffset);
-         fullVersion = ua.substring(verOffset+1);
-         if (browserName.toLowerCase()==browserName.toUpperCase()) {
-          browserName = navigator.appName;
-         }
-        }
-        // trim the fullVersion string at semicolon/space if present
-        if ((ix=fullVersion.indexOf(";"))!=-1){
-          fullVersion=fullVersion.substring(0,ix);
-        }
-        if ((ix=fullVersion.indexOf(" "))!=-1) {
-          fullVersion=fullVersion.substring(0,ix);
-        }
-
-        sessionSummary.devicePlatform = browserName;
-        sessionSummary.deviceOSVersion = fullVersion;
-      } else {
-        sessionSummary.devicePlatform = UNKNOWN;
-        sessionSummary.deviceOSVersion = UNKNOWN;
-      }
+        var browserData=determineBrowserType();
+        sessionSummary.devicePlatform = browserData.devicePlatform;
+        sessionSummary.deviceOSVersion = browserData.deviceOSVersion;
 
 
       // if(typeof navigator.appVersion !== "undefined") {
@@ -3399,6 +3341,69 @@ var Apigee = (function(){
       return (typeof Titanium !== "undefined");
   }
 
+  /*
+   * @method determineBrowserType
+   */
+  function determineBrowserType(){
+        var ua = navigator.userAgent;
+        var browserName  = navigator.appName;
+        var nameOffset,verOffset,ix;
+        var browserData={
+          devicePlatform:UNKNOWN,
+          deviceOSVersion:UNKNOWN
+        };
+
+        // In Opera, the true version is after "Opera" or after "Version"
+        if ((verOffset=ua.indexOf("Opera"))!=-1) {
+         browserName = "Opera";
+         fullVersion = ua.substring(verOffset+6);
+         if ((verOffset=ua.indexOf("Version"))!=-1)
+           fullVersion = ua.substring(verOffset+8);
+        }
+        // In MSIE, the true version is after "MSIE" in userAgent
+        else if ((verOffset=ua.indexOf("MSIE"))!=-1) {
+         browserName = "Microsoft Internet Explorer";
+         fullVersion = ua.substring(verOffset+5);
+        }
+        // In Chrome, the true version is after "Chrome"
+        else if ((verOffset=ua.indexOf("Chrome"))!=-1) {
+         browserName = "Chrome";
+         fullVersion = ua.substring(verOffset+7);
+        }
+        // In Safari, the true version is after "Safari" or after "Version"
+        else if ((verOffset=ua.indexOf("Safari"))!=-1) {
+         browserName = "Safari";
+         fullVersion = ua.substring(verOffset+7);
+         if ((verOffset=ua.indexOf("Version"))!=-1)
+           fullVersion = ua.substring(verOffset+8);
+        }
+        // In Firefox, the true version is after "Firefox"
+        else if ((verOffset=ua.indexOf("Firefox"))!=-1) {
+         browserName = "Firefox";
+         fullVersion = ua.substring(verOffset+8);
+        }
+        // In most other browsers, "name/version" is at the end of userAgent
+        else if ( (nameOffset=ua.lastIndexOf(' ')+1) <
+                  (verOffset=ua.lastIndexOf('/')) )
+        {
+         browserName = ua.substring(nameOffset,verOffset);
+         fullVersion = ua.substring(verOffset+1);
+         if (browserName.toLowerCase()==browserName.toUpperCase()) {
+          browserName = navigator.appName;
+         }
+        }
+        // trim the fullVersion string at semicolon/space if present
+        if ((ix=fullVersion.indexOf(";"))!=-1){
+          fullVersion=fullVersion.substring(0,ix);
+        }
+        if ((ix=fullVersion.indexOf(" "))!=-1) {
+          fullVersion=fullVersion.substring(0,ix);
+        }
+
+        browserData.devicePlatform = browserName;
+        browserData.deviceOSVersion = fullVersion;
+      return browserData;
+  }
 
   return Apigee;
 
