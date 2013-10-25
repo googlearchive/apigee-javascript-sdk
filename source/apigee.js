@@ -3386,7 +3386,7 @@ var Apigee = (function(){
 
   //Helper. Determines if the platform device is phonegap
   function isPhoneGap() {
-      return (typeof window.device !== "undefined");
+      return (typeof PhoneGap !== "undefined")||(typeof window.device !== "undefined");
   }
 
   //Helper. Determines if the platform device is trigger.io
