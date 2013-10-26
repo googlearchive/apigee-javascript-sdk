@@ -1,3 +1,4 @@
+/*jshint asi:true */
 /*
 *  This module is a collection of classes designed to make working with
 *  the Apigee App Services API as easy as possible.
@@ -124,10 +125,11 @@ var Usergrid = (function(){
         return this.logoutCallback(true, 'no_org_or_app_name_specified');
       }
     }
+    var uri;
     if (mQuery) {
-      var uri = this.URI + '/' + endpoint;
+      uri = this.URI + '/' + endpoint;
     } else {
-      var uri = this.URI + '/' + orgName + '/' + appName + '/' + endpoint;
+      uri = this.URI + '/' + orgName + '/' + appName + '/' + endpoint;
     }
 
     if (self.getToken()) {
@@ -163,7 +165,7 @@ var Usergrid = (function(){
         console.log('success (time: ' + self.calcTimeDiff() + '): ' + method + ' ' + uri);
       }
       if (self.logging) {
-        console.log('Error: API call failed at the network level.')
+        console.log('Error: API call failed at the network level.');
       }
       //network error
       clearTimeout(timeout);
@@ -188,7 +190,7 @@ var Usergrid = (function(){
         var error = response.error;
         var error_description = response.error_description;
         if (self.logging) {
-          console.log('Error ('+ xhr.status +')(' + error + '): ' + error_description )
+          console.log('Error ('+ xhr.status +')(' + error + '): ' + error_description );
         }
         if ( (error == "auth_expired_session_token") ||
             (error == "auth_missing_credentials")   ||
@@ -231,12 +233,12 @@ var Usergrid = (function(){
         uri:uri,
         body:body,
         method:method
-      }
+      };
       this.buildCurlCall(curlOptions);
     }
     this._start = new Date().getTime();
     xhr.send(body);
-  }
+  };
 
   /*
    *  function for building asset urls
@@ -262,7 +264,7 @@ var Usergrid = (function(){
      }
 
      return assetURL;
-   }
+   };
 
   /*
    *  Main function for creating new groups. Call this directly.
@@ -280,7 +282,7 @@ var Usergrid = (function(){
       path: options.path,
       client: this,
       data:options
-    }
+    };
 
     var group = new Usergrid.Group(options);
     group.fetch(function(err, data){
@@ -297,7 +299,7 @@ var Usergrid = (function(){
         }
       }
     });
-  }
+  };
 
   /*
   *  Main function for creating new entities - should be called directly.
@@ -329,7 +331,7 @@ var Usergrid = (function(){
     var options = {
       client:this,
       data:options
-    }
+    };
     var entity = new Usergrid.Entity(options);
     entity.fetch(function(err, data) {
       //if the fetch doesn't find what we are looking for, or there is no error, do a save
@@ -348,7 +350,7 @@ var Usergrid = (function(){
       }
     });
 
-  }
+  };
 
   /*
    *  Main function for getting existing entities - should be called directly.
@@ -368,14 +370,14 @@ var Usergrid = (function(){
     var options = {
       client:this,
       data:options
-    }
+    };
     var entity = new Usergrid.Entity(options);
     entity.fetch(function(err, data) {
       if (typeof(callback) === 'function') {
         callback(err, entity, data);
       }
     });
-  }
+  };
 
   /*
    *  Main function for restoring an entity from serialized data.
@@ -392,10 +394,10 @@ var Usergrid = (function(){
     var options = {
       client:this,
       data:data
-    }
+    };
     var entity = new Usergrid.Entity(options);
     return entity;
-  }
+  };
 
   /*
   *  Main function for creating new collections - should be called directly.
@@ -415,7 +417,7 @@ var Usergrid = (function(){
         callback(err, collection, data);
       }
     });
-  }
+  };
 
   /*
    *  Main function for restoring a collection from serialized data.
@@ -432,7 +434,7 @@ var Usergrid = (function(){
     data.client = this;
     var collection = new Usergrid.Collection(data);
     return collection;
-  }
+  };
 
   /*
    *  Main function for retrieving a user's activity feed.
@@ -447,7 +449,7 @@ var Usergrid = (function(){
     var options = {
       method: "GET",
       endpoint: "users/"+username+"/feed"
-    }
+    };
 
     this.request(options, function(err, data){
       if(typeof(callback) === "function") {
@@ -458,7 +460,7 @@ var Usergrid = (function(){
         }
       }
     });
-  }
+  };
 
   /*
   *  Function for creating new activities for the current user - should be called directly.
@@ -500,14 +502,14 @@ var Usergrid = (function(){
     var options = {
       client:this,
       data:options
-    }
+    };
     var entity = new Usergrid.Entity(options);
     entity.save(function(err, data) {
       if (typeof(callback) === 'function') {
         callback(err, entity);
       }
     });
-  }
+  };
 
   /*
    *  Function for creating user activities with an associated user entity.
@@ -543,7 +545,7 @@ var Usergrid = (function(){
 
     this.createUserActivity(username, options, callback);
 
-  }
+  };
 
   /*
   *  A private method to get call timing of last call
@@ -555,7 +557,7 @@ var Usergrid = (function(){
       seconds = ((time/10) / 60).toFixed(2);
    } catch(e) { return 0; }
    return seconds;
-  }
+  };
 
   /*
    *  A public method to store the OAuth token for later use - uses localstorage if available
@@ -567,7 +569,7 @@ var Usergrid = (function(){
    */
   Usergrid.Client.prototype.setToken = function (token) {
     this.set('token', token);
-  }
+  };
 
   /*
    *  A public method to get the OAuth token
@@ -578,14 +580,14 @@ var Usergrid = (function(){
    */
   Usergrid.Client.prototype.getToken = function () {
     return this.get('token');
-  }
+  };
 
   Usergrid.Client.prototype.setObject = function(key, value) {
     if (value) {
       value = JSON.stringify(value);
     }
     this.set(key, value);
-  }
+  };
 
   Usergrid.Client.prototype.set = function (key, value) {
     var keyStore =  'apigee_' + key;
@@ -597,11 +599,11 @@ var Usergrid = (function(){
         localStorage.removeItem(keyStore);
       }
     }
-  }
+  };
 
   Usergrid.Client.prototype.getObject = function(key) {
     return JSON.parse(this.get(key));
-  }
+  };
 
   Usergrid.Client.prototype.get = function (key) {
     var keyStore = 'apigee_' + key;
@@ -611,7 +613,7 @@ var Usergrid = (function(){
       return localStorage.getItem(keyStore);
     }
     return null;
-  }
+  };
 
   /*
    * A public facing helper method for signing up users
@@ -636,7 +638,7 @@ var Usergrid = (function(){
     };
 
     this.createEntity(options, callback);
-  }
+  };
 
   /*
   *
@@ -668,7 +670,7 @@ var Usergrid = (function(){
         var options = {
           client:self,
           data:data.user
-        }
+        };
         user = new Usergrid.Entity(options);
         self.setToken(data.access_token);
         }
@@ -676,7 +678,7 @@ var Usergrid = (function(){
         callback(err, data, user);
       }
     });
-  }
+  };
 
 
   Usergrid.Client.prototype.reAuthenticateLite = function (callback) {
@@ -699,7 +701,7 @@ var Usergrid = (function(){
         callback(err);
       }
     });
-  }
+  };
 
 
   Usergrid.Client.prototype.reAuthenticate = function (email, callback) {
@@ -713,10 +715,10 @@ var Usergrid = (function(){
       var organizations = {};
       var applications = {};
       var user = {};
+      var data = response.data;
       if (err && self.logging) {
         console.log('error trying to full authenticate user');
       } else {
-        var data = response.data;
         self.setToken(data.token);
         self.set('email', data.email);
 
@@ -732,11 +734,11 @@ var Usergrid = (function(){
           "email" : data.email,
           "name" : data.name,
           "uuid" : data.uuid
-        }
+        };
         var options = {
           client:self,
           data:userData
-        }
+        };
         user = new Usergrid.Entity(options);
 
         organizations = data.organizations;
@@ -762,7 +764,7 @@ var Usergrid = (function(){
         callback(err, data, user, organizations, applications);
       }
     });
-  }
+  };
 
   /*
   *  A public method to log in an app user with facebook - stores the token for later use
@@ -799,7 +801,7 @@ var Usergrid = (function(){
         callback(err, data, user);
       }
     });
-  }
+  };
 
   /*
   *  A public method to get the currently logged in user entity
@@ -830,7 +832,7 @@ var Usergrid = (function(){
           var options = {
             client:self,
             data:data.entities[0]
-          }
+          };
           var user = new Usergrid.Entity(options);
           if (typeof(callback) === 'function') {
             callback(err, data, user);
@@ -838,7 +840,7 @@ var Usergrid = (function(){
         }
       });
     }
-  }
+  };
 
   /*
   *  A public method to test if a user is logged in - does not guarantee that the token is still valid,
@@ -853,7 +855,7 @@ var Usergrid = (function(){
       return true;
     }
     return false;
-  }
+  };
 
   /*
   *  A public method to log out an app user - clears all user fields from client
@@ -864,7 +866,7 @@ var Usergrid = (function(){
   */
   Usergrid.Client.prototype.logout = function () {
     this.setToken(null);
-  }
+  };
 
   /*
   *  A private method to build the curl call to display on the command line
@@ -899,7 +901,7 @@ var Usergrid = (function(){
     console.log(curl);
 
     return curl;
-  }
+  };
 
   /*
   *  Function to register a device with Apigee. Call directly with options object.
@@ -923,14 +925,14 @@ var Usergrid = (function(){
       var entityOptions = {
         client: this,
         data:device
-      }
+      };
 
       var deviceEntity = new Usergrid.Entity(entityOptions);
       deviceEntity.save(callback);
     } else {
       callback(true);
     }
-  }
+  };
 
   /*
   *  Function to send push notification to a specified path. Call directly.
@@ -948,7 +950,7 @@ var Usergrid = (function(){
       var notifierLookupOptions = {
         "type":"notifier",
         "name":options.notifier
-      }
+      };
       var self = this;
       this.getEntity(notifierLookupOptions, function(error, result){
         if (error) {
@@ -980,7 +982,7 @@ var Usergrid = (function(){
     } else {
       callback(true);
     }
-  }
+  };
 
 
   /* randomUUID.js - Version 1.0
@@ -1035,7 +1037,7 @@ var Usergrid = (function(){
       window.localStorage.setItem("deviceUUID", uuid);
       return window.localStorage.getItem("deviceUUID");
     }
-  }
+  };
 
 /*
 *  A class to Model a Usergrid Entity.
@@ -1061,7 +1063,7 @@ var Usergrid = (function(){
    */
   Usergrid.Entity.prototype.serialize = function () {
     return JSON.stringify(this._data);
-  }
+  };
 
   /*
   *  gets a specific field or the entire data object. If null or no argument
@@ -1077,7 +1079,7 @@ var Usergrid = (function(){
     } else {
       return this._data;
     }
-  }
+  };
 
   /*
   *  adds a specific key value pair or object to the Entity's data
@@ -1103,7 +1105,7 @@ var Usergrid = (function(){
     } else {
       this._data = {};
     }
-  }
+  };
 
   /*
   *  Saves the entity back to the database
@@ -1185,7 +1187,7 @@ var Usergrid = (function(){
         }
       }
     });
-  }
+  };
 
   /*
   *  refreshes the entity by making a GET call back to the database
@@ -1258,7 +1260,7 @@ var Usergrid = (function(){
         callback(err, data, self);
       }
     });
-  }
+  };
 
   /*
   *  deletes the entity from the database - will only delete
@@ -1298,7 +1300,7 @@ var Usergrid = (function(){
         callback(err, data);
       }
     });
-  }
+  };
 
   /*
   *  connects one entity to another
@@ -1356,7 +1358,7 @@ var Usergrid = (function(){
         callback(err, data);
       }
     });
-  }
+  };
 
   /*
   *  returns a unique identifier for an entity
@@ -1380,7 +1382,7 @@ var Usergrid = (function(){
       }
     }
     return id;
-  }
+  };
 
   /*
   *  gets an entities connections
@@ -1438,7 +1440,7 @@ var Usergrid = (function(){
       }
     });
 
-  }
+  };
 
   Usergrid.Entity.prototype.getGroups = function (callback) {
 
@@ -1461,7 +1463,7 @@ var Usergrid = (function(){
       }
     });
 
-  }
+  };
 
   Usergrid.Entity.prototype.getActivities = function (callback) {
 
@@ -1477,7 +1479,7 @@ var Usergrid = (function(){
         console.log('entity could not be connected');
       }
 
-      for(entity in data.entities) {
+      for(var entity in data.entities) {
         data.entities[entity].createdDate = (new Date(data.entities[entity].created)).toUTCString();
       }
 
@@ -1488,7 +1490,7 @@ var Usergrid = (function(){
       }
     });
 
-  }
+  };
 
   Usergrid.Entity.prototype.getFollowing = function (callback) {
 
@@ -1504,7 +1506,7 @@ var Usergrid = (function(){
         console.log('could not get user following');
       }
 
-      for(entity in data.entities) {
+      for(var entity in data.entities) {
         data.entities[entity].createdDate = (new Date(data.entities[entity].created)).toUTCString();
         var image = self._client.getDisplayImage(data.entities[entity].email, data.entities[entity].picture);
         data.entities[entity]._portal_image_icon =  image;
@@ -1517,7 +1519,7 @@ var Usergrid = (function(){
       }
     });
 
-  }
+  };
 
 
   Usergrid.Entity.prototype.getFollowers = function (callback) {
@@ -1534,7 +1536,7 @@ var Usergrid = (function(){
         console.log('could not get user followers');
       }
 
-      for(entity in data.entities) {
+      for(var entity in data.entities) {
         data.entities[entity].createdDate = (new Date(data.entities[entity].created)).toUTCString();
         var image = self._client.getDisplayImage(data.entities[entity].email, data.entities[entity].picture);
         data.entities[entity]._portal_image_icon =  image;
@@ -1547,7 +1549,7 @@ var Usergrid = (function(){
       }
     });
 
-  }
+  };
 
   Usergrid.Entity.prototype.getRoles = function (callback) {
 
@@ -1570,7 +1572,7 @@ var Usergrid = (function(){
       }
     });
 
-  }
+  };
 
   Usergrid.Entity.prototype.getPermissions = function (callback) {
 
@@ -1625,7 +1627,7 @@ var Usergrid = (function(){
       }
     });
 
-  }
+  };
 
   /*
   *  disconnects one entity from another
@@ -1683,7 +1685,7 @@ var Usergrid = (function(){
         callback(err, data);
       }
     });
-  }
+  };
 
   /*
   *  The Collection class models Usergrid Collections.  It essentially
@@ -1726,7 +1728,7 @@ var Usergrid = (function(){
       this.fetch(callback);
     }
 
-  }
+  };
 
 
   /*
@@ -1757,7 +1759,7 @@ var Usergrid = (function(){
 
     data = JSON.stringify(data);
     return data;
-  }
+  };
 
   Usergrid.Collection.prototype.addCollection = function (collectionName, options, callback) {
     self = this;
@@ -1777,7 +1779,7 @@ var Usergrid = (function(){
         callback(err, collection);
       }
     });
-  }
+  };
 
   /*
   *  Populates the collection from the server
@@ -1838,7 +1840,7 @@ var Usergrid = (function(){
         callback(err, data);
       }
     });
-  }
+  };
 
   /*
   *  Adds a new Entity to the collection (saves, then adds to the local object)
@@ -1863,13 +1865,13 @@ var Usergrid = (function(){
         callback(err, entity);
       }
     });
-  }
+  };
 
   Usergrid.Collection.prototype.addExistingEntity = function (entity) {
     //entity should already exist in the db, so just add it to the list
     var count = this._list.length;
     this._list[count] = entity;
-  }
+  };
 
   /*
   *  Removes the Entity from the collection, then destroys the object on the server
@@ -1896,19 +1898,19 @@ var Usergrid = (function(){
     });
     //remove entity from the local store
     this.removeEntity(entity);
-  }
+  };
 
 
   Usergrid.Collection.prototype.removeEntity = function (entity) {
     var uuid = entity.get('uuid');
-    for (key in this._list) {
+    for (var key in this._list) {
       var listItem = this._list[key];
       if (listItem.get('uuid') === uuid) {
         return this._list.splice(key, 1);
       }
     }
     return false;
-  }
+  };
 
   /*
   *  Looks up an Entity by UUID
@@ -1920,7 +1922,7 @@ var Usergrid = (function(){
   */
   Usergrid.Collection.prototype.getEntityByUUID = function (uuid, callback) {
 
-    for (key in this._list) {
+    for (var key in this._list) {
       var listItem = this._list[key];
       if (listItem.get('uuid') === uuid) {
         return listItem;
@@ -1937,7 +1939,7 @@ var Usergrid = (function(){
     }
     var entity = new Usergrid.Entity(options);
     entity.fetch(callback);
-  }
+  };
 
   /*
   *  Returns the first Entity of the Entity list - does not affect the iterator
@@ -1951,7 +1953,7 @@ var Usergrid = (function(){
       return this._list[0];
     }
     return null;
-  }
+  };
 
   /*
   *  Returns the last Entity of the Entity list - does not affect the iterator
@@ -1965,7 +1967,7 @@ var Usergrid = (function(){
       return this._list[count-1];
     }
     return null;
-  }
+  };
 
   /*
   *  Entity iteration -Checks to see if there is a "next" entity
@@ -1983,7 +1985,7 @@ var Usergrid = (function(){
       return true;
     }
     return false;
-  }
+  };
 
   /*
   *  Entity iteration - Gets the "next" entity in the list.  The first
@@ -2001,7 +2003,7 @@ var Usergrid = (function(){
       return this._list[this._iterator];
     }
     return false;
-  }
+  };
 
   /*
   *  Entity iteration - Checks to see if there is a "previous"
@@ -2017,7 +2019,7 @@ var Usergrid = (function(){
       return true;
     }
     return false;
-  }
+  };
 
   /*
   *  Entity iteration - Gets the "previous" entity in the list.
@@ -2032,7 +2034,7 @@ var Usergrid = (function(){
       return this.list[this._iterator];
      }
      return false;
-  }
+  };
 
   /*
   *  Entity iteration - Resets the iterator back to the beginning
@@ -2043,7 +2045,7 @@ var Usergrid = (function(){
   */
   Usergrid.Collection.prototype.resetEntityPointer = function () {
      this._iterator  = -1;
-  }
+  };
 
   /*
   * Method to save off the cursor just returned by the last API call
@@ -2057,7 +2059,7 @@ var Usergrid = (function(){
     if (this._next !== cursor) {
       this._next = cursor;
     }
-  }
+  };
 
   /*
   * Resets the paging pointer (back to original page)
@@ -2070,7 +2072,7 @@ var Usergrid = (function(){
     this._previous = [];
     this._next = null;
     this._cursor = null;
-  }
+  };
 
   /*
   *  Paging -  checks to see if there is a next page od data
@@ -2080,7 +2082,7 @@ var Usergrid = (function(){
   */
   Usergrid.Collection.prototype.hasNextPage = function () {
     return (this._next);
-  }
+  };
 
   /*
   *  Paging - advances the cursor and gets the next
@@ -2100,7 +2102,7 @@ var Usergrid = (function(){
       this._list = [];
       this.fetch(callback);
     }
-  }
+  };
 
   /*
   *  Paging -  checks to see if there is a previous page od data
@@ -2110,7 +2112,7 @@ var Usergrid = (function(){
   */
   Usergrid.Collection.prototype.hasPreviousPage = function () {
     return (this._previous.length > 0);
-  }
+  };
 
   /*
   *  Paging - reverts the cursor and gets the previous
@@ -2129,7 +2131,7 @@ var Usergrid = (function(){
       this._list = [];
       this.fetch(callback);
     }
-  }
+  };
 
 
   /*
@@ -2145,7 +2147,7 @@ var Usergrid = (function(){
     this._client = options.client;
     this._data = options.data || {};
     this._data.type = "groups";
-  }
+  };
 
   /*
    *  Inherit from Usergrid.Entity.
@@ -2220,7 +2222,7 @@ var Usergrid = (function(){
         }
       }
     });
-  }
+  };
 
   /*
    *  Retrieves the members of a group.
@@ -2234,7 +2236,7 @@ var Usergrid = (function(){
     if(typeof(callback) === 'function') {
       callback(null, this._list);
     }
-  }
+  };
 
   /*
    *  Adds a user to the group, and refreshes the group object.
@@ -2263,7 +2265,7 @@ var Usergrid = (function(){
         self.fetch(callback);
       }
     });
-  }
+  };
 
   /*
    *  Removes a user from a group, and refreshes the group object.
@@ -2293,7 +2295,7 @@ var Usergrid = (function(){
         self.fetch(callback);
       }
     });
-  }
+  };
 
   /*
   * Gets feed for a group.
@@ -2321,7 +2323,7 @@ var Usergrid = (function(){
           callback(err, data, data.entities);
       }
     });
-  }
+  };
 
   /*
   * Creates activity and posts to group feed.
@@ -2365,7 +2367,7 @@ var Usergrid = (function(){
           callback(err, entity);
         }
       });
-  }
+  };
 
   /*
   * Tests if the string is a uuid
@@ -2393,7 +2395,7 @@ var Usergrid = (function(){
     tail = [];
     var item = [];
     if (params instanceof Array) {
-      for (i in params) {
+      for (var i in params) {
         item = params[i];
         if ((item instanceof Array) && (item.length > 1)) {
           tail.push(item[0] + "=" + encodeURIComponent(item[1]));
@@ -2404,7 +2406,7 @@ var Usergrid = (function(){
         if (params.hasOwnProperty(key)) {
           var value = params[key];
           if (value instanceof Array) {
-            for (i in value) {
+            for (var i in value) {
               item = value[i];
               tail.push(key + "=" + encodeURIComponent(item));
             }
@@ -2427,7 +2429,7 @@ var Usergrid = (function(){
   */
   Usergrid.Client.prototype.logVerbose = function(options) {
     this.monitor.logVerbose(options);
-  }
+  };
 
   /*
   * Logs a user defined debug message.
@@ -2439,7 +2441,7 @@ var Usergrid = (function(){
   */
   Usergrid.Client.prototype.logDebug = function(options) {
     this.monitor.logDebug(options);
-  }
+  };
 
   /*
   * Logs a user defined informational message.
@@ -2451,7 +2453,7 @@ var Usergrid = (function(){
   */
   Usergrid.Client.prototype.logInfo = function(options) {
     this.monitor.logInfo(options);
-  }
+  };
 
   /*
   * Logs a user defined warning message.
@@ -2463,7 +2465,7 @@ var Usergrid = (function(){
   */
   Usergrid.Client.prototype.logWarn = function(options) {
     this.monitor.logWarn(options);
-  }
+  };
 
   /*
   * Logs a user defined error message.
@@ -2475,7 +2477,7 @@ var Usergrid = (function(){
   */
   Usergrid.Client.prototype.logError = function(options) {
     this.monitor.logError(options);
-  }
+  };
 
   /*
   * Logs a user defined assert message.
@@ -2487,7 +2489,7 @@ var Usergrid = (function(){
   */
   Usergrid.Client.prototype.logAssert = function(options) {
     this.monitor.logAssert(options);
-  }
+  };
 
   //END USERGRID SDK
   return Usergrid;
@@ -2632,7 +2634,7 @@ var Apigee = (function(){
     } else {
       console.log("Error: Apigee APM configuration unavailable.");
     }
-  }
+  };
 
   /*
   * Function for downloading the current Apigee Monitoring configuration.
@@ -2682,12 +2684,12 @@ var Apigee = (function(){
             } else {
               self.deviceConfig = config.defaultAppConfig;
             }
-                        self.sync();
+            self.sync();
           }
         }  // callback is not a function
       }  // readyState === 4
     }  // onReadyStateChange
-  }
+  };
 
 
   /*
@@ -2730,7 +2732,7 @@ var Apigee = (function(){
       console.log("Error syncing");
       console.log(syncRequest.responseText);
     }
-  }
+  };
 
   /*
   * Function that is called during the window.onerror handler. Grabs all parameters sent by that function.
@@ -2744,7 +2746,7 @@ var Apigee = (function(){
   */
   Apigee.MonitoringClient.catchCrashReport = function(crashEvent, url, line) {
     logCrash({tag:"CRASH", logMessage:"Error:"+crashEvent+" for url:"+url+" on line:"+line});
-  }
+  };
 
   /*
   * Registers a device with Apigee Monitoring. Generates a new UUID for a device and collects relevant info on it.
@@ -2757,32 +2759,32 @@ var Apigee = (function(){
     if((this.configuration === null) || (this.configuration === "undefined")) {
       return;
     }
-    
     //If the user agent string exists on the device
     var self = this;
     var sessionSummary = {};
+    //timeStamp goes first because it is used in other properties
     sessionSummary.timeStamp = timeStamp();
-    //Lets set all the automatically unknowns
-    sessionSummary.networkType = UNKNOWN;
-    sessionSummary.networkCarrier = UNKNOWN;
-    sessionSummary.deviceCountry = UNKNOWN;
-    sessionSummary.batteryLevel = "-100";
-    sessionSummary.networkSubType = UNKNOWN;
-    sessionSummary.networkCountry = UNKNOWN;
-    sessionSummary.sessionId = randomUUID();
-    sessionSummary.applicationVersion = "1.0";
+    //defaults for other properties
+    sessionSummary.appConfigType = UNKNOWN;
     sessionSummary.appId = this.appId.toString();
-    sessionSummary.sessionStartTime = sessionSummary.timeStamp;
-    sessionSummary.sdkType = SDKTYPE;
-    sessionSummary.localLanguage = UNKNOWN;
+    sessionSummary.applicationVersion = "1.0";
+    sessionSummary.batteryLevel = "-100";
+    sessionSummary.deviceCountry = UNKNOWN;
+    sessionSummary.deviceId = UNKNOWN;
     sessionSummary.deviceModel = UNKNOWN;
     sessionSummary.deviceOSVersion = UNKNOWN;
-    sessionSummary.localCountry = UNKNOWN;
     sessionSummary.devicePlatform = UNKNOWN;
-    sessionSummary.appConfigType = UNKNOWN;
+    sessionSummary.localCountry = UNKNOWN;
+    sessionSummary.localLanguage = UNKNOWN;
+    sessionSummary.networkCarrier = UNKNOWN;
+    sessionSummary.networkCountry = UNKNOWN;
+    sessionSummary.networkSubType = UNKNOWN;
+    sessionSummary.networkType = UNKNOWN;
+    sessionSummary.sdkType = SDKTYPE;
+    sessionSummary.sessionId = randomUUID();
+    sessionSummary.sessionStartTime = sessionSummary.timeStamp;
 
-
-    if(this.deviceConfig.locationCaptureEnabled) {
+    if(self.deviceConfig.locationCaptureEnabled) {
       if (typeof navigator.geolocation !== "undefined") {
         navigator.geolocation.getCurrentPosition(function(position){
           self.sessionMetrics.latitude = position.coords.latitude;
@@ -2796,13 +2798,23 @@ var Apigee = (function(){
     //If not let's fallback onto stuff we should collect ourselves.
     if (isPhoneGap()) {
       //framework is phonegap.
-      sessionSummary.devicePlatform = window.device.platform;
-      sessionSummary.deviceOSVersion = window.device.version;
+      if("device" in window){
+        sessionSummary.devicePlatform = window.device.platform;
+        sessionSummary.deviceOSVersion = window.device.version;
+        sessionSummary.deviceModel = window.device.name;
+      }else if(window.cordova){
+        sessionSummary.devicePlatform = window.cordova.platformId;
+        sessionSummary.deviceOSVersion = UNKNOWN;
+        sessionSummary.deviceModel = UNKNOWN;
+      }
+      if("connection" in navigator){
+        sessionSummary.networkType = navigator.connection.type||UNKNOWN;
+      }
 
       //Get the device id if we want it. If we dont, but we want it obfuscated generate
       //a one off id and attach it to localStorage.
-      if(this.deviceConfig.deviceIdCaptureEnabled) {
-        if(this.deviceConfig.obfuscateDeviceId) {
+      if(self.deviceConfig.deviceIdCaptureEnabled) {
+        if(self.deviceConfig.obfuscateDeviceId) {
           sessionSummary.deviceId = generateDeviceId();
         } else {
           sessionSummary.deviceId = window.device.uuid;
@@ -2815,8 +2827,6 @@ var Apigee = (function(){
         }
       }
 
-      sessionSummary.deviceModel = window.device.name;
-      sessionSummary.networkType = navigator.connection.type;
 
     } else if (isTrigger()) {
       //Framework is trigger
@@ -2830,7 +2840,7 @@ var Apigee = (function(){
       sessionSummary.deviceOSVersion = os;
 
       //Get the device id if we want it. Trigger.io doesn't expose device id APIs
-      if(this.deviceConfig.deviceIdCaptureEnabled) {
+      if(self.deviceConfig.deviceIdCaptureEnabled) {
         sessionSummary.deviceId = generateDeviceId();
       } else {
         sessionSummary.deviceId = UNKNOWN;
@@ -2840,104 +2850,45 @@ var Apigee = (function(){
       sessionSummary.networkType = forge.is.connection.wifi() ? "WIFI" : UNKNOWN;
 
     } else if (isTitanium()) {
-      var self = this;
       Ti.App.addEventListener("analytics:platformMetrics", function(e){
         //Framework is appcelerator
-        self.sessionMetrics.devicePlatform = e.name;
-        self.sessionMetrics.deviceOSVersion = e.osname;
+        sessionSummary.devicePlatform = e.name;
+        sessionSummary.deviceOSVersion = e.osname;
 
         //Get the device id if we want it. If we dont, but we want it obfuscated generate
         //a one off id and attach it to localStorage.
         if(self.deviceConfig.deviceIdCaptureEnabled) {
           if(self.deviceConfig.obfuscateDeviceId) {
-          self.sessionMetrics.deviceId = generateDeviceId();
+          sessionSummary.deviceId = generateDeviceId();
           } else {
-          self.sessionMetrics.deviceId = e.uuid;
+          sessionSummary.deviceId = e.uuid;
           }
         } else {
-          if(self.deviceConfig.obfuscateDeviceId) {
-          self.sessionMetrics.deviceId = generateDeviceId();
+          if(this.deviceConfig.obfuscateDeviceId) {
+          sessionSummary.deviceId = generateDeviceId();
           } else {
-          self.sessionMetrics.deviceId = UNKNOWN;
+          sessionSummary.deviceId = UNKNOWN;
           }
         }
 
-        self.sessionMetrics.deviceModel = e.model;
-        self.sessionMetrics.networkType = e.networkType;
+        sessionSummary.deviceModel = e.model;
+        sessionSummary.networkType = e.networkType;
       });
     } else {
       //Can't detect framework assume browser.
       //Here we want to check for localstorage and make sure the browser has it
       if(typeof window.localStorage !== "undefined") {
         //If no uuid is set in localstorage create a new one, and set it as the session's deviceId
-
-        if(this.deviceConfig.deviceIdCaptureEnabled) {
+        if(self.deviceConfig.deviceIdCaptureEnabled) {
           sessionSummary.deviceId = generateDeviceId();
-        } else {
-          sessionSummary.deviceId = UNKNOWN;
         }
       }
 
       if(typeof navigator.userAgent !== "undefined") {
         //Small hack to make all device names consistent.
-
-        var ua = navigator.userAgent;
-        var browserName  = navigator.appName;
-        var nameOffset,verOffset,ix;
-
-        // In Opera, the true version is after "Opera" or after "Version"
-        if ((verOffset=ua.indexOf("Opera"))!=-1) {
-         browserName = "Opera";
-         fullVersion = ua.substring(verOffset+6);
-         if ((verOffset=ua.indexOf("Version"))!=-1)
-           fullVersion = ua.substring(verOffset+8);
-        }
-        // In MSIE, the true version is after "MSIE" in userAgent
-        else if ((verOffset=ua.indexOf("MSIE"))!=-1) {
-         browserName = "Microsoft Internet Explorer";
-         fullVersion = ua.substring(verOffset+5);
-        }
-        // In Chrome, the true version is after "Chrome"
-        else if ((verOffset=ua.indexOf("Chrome"))!=-1) {
-         browserName = "Chrome";
-         fullVersion = ua.substring(verOffset+7);
-        }
-        // In Safari, the true version is after "Safari" or after "Version"
-        else if ((verOffset=ua.indexOf("Safari"))!=-1) {
-         browserName = "Safari";
-         fullVersion = ua.substring(verOffset+7);
-         if ((verOffset=ua.indexOf("Version"))!=-1)
-           fullVersion = ua.substring(verOffset+8);
-        }
-        // In Firefox, the true version is after "Firefox"
-        else if ((verOffset=ua.indexOf("Firefox"))!=-1) {
-         browserName = "Firefox";
-         fullVersion = ua.substring(verOffset+8);
-        }
-        // In most other browsers, "name/version" is at the end of userAgent
-        else if ( (nameOffset=ua.lastIndexOf(' ')+1) <
-                  (verOffset=ua.lastIndexOf('/')) )
-        {
-         browserName = ua.substring(nameOffset,verOffset);
-         fullVersion = ua.substring(verOffset+1);
-         if (browserName.toLowerCase()==browserName.toUpperCase()) {
-          browserName = navigator.appName;
-         }
-        }
-        // trim the fullVersion string at semicolon/space if present
-        if ((ix=fullVersion.indexOf(";"))!=-1){
-          fullVersion=fullVersion.substring(0,ix);
-        }
-        if ((ix=fullVersion.indexOf(" "))!=-1) {
-          fullVersion=fullVersion.substring(0,ix);
-        }
-
-        sessionSummary.devicePlatform = browserName;
-        sessionSummary.deviceOSVersion = fullVersion;
-      } else {
-        sessionSummary.devicePlatform = UNKNOWN;
-        sessionSummary.deviceOSVersion = UNKNOWN;
-      }
+        var browserData=determineBrowserType();
+        sessionSummary.devicePlatform = browserData.devicePlatform;
+        sessionSummary.deviceOSVersion = browserData.deviceOSVersion;
 
 
       // if(typeof navigator.appVersion !== "undefined") {
@@ -2949,13 +2900,12 @@ var Apigee = (function(){
       }
 
     }
-    this.sessionMetrics = sessionSummary;
-
+  }
+    self.sessionMetrics = sessionSummary;
     if(isTitanium()) {
       Ti.App.fireEvent("analytics:attachReady");
     }
-  }
-
+};
   /*
   * Method to encapsulate the monkey patching of AJAX methods. We pass in the XMLHttpRequest object for monkey patching.
   *
@@ -3036,7 +2986,7 @@ var Apigee = (function(){
 
           send.call(this, data);
        }
-  }
+  };
 
   Apigee.MonitoringClient.prototype.patchLoggingCalls = function(){
     //Hacky way of tapping into this and switching it around but it'll do.
@@ -3097,7 +3047,7 @@ var Apigee = (function(){
       }
     }
 
-  }
+  };
 
   /*
   * Prepares data for syncing on window close.
@@ -3133,7 +3083,7 @@ var Apigee = (function(){
     if(syncFlag && !self.testMode) {
       this.sync(syncObject);
     }
-  }
+  };
 
   /*
   * Logs a user defined message.
@@ -3152,7 +3102,7 @@ var Apigee = (function(){
       timeStamp: timeStamp()
     }
     logs.push(cleansedLog);
-  }
+  };
 
   /*
   * Logs a user defined verbose message.
@@ -3168,7 +3118,7 @@ var Apigee = (function(){
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.verbose ) {
       this.logMessage(options);
     }
-  }
+  };
 
   /*
   * Logs a user defined debug message.
@@ -3184,7 +3134,7 @@ var Apigee = (function(){
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.debug ) {
       this.logMessage(options);
     }
-  }
+  };
 
   /*
   * Logs a user defined informational message.
@@ -3200,7 +3150,7 @@ var Apigee = (function(){
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.info ) {
       this.logMessage(options);
     }
-  }
+  };
 
   /*
   * Logs a user defined warning message.
@@ -3216,7 +3166,7 @@ var Apigee = (function(){
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.warn ) {
       this.logMessage(options);
     }
-  }
+  };
 
   /*
   * Logs a user defined error message.
@@ -3232,7 +3182,7 @@ var Apigee = (function(){
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.error ) {
       this.logMessage(options);
     }
-  }
+  };
 
   /*
   * Logs a user defined assert message.
@@ -3248,7 +3198,7 @@ var Apigee = (function(){
     if(this.deviceConfig.logLevelToMonitor >= LOGLEVELNUMBERS.assert ) {
       this.logMessage(options);
     }
-  }
+  };
 
   /*
   * Internal function for encapsulating crash log catches. Not directly callable.
@@ -3276,7 +3226,7 @@ var Apigee = (function(){
   */
   Apigee.MonitoringClient.prototype.logNetworkCall = function(options) {
     metrics.push(options);
-  }
+  };
 
 
   /*
@@ -3289,7 +3239,7 @@ var Apigee = (function(){
   */
   Apigee.MonitoringClient.prototype.getMonitoringURL = function() {
     return this.URI + '/' + this.orgName + '/' + this.appName + '/apm/';
-  }
+  };
 
 
 
@@ -3306,27 +3256,27 @@ var Apigee = (function(){
   */
   Apigee.MonitoringClient.prototype.getConfig = function(key) {
 
-  }
+  };
 
   //TEST HELPERS NOT REALLY MEANT TO BE USED OUTSIDE THAT CONTEXT.
   //Simply exposes some internal data that is collected.
 
   Apigee.MonitoringClient.prototype.logs = function(){
     return logs;
-  }
+  };
 
   Apigee.MonitoringClient.prototype.metrics = function(){
     return metrics;
-  }
+  };
 
   Apigee.MonitoringClient.prototype.getSessionMetrics = function(){
     return this.sessionMetrics;
-  }
+  };
 
   Apigee.MonitoringClient.prototype.clearMetrics = function(){
     logs = [];
     metrics = [];
-  }
+  };
 
   //UUID Generation function unedited
 
@@ -3385,7 +3335,7 @@ var Apigee = (function(){
 
   //Helper. Determines if the platform device is phonegap
   function isPhoneGap() {
-      return (typeof window.device !== "undefined");
+      return (typeof cordova !== "undefined")||(typeof PhoneGap !== "undefined")||(typeof window.device !== "undefined");
   }
 
   //Helper. Determines if the platform device is trigger.io
@@ -3398,6 +3348,69 @@ var Apigee = (function(){
       return (typeof Titanium !== "undefined");
   }
 
+  /*
+   * @method determineBrowserType
+   */
+  function determineBrowserType(){
+        var ua = navigator.userAgent;
+        var browserName  = navigator.appName;
+        var nameOffset,verOffset,ix,fullVersion=UNKNOWN;
+        var browserData={
+          devicePlatform:UNKNOWN,
+          deviceOSVersion:UNKNOWN
+        };
+
+        // In Opera, the true version is after "Opera" or after "Version"
+        if ((verOffset=ua.indexOf("Opera"))!=-1) {
+         browserName = "Opera";
+         fullVersion = ua.substring(verOffset+6);
+         if ((verOffset=ua.indexOf("Version"))!=-1)
+           fullVersion = ua.substring(verOffset+8);
+        }
+        // In MSIE, the true version is after "MSIE" in userAgent
+        else if ((verOffset=ua.indexOf("MSIE"))!=-1) {
+         browserName = "Microsoft Internet Explorer";
+         fullVersion = ua.substring(verOffset+5);
+        }
+        // In Chrome, the true version is after "Chrome"
+        else if ((verOffset=ua.indexOf("Chrome"))!=-1) {
+         browserName = "Chrome";
+         fullVersion = ua.substring(verOffset+7);
+        }
+        // In Safari, the true version is after "Safari" or after "Version"
+        else if ((verOffset=ua.indexOf("Safari"))!=-1) {
+         browserName = "Safari";
+         fullVersion = ua.substring(verOffset+7);
+         if ((verOffset=ua.indexOf("Version"))!=-1)
+           fullVersion = ua.substring(verOffset+8);
+        }
+        // In Firefox, the true version is after "Firefox"
+        else if ((verOffset=ua.indexOf("Firefox"))!=-1) {
+         browserName = "Firefox";
+         fullVersion = ua.substring(verOffset+8);
+        }
+        // In most other browsers, "name/version" is at the end of userAgent
+        else if ( (nameOffset=ua.lastIndexOf(' ')+1) <
+                  (verOffset=ua.lastIndexOf('/')) )
+        {
+         browserName = ua.substring(nameOffset,verOffset);
+         fullVersion = ua.substring(verOffset+1);
+         if (browserName.toLowerCase()==browserName.toUpperCase()) {
+          browserName = navigator.appName;
+         }
+        }
+        // trim the fullVersion string at semicolon/space if present
+        if ((ix=fullVersion.indexOf(";"))!=-1){
+          fullVersion=fullVersion.substring(0,ix);
+        }
+        if ((ix=fullVersion.indexOf(" "))!=-1) {
+          fullVersion=fullVersion.substring(0,ix);
+        }
+
+        browserData.devicePlatform = browserName;
+        browserData.deviceOSVersion = fullVersion;
+      return browserData;
+  }
 
   return Apigee;
 
