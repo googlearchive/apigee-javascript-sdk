@@ -48,7 +48,7 @@ var Usergrid = (function(){
     //other options
     this.buildCurl = options.buildCurl || false;
     this.logging = options.logging || false;
-  this.monitoringEnabled = options.monitoringEnabled || true;
+    this.monitoringEnabled = options.monitoringEnabled || true;
 
     //timeout and callbacks
     this._callTimeout =  options.callTimeout || 30000; //default to 30 seconds
@@ -87,10 +87,10 @@ var Usergrid = (function(){
     //Init app monitoring.
     if (this.monitoringEnabled) {
       try{
-  this.monitor = new Apigee.MonitoringClient(options);
-  this.monitor.startSession();
+        this.monitor = new Apigee.MonitoringClient(options);
+        //this.monitor.startSession();
       }catch(e){
-      console.log(e); 
+        console.log(e); 
       }
     }
   };
@@ -2582,6 +2582,7 @@ var Apigee = (function(){
       //If we're not in the sampling window don't setup data collection at all
       if(sampleSeed < this.deviceConfig.samplingRate){
         this.appId = this.configuration.instaOpsApplicationId;
+        this.appConfigType=this.deviceConfig.appConfigType;
 
         //Let's monkeypatch logging calls to intercept and send to server.
         if(this.deviceConfig.enableLogMonitoring) {
@@ -2725,7 +2726,7 @@ var Apigee = (function(){
       logs = [];
       metrics = [];
       var response = syncRequest.responseText;
-      console.log(response);
+      console.log(syncObject, response);
     } else {
       //Not much we can do if there was an error syncing data.
       //Log it to console accordingly.
@@ -2765,9 +2766,9 @@ var Apigee = (function(){
     //timeStamp goes first because it is used in other properties
     sessionSummary.timeStamp = timeStamp();
     //defaults for other properties
-    sessionSummary.appConfigType = UNKNOWN;
+    sessionSummary.appConfigType = this.appConfigType;
     sessionSummary.appId = this.appId.toString();
-    sessionSummary.applicationVersion = "1.0";
+    sessionSummary.applicationVersion = UNKNOWN;
     sessionSummary.batteryLevel = "-100";
     sessionSummary.deviceCountry = UNKNOWN;
     sessionSummary.deviceId = UNKNOWN;
@@ -2901,10 +2902,11 @@ var Apigee = (function(){
 
     }
   }
-    self.sessionMetrics = sessionSummary;
-    if(isTitanium()) {
-      Ti.App.fireEvent("analytics:attachReady");
-    }
+  self.sessionMetrics = sessionSummary;
+  if(isTitanium()) {
+    Ti.App.fireEvent("analytics:attachReady");
+  }
+  console.log(JSON.stringify(self.sessionMetrics, null, 4));
 };
   /*
   * Method to encapsulate the monkey patching of AJAX methods. We pass in the XMLHttpRequest object for monkey patching.
@@ -2964,7 +2966,7 @@ var Apigee = (function(){
                           apigee.logNetworkCall(summary);
                       }
                   } else {
-                    console.log('ignoring network perf for url ' + url);
+                    //console.log('ignoring network perf for url ' + url);
                   }
               }
 
