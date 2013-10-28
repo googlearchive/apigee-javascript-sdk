@@ -44,6 +44,9 @@ var Usergrid = (function(){
     if (options.appName) {
       this.set('appName', options.appName);
     }
+    if (options.appVersion) {
+      this.set('appVersion', options.appVersion);
+    }
 
     //other options
     this.buildCurl = options.buildCurl || false;
@@ -2768,7 +2771,7 @@ var Apigee = (function(){
     //defaults for other properties
     sessionSummary.appConfigType = this.appConfigType;
     sessionSummary.appId = this.appId.toString();
-    sessionSummary.applicationVersion = UNKNOWN;
+    sessionSummary.appVersion = ("undefined" !== typeof this.appVersion)?this.appVersion.toString():UNKNOWN;
     sessionSummary.batteryLevel = "-100";
     sessionSummary.deviceCountry = UNKNOWN;
     sessionSummary.deviceId = UNKNOWN;
@@ -2892,9 +2895,9 @@ var Apigee = (function(){
         sessionSummary.deviceOSVersion = browserData.deviceOSVersion;
 
 
-      // if(typeof navigator.appVersion !== "undefined") {
-      //   sessionSummary.appVersion = navigator.appVersion;
-      // }
+       if(sessionSummary.applicationVersion === UNKNOWN && typeof navigator.appVersion !== "undefined") {
+         sessionSummary.appVersion = navigator.appVersion;
+       }
 
       if (typeof navigator.language !== "undefined") {
         sessionSummary.localLanguage = navigator.language;
