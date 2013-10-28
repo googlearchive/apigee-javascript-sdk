@@ -2726,7 +2726,7 @@ var Apigee = (function(){
       logs = [];
       metrics = [];
       var response = syncRequest.responseText;
-      console.log(syncObject, response);
+      //console.log(syncObject, response);
     } else {
       //Not much we can do if there was an error syncing data.
       //Log it to console accordingly.
@@ -2906,7 +2906,6 @@ var Apigee = (function(){
   if(isTitanium()) {
     Ti.App.fireEvent("analytics:attachReady");
   }
-  console.log(JSON.stringify(self.sessionMetrics, null, 4));
 };
   /*
   * Method to encapsulate the monkey patching of AJAX methods. We pass in the XMLHttpRequest object for monkey patching.
@@ -2958,7 +2957,6 @@ var Apigee = (function(){
                       if(self.status == 200) {
                           //Record the http call here
                           summary.numErrors = "0";
-                          console.log(JSON.stringify(summary));
                           apigee.logNetworkCall(summary);
                       } else {
                           //Record a connection failure here
