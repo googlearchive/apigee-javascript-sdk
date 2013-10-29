@@ -31,7 +31,7 @@ var Usergrid = (function(){
 
   window.Usergrid = window.Usergrid || {};
   Usergrid = Usergrid || {};
-  Usergrid.USERGRID_SDK_VERSION = '2.0.4';
+  Usergrid.USERGRID_SDK_VERSION = '2.0.5';
 
   Usergrid.Client = function(options) {
     //usergrid enpoint
