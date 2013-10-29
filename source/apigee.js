@@ -2771,7 +2771,7 @@ var Apigee = (function(){
     //defaults for other properties
     sessionSummary.appConfigType = this.appConfigType;
     sessionSummary.appId = this.appId.toString();
-    sessionSummary.appVersion = ("undefined" !== typeof this.appVersion)?this.appVersion.toString():UNKNOWN;
+    sessionSummary.applicationVersion = ("undefined" !== typeof this.appVersion)?this.appVersion.toString():UNKNOWN;
     sessionSummary.batteryLevel = "-100";
     sessionSummary.deviceCountry = UNKNOWN;
     sessionSummary.deviceId = UNKNOWN;
@@ -2896,7 +2896,7 @@ var Apigee = (function(){
 
 
        if(sessionSummary.applicationVersion === UNKNOWN && typeof navigator.appVersion !== "undefined") {
-         sessionSummary.appVersion = navigator.appVersion;
+         sessionSummary.applicationVersion = navigator.appVersion;
        }
 
       if (typeof navigator.language !== "undefined") {
