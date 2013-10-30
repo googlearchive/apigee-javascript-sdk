@@ -23,8 +23,9 @@
 */
 
   //Hack around IE console.log
-  window.console = window.console || {};
-  window.console.log = window.console.log || function() {};
+  if(!('console' in window)){
+    window.console={log:function(){}};
+  }
 
 var Usergrid = (function(){
   //BEGIN USERGRID SDK
@@ -58,40 +59,10 @@ var Usergrid = (function(){
     this._callTimeoutCallback =  options.callTimeoutCallback || null;
     this.logoutCallback =  options.logoutCallback || null;
   
-  /*
-    if (typeof navigator.geolocation !== "undefined") {
-    var self = this;
-      navigator.geolocation.getCurrentPosition(function(position){
-      var locationData = {
-      latitude:position.coords.latitude,
-      longitude:position.coords.longitude
-    }
-      
-    var entityData = {
-      "type":"devices",
-      "uuid":self.getDeviceUUID(),
-        "deviceModel":"UNKNOWN",
-      "devicePlatform":"JavaScript",
-      "deviceOSVersion":"UNKNOWN",
-      "location":locationData
-    }
-      
-      var deviceLocationOptions = {
-        client:self,
-        data:entityData
-      }
-      
-      var deviceEntity = new Usergrid.Entity(deviceLocationOptions);
-      deviceEntity.save(null);
-      });
-    }
-  */
-
     //Init app monitoring.
     if (this.monitoringEnabled) {
       try{
         this.monitor = new Apigee.MonitoringClient(options);
-        //this.monitor.startSession();
       }catch(e){
         console.log(e); 
       }
@@ -2688,7 +2659,7 @@ var Apigee = (function(){
             } else {
               self.deviceConfig = config.defaultAppConfig;
             }
-            self.sync();
+            self.prepareSync();
           }
         }  // callback is not a function
       }  // readyState === 4
@@ -2706,6 +2677,7 @@ var Apigee = (function(){
   */
   Apigee.MonitoringClient.prototype.sync = function(syncObject){
     //Sterilize the sync data
+
     var syncData = {}
     syncData.logs = syncObject.logs;
     syncData.metrics = syncObject.metrics;
@@ -2787,13 +2759,14 @@ var Apigee = (function(){
     sessionSummary.sdkType = SDKTYPE;
     sessionSummary.sessionId = randomUUID();
     sessionSummary.sessionStartTime = sessionSummary.timeStamp;
-
     if(self.deviceConfig.locationCaptureEnabled) {
       if (typeof navigator.geolocation !== "undefined") {
-        navigator.geolocation.getCurrentPosition(function(position){
+        function geoSuccessCallback(position){
           self.sessionMetrics.latitude = position.coords.latitude;
           self.sessionMetrics.longitude = position.coords.longitude;
-        });
+        }
+        function geoErrorCallback(){console.log("Location access is not available.")}
+        navigator.geolocation.getCurrentPosition(geoSuccessCallback, geoErrorCallback);
       }
     }
 
@@ -3015,7 +2988,6 @@ var Apigee = (function(){
             self.logDebug({tag:"CONSOLE", logMessage:arguments[0]});
             original.debug.apply(original, arguments);
         }
-
     }
 
     if(isTitanium()) {
