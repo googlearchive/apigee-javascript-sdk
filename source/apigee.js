@@ -2866,12 +2866,6 @@ var Apigee = (function(){
         var browserData=determineBrowserType();
         sessionSummary.devicePlatform = browserData.devicePlatform;
         sessionSummary.deviceOSVersion = browserData.deviceOSVersion;
-
-
-       if(sessionSummary.applicationVersion === UNKNOWN && typeof navigator.appVersion !== "undefined") {
-         sessionSummary.applicationVersion = navigator.appVersion;
-       }
-
       if (typeof navigator.language !== "undefined") {
         sessionSummary.localLanguage = navigator.language;
       }
