@@ -1,0 +1,21 @@
+{
+  "name": "apigee-javascript-sdk",
+  "version": "3.0.0",
+  "description": "Apigee Javascript SDK",
+  "main": "index.js",
+  "directories": {
+    "test": "tests"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/apigee/apigee-javascript-sdk.git"
+  },
+  "author": "Ryan Bridges, apigee",
+  "license": "GPLv2",
+  "bugs": {
+    "url": "https://github.com/apigee/apigee-javascript-sdk/issues"
+  }
+}
