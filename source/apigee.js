@@ -107,7 +107,7 @@ var Usergrid = (function(){
     }
 
     if (self.getToken()) {
-      qs['access_token'] = self.getToken();
+      qs.access_token = self.getToken();
       /* //could also use headers for the token
       xhr.setRequestHeader("Authorization", "Bearer " + self.getToken());
       xhr.withCredentials = true;
@@ -228,7 +228,7 @@ var Usergrid = (function(){
      var assetURL = this.URI + '/' + this.orgName + '/' + this.appName + '/assets/' + uuid + '/data';
 
      if (self.getToken()) {
-       qs['access_token'] = self.getToken();
+       qs.access_token = self.getToken();
      }
 
      //append params to the path
@@ -252,7 +252,7 @@ var Usergrid = (function(){
   Usergrid.Client.prototype.createGroup = function(options, callback) {
     var getOnExist = options.getOnExist || false;
 
-    var options = {
+    options = {
       path: options.path,
       client: this,
       data:options
@@ -290,7 +290,7 @@ var Usergrid = (function(){
     // todo: replace the check for new / save on not found code with simple save
     // when users PUT on no user fix is in place.
     /*
-    var options = {
+    options = {
       client:this,
       data:options
     }
@@ -302,7 +302,7 @@ var Usergrid = (function(){
     });
     */
     var getOnExist = options.getOnExist || false; //if true, will return entity if one already exists
-    var options = {
+    options = {
       client:this,
       data:options
     };
@@ -341,7 +341,7 @@ var Usergrid = (function(){
    *  @return {callback} callback(err, data)
    */
   Usergrid.Client.prototype.getEntity = function (options, callback) {
-    var options = {
+    options = {
       client:this,
       data:options
     };
@@ -365,7 +365,7 @@ var Usergrid = (function(){
    */
   Usergrid.Client.prototype.restoreEntity = function (serializedObject) {
     var data = JSON.parse(serializedObject);
-    var options = {
+    options = {
       client:this,
       data:data
     };
@@ -473,7 +473,7 @@ var Usergrid = (function(){
   */
   Usergrid.Client.prototype.createUserActivity = function (user, options, callback) {
     options.type = 'users/'+user+'/activities';
-    var options = {
+    options = {
       client:this,
       data:options
     };
@@ -641,7 +641,7 @@ var Usergrid = (function(){
       if (err && self.logging) {
         console.log('error trying to log user in');
       } else {
-        var options = {
+        options = {
           client:self,
           data:data.user
         };
@@ -709,7 +709,7 @@ var Usergrid = (function(){
           "name" : data.name,
           "uuid" : data.uuid
         };
-        var options = {
+        options = {
           client:self,
           data:userData
         };
@@ -934,11 +934,11 @@ var Usergrid = (function(){
             "type":options.path
           }
           if (result.get("provider") === "google") {
-                pushEntity["payloads"] = {};
-                pushEntity["payloads"][notifierName] = options.message;
+                pushEntity.payloads = {};
+                pushEntity.payloads[notifierName] = options.message;
           } else if (result.get("provider") === "apple") {
-                     pushEntity["payloads"] = {}
-                     pushEntity["payloads"][notifierName] = {
+                     pushEntity.payloads = {}
+                     pushEntity.payloads[notifierName] = {
                 "aps": {
                     "alert":options.message,
                     "sound":options.sound
@@ -977,18 +977,18 @@ var Usergrid = (function(){
   * Create and return a "version 4" RFC-4122 UUID string.
   */
   function randomUUID() {
-    var s = [], itoh = '0123456789ABCDEF';
+    var s = [], itoh = '0123456789ABCDEF', i;
 
     // Make array of random hex digits. The UUID only has 32 digits in it, but we
     // allocate an extra items to make room for the '-'s we'll be inserting.
-    for (var i = 0; i <36; i++) s[i] = Math.floor(Math.random()*0x10);
+    for ( i = 0; i <36; i++) {s[i] = Math.floor(Math.random()*0x10);}
 
     // Conform to RFC-4122, section 4.4
     s[14] = 4;  // Set 4 high bits of time_high field to version
     s[19] = (s[19] & 0x3) | 0x8;  // Specify 2 high bits of clock sequence
 
     // Convert to hex chars
-    for (var i = 0; i <36; i++) s[i] = itoh[s[i]];
+    for ( i = 0; i <36; i++) {s[i] = itoh[s[i]];}
 
     // Insert '-'s
     s[8] = s[13] = s[18] = s[23] = '-';
@@ -1174,11 +1174,11 @@ var Usergrid = (function(){
   Usergrid.Entity.prototype.fetch = function (callback) {
     var type = this.get('type');
     var self = this;
-
+    var error;
     //Check for an entity type, then if a uuid is available, use that, otherwise, use the name
 
     if (type === undefined) {
-      var error = 'cannot fetch entity, no entity type specified';
+       error = 'cannot fetch entity, no entity type specified';
         if (self._client.logging) {
       console.log(error);
         }
@@ -1191,7 +1191,7 @@ var Usergrid = (function(){
           type += '/' + this.get('username');
         } else {
           if (typeof(callback) === 'function') {
-            var error = 'no_name_specified';
+             error = 'no_name_specified';
             if (self._client.logging) {
               console.log(error);
             }
@@ -1203,7 +1203,7 @@ var Usergrid = (function(){
           type += '/' + encodeURIComponent(this.get('name'));
         } else {
           if (typeof(callback) === 'function') {
-            var error = 'no_name_specified';
+             error = 'no_name_specified';
             if (self._client.logging) {
               console.log(error);
             }
@@ -1290,13 +1290,13 @@ var Usergrid = (function(){
   Usergrid.Entity.prototype.connect = function (connection, entity, callback) {
 
     var self = this;
-
+    var error;
     //connectee info
     var connecteeType = entity.get('type');
     var connectee = this.getEntityId(entity);
     if (!connectee) {
       if (typeof(callback) === 'function') {
-        var error = 'Error trying to delete object - no uuid specified.';
+        error = 'Error trying to delete object - no uuid specified.';
         if (self._client.logging) {
           console.log(error);
         }
@@ -1310,7 +1310,7 @@ var Usergrid = (function(){
     var connector = this.getEntityId(this);
     if (!connector) {
       if (typeof(callback) === 'function') {
-        var error = 'Error in connect - no uuid specified.';
+        error = 'Error in connect - no uuid specified.';
         if (self._client.logging) {
           console.log(error);
         }
@@ -1430,7 +1430,7 @@ var Usergrid = (function(){
         console.log('entity could not be connected');
       }
 
-      self['groups'] = data.entities;
+      self.groups = data.entities;
 
       if (typeof(callback) === 'function') {
         callback(err, data, data.entities);
@@ -1457,7 +1457,7 @@ var Usergrid = (function(){
         data.entities[entity].createdDate = (new Date(data.entities[entity].created)).toUTCString();
       }
 
-      self['activities'] = data.entities;
+      self.activities = data.entities;
 
       if (typeof(callback) === 'function') {
         callback(err, data, data.entities);
@@ -1486,7 +1486,7 @@ var Usergrid = (function(){
         data.entities[entity]._portal_image_icon =  image;
       }
 
-      self['following'] = data.entities;
+      self.following = data.entities;
 
       if (typeof(callback) === 'function') {
         callback(err, data, data.entities);
@@ -1516,7 +1516,7 @@ var Usergrid = (function(){
         data.entities[entity]._portal_image_icon =  image;
       }
 
-      self['followers'] = data.entities;
+      self.followers = data.entities;
 
       if (typeof(callback) === 'function') {
         callback(err, data, data.entities);
@@ -1539,7 +1539,7 @@ var Usergrid = (function(){
         console.log('could not get user roles');
       }
 
-      self['roles'] = data.entities;
+      self.roles = data.entities;
 
       if (typeof(callback) === 'function') {
         callback(err, data, data.entities);
@@ -1582,10 +1582,10 @@ var Usergrid = (function(){
           ops_part.replace("*", "get,post,put,delete")
           var ops = ops_part.split(',');
           var ops_object = {}
-          ops_object['get'] = 'no';
-          ops_object['post'] = 'no';
-          ops_object['put'] = 'no';
-          ops_object['delete'] = 'no';
+          ops_object.get = 'no';
+          ops_object.post = 'no';
+          ops_object.put = 'no';
+          ops_object.delete = 'no';
           for (var j in ops) {
             ops_object[ops[j]] = 'yes';
           }
@@ -1594,7 +1594,7 @@ var Usergrid = (function(){
         }
       }
 
-      self['permissions'] = permissions;
+      self.permissions = permissions;
 
       if (typeof(callback) === 'function') {
         callback(err, data, data.entities);
@@ -1617,13 +1617,13 @@ var Usergrid = (function(){
   Usergrid.Entity.prototype.disconnect = function (connection, entity, callback) {
 
     var self = this;
-
+    var error;
     //connectee info
     var connecteeType = entity.get('type');
     var connectee = this.getEntityId(entity);
     if (!connectee) {
       if (typeof(callback) === 'function') {
-        var error = 'Error trying to delete object - no uuid specified.';
+        error = 'Error trying to delete object - no uuid specified.';
         if (self._client.logging) {
           console.log(error);
         }
@@ -1637,7 +1637,7 @@ var Usergrid = (function(){
     var connector = this.getEntityId(this);
     if (!connector) {
       if (typeof(callback) === 'function') {
-        var error = 'Error in connect - no uuid specified.';
+        error = 'Error in connect - no uuid specified.';
         if (self._client.logging) {
           console.log(error);
         }
@@ -2225,7 +2225,7 @@ var Usergrid = (function(){
    */
   Usergrid.Group.prototype.add = function(options, callback) {
     var self = this;
-    var options = {
+    options = {
       method:"POST",
       endpoint:"groups/"+this._path+"/users/"+options.user.get('username')
     }
@@ -2255,7 +2255,7 @@ var Usergrid = (function(){
   Usergrid.Group.prototype.remove = function(options, callback) {
     var self = this;
 
-    var options = {
+    options = {
       method:"DELETE",
       endpoint:"groups/"+this._path+"/users/"+options.user.get('username')
     }
@@ -2312,27 +2312,26 @@ var Usergrid = (function(){
   */
   Usergrid.Group.prototype.createGroupActivity = function(options, callback){
     var user = options.user;
-    var options = {
-      actor: {
-        "displayName":user.get("username"),
-        "uuid":user.get("uuid"),
-        "username":user.get("username"),
-        "email":user.get("email"),
-        "picture":user.get("picture"),
-        "image": {
-          "duration":0,
-          "height":80,
-          "url":user.get("picture"),
-          "width":80
-         },
-      },
-      "verb":"post",
-      "content":options.content };
-
-      options.type = 'groups/'+this._path+'/activities';
-      var options = {
+      options = {
         client:this._client,
-        data:options
+        data:{
+          actor: {
+            "displayName":user.get("username"),
+            "uuid":user.get("uuid"),
+            "username":user.get("username"),
+            "email":user.get("email"),
+            "picture":user.get("picture"),
+            "image": {
+              "duration":0,
+              "height":80,
+              "url":user.get("picture"),
+              "width":80
+             },
+          },
+          "verb":"post",
+          "content":options.content,
+          "type":'groups/'+this._path+'/activities'
+        }
       }
 
       var entity = new Usergrid.Entity(options);
@@ -2353,7 +2352,7 @@ var Usergrid = (function(){
   */
   function isUUID (uuid) {
     var uuidValueRegex = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/;
-    if (!uuid) return false;
+    if (!uuid) {return false;}
     return uuidValueRegex.test(uuid);
   }
 
@@ -2366,10 +2365,11 @@ var Usergrid = (function(){
   *  @return {string} Returns the encoded string
   */
   function encodeParams (params) {
-    tail = [];
+    var tail = [];
     var item = [];
+    var i;
     if (params instanceof Array) {
-      for (var i in params) {
+      for (i in params) {
         item = params[i];
         if ((item instanceof Array) && (item.length > 1)) {
           tail.push(item[0] + "=" + encodeURIComponent(item[1]));
@@ -2380,7 +2380,7 @@ var Usergrid = (function(){
         if (params.hasOwnProperty(key)) {
           var value = params[key];
           if (value instanceof Array) {
-            for (var i in value) {
+            for (i in value) {
               item = value[i];
               tail.push(key + "=" + encodeURIComponent(item));
             }
@@ -2761,11 +2761,11 @@ var Apigee = (function(){
     sessionSummary.sessionStartTime = sessionSummary.timeStamp;
     if(self.deviceConfig.locationCaptureEnabled) {
       if (typeof navigator.geolocation !== "undefined") {
-        function geoSuccessCallback(position){
+        var geoSuccessCallback = function(position){
           self.sessionMetrics.latitude = position.coords.latitude;
           self.sessionMetrics.longitude = position.coords.longitude;
         }
-        function geoErrorCallback(){console.log("Location access is not available.")}
+        var geoErrorCallback = function(){console.log("Location access is not available.")}
         navigator.geolocation.getCurrentPosition(geoSuccessCallback, geoErrorCallback);
       }
     }
@@ -2973,12 +2973,10 @@ var Apigee = (function(){
         log: function(){
             self.logInfo({tag:"CONSOLE", logMessage:arguments[0]});
             original.log.apply(original, arguments);
-        }
-        , warn: function(){
+        }, warn: function(){
             self.logWarn({tag:"CONSOLE", logMessage:arguments[0]});
             original.warn.apply(original, arguments);
-        }
-        , error: function(){
+        }, error: function(){
             self.logError({tag:"CONSOLE", logMessage:arguments[0]});
             original.error.apply(original, arguments);
         }, assert: function(){
@@ -3273,18 +3271,18 @@ var Apigee = (function(){
   * Create and return a "version 4" RFC-4122 UUID string.
   */
   function randomUUID() {
-    var s = [], itoh = '0123456789ABCDEF';
+    var s = [], itoh = '0123456789ABCDEF', i;
 
     // Make array of random hex digits. The UUID only has 32 digits in it, but we
     // allocate an extra items to make room for the '-'s we'll be inserting.
-    for (var i = 0; i <36; i++) s[i] = Math.floor(Math.random()*0x10);
+    for (i = 0; i <36; i++){ s[i] = Math.floor(Math.random()*0x10);}
 
     // Conform to RFC-4122, section 4.4
     s[14] = 4;  // Set 4 high bits of time_high field to version
     s[19] = (s[19] & 0x3) | 0x8;  // Specify 2 high bits of clock sequence
 
     // Convert to hex chars
-    for (var i = 0; i <36; i++) s[i] = itoh[s[i]];
+    for (i = 0; i <36; i++){ s[i] = itoh[s[i]];}
 
     // Insert '-'s
     s[8] = s[13] = s[18] = s[23] = '-';
@@ -3339,8 +3337,8 @@ var Apigee = (function(){
         if ((verOffset=ua.indexOf("Opera"))!=-1) {
          browserName = "Opera";
          fullVersion = ua.substring(verOffset+6);
-         if ((verOffset=ua.indexOf("Version"))!=-1)
-           fullVersion = ua.substring(verOffset+8);
+         if ((verOffset=ua.indexOf("Version"))!=-1){
+                    fullVersion = ua.substring(verOffset+8);}
         }
         // In MSIE, the true version is after "MSIE" in userAgent
         else if ((verOffset=ua.indexOf("MSIE"))!=-1) {
@@ -3356,8 +3354,8 @@ var Apigee = (function(){
         else if ((verOffset=ua.indexOf("Safari"))!=-1) {
          browserName = "Safari";
          fullVersion = ua.substring(verOffset+7);
-         if ((verOffset=ua.indexOf("Version"))!=-1)
-           fullVersion = ua.substring(verOffset+8);
+         if ((verOffset=ua.indexOf("Version"))!=-1){
+                    fullVersion = ua.substring(verOffset+8);}
         }
         // In Firefox, the true version is after "Firefox"
         else if ((verOffset=ua.indexOf("Firefox"))!=-1) {
