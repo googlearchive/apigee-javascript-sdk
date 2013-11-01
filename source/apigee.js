@@ -2873,7 +2873,6 @@ var Apigee = (function(){
     }
   }
   self.sessionMetrics = sessionSummary;
-  alert(JSON.stringify(self.sessionMetrics, null, 4));
   if(isTitanium()) {
     Ti.App.fireEvent("analytics:attachReady");
   }
