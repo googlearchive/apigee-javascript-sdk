@@ -1,4 +1,5 @@
 .DS_Store
 zip/
 lib/
-
+build/
+node_modules/
