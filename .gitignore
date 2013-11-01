@@ -2,4 +2,6 @@
 zip/
 lib/
 build/
+instrument/
+report/
 node_modules/

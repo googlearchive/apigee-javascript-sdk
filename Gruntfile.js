@@ -1,5 +1,5 @@
 module.exports = function(grunt) {
-  var tests = 'tests/**/*.html';
+  var tests = 'tests/**/*';
   var tasks = 'source/**/*.js';
   var samples = 'samples/**/*.*';
   var reportDir = 'report';
@@ -18,28 +18,42 @@ module.exports = function(grunt) {
         coverage: 'reports/coverage'
       }
     },
-    clean : [ 'build', 'tmp', 'report', 'instrument' ],
+    clean: ['build', 'tmp', 'report', 'instrument'],
     bumpup: 'package.json',
     //build
     copy: {
-        app: {
-            files: [
-                {expand: true, cwd: '<%= meta.src.main %>', src : ['**'], dest: 'build/source' },
-                {expand: true, cwd: '<%= meta.src.samples %>', src : ['**'], dest: 'build/samples' },
-                {expand: true, cwd: '<%= meta.src.test %>', src : ['**'], dest: 'build/test' }
-            ]
-        }
+      app: {
+        files: [{
+          expand: true,
+          cwd: '<%= meta.src.main %>',
+          src: ['**'],
+          dest: 'build/source'
+        }, {
+          expand: true,
+          cwd: '<%= meta.src.samples %>',
+          src: ['**'],
+          dest: 'build/samples'
+        }, {
+          expand: true,
+          cwd: '<%= meta.src.test %>',
+          src: ['**'],
+          dest: 'build/tests'
+        }]
+      }
     },
     //testing tasks
     complexity: {
-        generic: {
-            src: ['./build/source/**/*.js'],
-            options: {
-                cyclomatic: 10,
-                halstead: 15,
-                maintainability: 100
-            }
+      generic: {
+        src: ['./build/source/**/*.js'],
+        options: {
+          //jsLintXML: reportDir+'/jsLintReport.xml', // create XML JSLint-like report
+          //checkstyleXML: reportDir+'/checkstyle.xml', // create checkstyle report
+          errorsOnly: false, // show only maintainability errors                
+          cyclomatic: 10,
+          halstead: 40,
+          maintainability: 100
         }
+      }
     },
     jshint: {
       options: {
@@ -47,7 +61,7 @@ module.exports = function(grunt) {
         //eqeqeq: true,
         eqnull: true,
         //browser: true,
-        laxcomma:true,
+        laxcomma: true,
         globals: {
           jQuery: true,
           require: true,
@@ -55,18 +69,20 @@ module.exports = function(grunt) {
           document: true
         }
       },
-      files:{src: ['Gruntfile.js', tasks]}
+      files: {
+        src: ['Gruntfile.js', tasks]
+      }
     },
     qunit: {
       all: {
         options: {
-            urls:[
-              'http://localhost.cnn.com:8000/samples/booksSample.html'
-            ],
+          urls: [
+            'http://localhost:8000/tests/qunit/apigee_test.html'
+          ],
           coverage: {
-            src: ['source/**/*.js'], 
+            src: ['source/**/*.js'],
             instrumentedFiles: 'build/instrument',
-            htmlReport: reportDir+'/coverage',
+            htmlReport: reportDir + '/coverage',
             coberturaReport: reportDir
           }
         }
@@ -76,42 +92,53 @@ module.exports = function(grunt) {
       server: {
         options: {
           port: 3000,
-          base: '.'
+          base: 'build'
         }
       },
       test: {
         options: {
           port: 8000,
-          base: '.'
+          base: 'build'
         }
       }
     },
-    instrument : {
-      files : tasks,
-      options : {
-        basePath : 'instrument/'
+    instrument: {
+      files: tasks,
+      options: {
+        basePath: 'instrument/'
       }
     },
-    reloadTasks : {
-      rootPath : 'instrument/source'
+    reloadTasks: {
+      rootPath: 'instrument/source'
     },
-    storeCoverage : {
-      options : {
-        dir : reportDir
+    storeCoverage: {
+      options: {
+        dir: reportDir
       }
     },
-    makeReport : {
-      src : reportDir+'/**/*.json',
-      options : {
-        type : 'lcov',
-        dir : reportDir,
-        print : 'detail'
+    makeReport: {
+      src: reportDir + '/**/*.json',
+      options: {
+        type: 'lcov',
+        dir: reportDir,
+        print: 'detail'
+      }
+    },
+    uglify: {
+      my_target: {
+        options: {
+          sourceMap: 'dist/apigee-source-map.js'
+        },
+        files: {
+          'dist/apigee.min.js': ['build/source/apigee.js']
+        }
       }
     }
   });
-  grunt.loadNpmTasks('grunt-contrib-clean');
   //build
+  grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
+  grunt.loadNpmTasks('grunt-contrib-uglify');
   //test
   grunt.loadNpmTasks('grunt-contrib-jshint');
   grunt.loadNpmTasks('grunt-istanbul');
@@ -121,16 +148,24 @@ module.exports = function(grunt) {
   //release
   grunt.loadNpmTasks('grunt-bumpup');
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'copy']);
+  grunt.registerTask('default', ['clean', 'copy', 'validate', 'test', 'build']);
   // test
   grunt.registerTask('validate', ['jshint', 'complexity']);
-  grunt.registerTask('test', [ 'instrument', 'reloadTasks', 'connect:test', 'qunit', 'storeCoverage', 'makeReport' ]);
+  grunt.registerTask('test', [
+    'instrument',
+    'reloadTasks',
+    'connect:test',
+    'qunit',
+    'storeCoverage',
+    'makeReport'
+  ]);
   grunt.registerTask('dev', ['connect:server', 'watch']);
+  grunt.registerTask('build', ['uglify']);
   // commit
   grunt.registerTask('commit', ['bumpup:build']);
   // Alias task for release
-  grunt.registerTask('release', function (type) {
-    type = type ? type : 'patch';     // Set the release type
+  grunt.registerTask('release', function(type) {
+    type = type ? type : 'patch'; // Set the release type
     grunt.task.run('bumpup:' + type); // Bump up the version
   });
 
