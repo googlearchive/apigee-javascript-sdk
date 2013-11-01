@@ -2866,12 +2866,6 @@ var Apigee = (function(){
         var browserData=determineBrowserType();
         sessionSummary.devicePlatform = browserData.devicePlatform;
         sessionSummary.deviceOSVersion = browserData.deviceOSVersion;
-
-
-       if(sessionSummary.applicationVersion === UNKNOWN && typeof navigator.appVersion !== "undefined") {
-         sessionSummary.applicationVersion = navigator.appVersion;
-       }
-
       if (typeof navigator.language !== "undefined") {
         sessionSummary.localLanguage = navigator.language;
       }
@@ -2879,6 +2873,7 @@ var Apigee = (function(){
     }
   }
   self.sessionMetrics = sessionSummary;
+  alert(JSON.stringify(self.sessionMetrics, null, 4));
   if(isTitanium()) {
     Ti.App.fireEvent("analytics:attachReady");
   }
