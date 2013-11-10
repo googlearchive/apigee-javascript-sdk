@@ -34,6 +34,11 @@ var Usergrid = (function(){
   Usergrid = Usergrid || {};
   Usergrid.USERGRID_SDK_VERSION = '2.0.5';
 
+  /**
+   * @class
+   *
+   * Top-level class for interfacing with App Services.
+   */
   Usergrid.Client = function(options) {
     //usergrid enpoint
     this.URI = options.URI || 'https://api.usergrid.com';
@@ -69,7 +74,7 @@ var Usergrid = (function(){
     }
   };
 
-  /*
+  /**
   *  Main function for making requests to the API.  Can be called directly.
   *
   *  options object:
@@ -81,7 +86,7 @@ var Usergrid = (function(){
   *
   *  @method request
   *  @public
-  *  @params {object} options
+  *  @param {object} options
   *  @param {function} callback
   *  @return {callback} callback(err, data)
   */
@@ -214,7 +219,7 @@ var Usergrid = (function(){
     xhr.send(body);
   };
 
-  /*
+  /**
    *  function for building asset urls
    *
    *  @method buildAssetURL
@@ -240,7 +245,7 @@ var Usergrid = (function(){
      return assetURL;
    };
 
-  /*
+  /**
    *  Main function for creating new groups. Call this directly.
    *
    *  @method createGroup
@@ -275,7 +280,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  Main function for creating new entities - should be called directly.
   *
   *  options object: options {data:{'type':'collection_type', 'key':'value'}, uuid:uuid}}
@@ -326,7 +331,7 @@ var Usergrid = (function(){
 
   };
 
-  /*
+  /**
    *  Main function for getting existing entities - should be called directly.
    *
    *  You must supply a uuid or (username or name). Username only applies to users.
@@ -353,7 +358,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
    *  Main function for restoring an entity from serialized data.
    *
    *  serializedObject should have come from entityObject.serialize();
@@ -373,7 +378,7 @@ var Usergrid = (function(){
     return entity;
   };
 
-  /*
+  /**
   *  Main function for creating new collections - should be called directly.
   *
   *  options object: options {client:client, type: type, qs:qs}
@@ -393,7 +398,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
    *  Main function for restoring a collection from serialized data.
    *
    *  serializedObject should have come from collectionObject.serialize();
@@ -410,7 +415,7 @@ var Usergrid = (function(){
     return collection;
   };
 
-  /*
+  /**
    *  Main function for retrieving a user's activity feed.
    *
    *  @method getFeedForUser
@@ -436,7 +441,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  Function for creating new activities for the current user - should be called directly.
   *
   *  //user can be any of the following: "me", a uuid, a username
@@ -485,7 +490,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
    *  Function for creating user activities with an associated user entity.
    *
    *  user object:
@@ -521,7 +526,7 @@ var Usergrid = (function(){
 
   };
 
-  /*
+  /**
   *  A private method to get call timing of last call
   */
   Usergrid.Client.prototype.calcTimeDiff = function () {
@@ -533,7 +538,7 @@ var Usergrid = (function(){
    return seconds;
   };
 
-  /*
+  /**
    *  A public method to store the OAuth token for later use - uses localstorage if available
    *
    *  @method setToken
@@ -545,7 +550,7 @@ var Usergrid = (function(){
     this.set('token', token);
   };
 
-  /*
+  /**
    *  A public method to get the OAuth token
    *
    *  @method getToken
@@ -589,7 +594,7 @@ var Usergrid = (function(){
     return null;
   };
 
-  /*
+  /**
    * A public facing helper method for signing up users
    *
    * @method signup
@@ -614,7 +619,7 @@ var Usergrid = (function(){
     this.createEntity(options, callback);
   };
 
-  /*
+  /**
   *
   *  A public method to log in an app user - stores the token for later use
   *
@@ -740,7 +745,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  A public method to log in an app user with facebook - stores the token for later use
   *
   *  @method loginFacebook
@@ -777,7 +782,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  A public method to get the currently logged in user entity
   *
   *  @method getLoggedInUser
@@ -816,7 +821,7 @@ var Usergrid = (function(){
     }
   };
 
-  /*
+  /**
   *  A public method to test if a user is logged in - does not guarantee that the token is still valid,
   *  but rather that one exists
   *
@@ -831,18 +836,18 @@ var Usergrid = (function(){
     return false;
   };
 
-  /*
+  /**
   *  A public method to log out an app user - clears all user fields from client
   *
   *  @method logout
   *  @public
-  *  @return none
+  *  @return none`
   */
   Usergrid.Client.prototype.logout = function () {
     this.setToken(null);
   };
 
-  /*
+  /**
   *  A private method to build the curl call to display on the command line
   *
   *  @method buildCurlCall
@@ -877,7 +882,7 @@ var Usergrid = (function(){
     return curl;
   };
 
-  /*
+  /**
   *  Function to register a device with Apigee. Call directly with options object.
   *
   *  @method registerDevice
@@ -908,7 +913,7 @@ var Usergrid = (function(){
     }
   };
 
-  /*
+  /**
   *  Function to send push notification to a specified path. Call directly.
   *
   *  @method sendPushToDevice
@@ -996,7 +1001,7 @@ var Usergrid = (function(){
     return s.join('');
   }
 
-  /*
+  /**
   *  Function to get the assigned Apigee UUID of the device. Call directly to retrieve this information.
   *
   *  @method getDeviceUUID
@@ -1013,7 +1018,7 @@ var Usergrid = (function(){
     }
   };
 
-/*
+/**
 *  A class to Model a Usergrid Entity.
 *  Set the type and uuid of entity in the 'data' json object
 *
@@ -1027,7 +1032,7 @@ var Usergrid = (function(){
     }
   };
 
-  /*
+  /**
    *  returns a serialized version of the entity object
    *
    *  Note: use the client.restoreEntity() function to restore
@@ -1039,7 +1044,7 @@ var Usergrid = (function(){
     return JSON.stringify(this._data);
   };
 
-  /*
+  /**
   *  gets a specific field or the entire data object. If null or no argument
   *  passed, will return all data, else, will return a specific field
   *
@@ -1055,7 +1060,7 @@ var Usergrid = (function(){
     }
   };
 
-  /*
+  /**
   *  adds a specific key value pair or object to the Entity's data
   *  is additive - will not overwrite existing values unless they
   *  are explicitly specified
@@ -1081,7 +1086,7 @@ var Usergrid = (function(){
     }
   };
 
-  /*
+  /**
   *  Saves the entity back to the database
   *
   *  @method save
@@ -1163,7 +1168,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  refreshes the entity by making a GET call back to the database
   *
   *  @method fetch
@@ -1236,7 +1241,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  deletes the entity from the database - will only delete
   *  if the object has a valid uuid
   *
@@ -1276,7 +1281,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  connects one entity to another
   *
   *  @method connect
@@ -1334,7 +1339,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  returns a unique identifier for an entity
   *
   *  @method connect
@@ -1358,7 +1363,7 @@ var Usergrid = (function(){
     return id;
   };
 
-  /*
+  /**
   *  gets an entities connections
   *
   *  @method getConnections
@@ -1603,7 +1608,7 @@ var Usergrid = (function(){
 
   };
 
-  /*
+  /**
   *  disconnects one entity from another
   *
   *  @method disconnect
@@ -1661,7 +1666,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  The Collection class models Usergrid Collections.  It essentially
   *  acts as a container for holding Entity objects, while providing
   *  additional funcitonality such as paging, and saving
@@ -1705,7 +1710,7 @@ var Usergrid = (function(){
   };
 
 
-  /*
+  /**
    *  gets the data from the collection object for serialization
    *
    *  @method serialize
@@ -1755,7 +1760,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  Populates the collection from the server
   *
   *  @method fetch
@@ -1816,7 +1821,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   *  Adds a new Entity to the collection (saves, then adds to the local object)
   *
   *  @method addNewEntity
@@ -1847,7 +1852,7 @@ var Usergrid = (function(){
     this._list[count] = entity;
   };
 
-  /*
+  /**
   *  Removes the Entity from the collection, then destroys the object on the server
   *
   *  @method destroyEntity
@@ -1886,7 +1891,7 @@ var Usergrid = (function(){
     return false;
   };
 
-  /*
+  /**
   *  Looks up an Entity by UUID
   *
   *  @method getEntityByUUID
@@ -1915,7 +1920,7 @@ var Usergrid = (function(){
     entity.fetch(callback);
   };
 
-  /*
+  /**
   *  Returns the first Entity of the Entity list - does not affect the iterator
   *
   *  @method getFirstEntity
@@ -1929,7 +1934,7 @@ var Usergrid = (function(){
     return null;
   };
 
-  /*
+  /**
   *  Returns the last Entity of the Entity list - does not affect the iterator
   *
   *  @method getLastEntity
@@ -1943,7 +1948,7 @@ var Usergrid = (function(){
     return null;
   };
 
-  /*
+  /**
   *  Entity iteration -Checks to see if there is a "next" entity
   *  in the list.  The first time this method is called on an entity
   *  list, or after the resetEntityPointer method is called, it will
@@ -1961,7 +1966,7 @@ var Usergrid = (function(){
     return false;
   };
 
-  /*
+  /**
   *  Entity iteration - Gets the "next" entity in the list.  The first
   *  time this method is called on an entity list, or after the method
   *  resetEntityPointer is called, it will return the,
@@ -1979,7 +1984,7 @@ var Usergrid = (function(){
     return false;
   };
 
-  /*
+  /**
   *  Entity iteration - Checks to see if there is a "previous"
   *  entity in the list.
   *
@@ -1995,7 +2000,7 @@ var Usergrid = (function(){
     return false;
   };
 
-  /*
+  /**
   *  Entity iteration - Gets the "previous" entity in the list.
   *
   *  @method getPrevEntity
@@ -2010,7 +2015,7 @@ var Usergrid = (function(){
      return false;
   };
 
-  /*
+  /**
   *  Entity iteration - Resets the iterator back to the beginning
   *  of the list
   *
@@ -2021,7 +2026,7 @@ var Usergrid = (function(){
      this._iterator  = -1;
   };
 
-  /*
+  /**
   * Method to save off the cursor just returned by the last API call
   *
   * @public
@@ -2035,7 +2040,7 @@ var Usergrid = (function(){
     }
   };
 
-  /*
+  /**
   * Resets the paging pointer (back to original page)
   *
   * @public
@@ -2048,7 +2053,7 @@ var Usergrid = (function(){
     this._cursor = null;
   };
 
-  /*
+  /**
   *  Paging -  checks to see if there is a next page od data
   *
   *  @method hasNextPage
@@ -2058,7 +2063,7 @@ var Usergrid = (function(){
     return (this._next);
   };
 
-  /*
+  /**
   *  Paging - advances the cursor and gets the next
   *  page of data from the API.  Stores returned entities
   *  in the Entity list.
@@ -2078,7 +2083,7 @@ var Usergrid = (function(){
     }
   };
 
-  /*
+  /**
   *  Paging -  checks to see if there is a previous page od data
   *
   *  @method hasPreviousPage
@@ -2088,7 +2093,7 @@ var Usergrid = (function(){
     return (this._previous.length > 0);
   };
 
-  /*
+  /**
   *  Paging - reverts the cursor and gets the previous
   *  page of data from the API.  Stores returned entities
   *  in the Entity list.
@@ -2108,7 +2113,7 @@ var Usergrid = (function(){
   };
 
 
-  /*
+  /**
    *  A class to model a Usergrid group.
    *  Set the path in the options object.
    *
@@ -2123,14 +2128,14 @@ var Usergrid = (function(){
     this._data.type = "groups";
   };
 
-  /*
+  /**
    *  Inherit from Usergrid.Entity.
    *  Note: This only accounts for data on the group object itself.
    *  You need to use add and remove to manipulate group membership.
    */
   Usergrid.Group.prototype = new Usergrid.Entity();
 
-  /*
+  /**
   *  Fetches current group data, and members.
   *
   *  @method fetch
@@ -2198,7 +2203,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
    *  Retrieves the members of a group.
    *
    *  @method members
@@ -2212,7 +2217,7 @@ var Usergrid = (function(){
     }
   };
 
-  /*
+  /**
    *  Adds a user to the group, and refreshes the group object.
    *
    *  Options object: {user: user_entity}
@@ -2241,7 +2246,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
    *  Removes a user from a group, and refreshes the group object.
    *
    *  Options object: {user: user_entity}
@@ -2271,7 +2276,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   * Gets feed for a group.
   *
   * @public
@@ -2299,7 +2304,7 @@ var Usergrid = (function(){
     });
   };
 
-  /*
+  /**
   * Creates activity and posts to group feed.
   *
   * options object: {user: user_entity, content: "activity content"}
@@ -2343,7 +2348,7 @@ var Usergrid = (function(){
       });
   };
 
-  /*
+  /**
   * Tests if the string is a uuid
   *
   * @public
@@ -2357,7 +2362,7 @@ var Usergrid = (function(){
     return uuidValueRegex.test(uuid);
   }
 
-  /*
+  /**
   *  method to encode the query string parameters
   *
   *  @method encodeParams
@@ -2393,7 +2398,7 @@ var Usergrid = (function(){
     return tail.join("&");
   }
 
-  /*
+  /**
   * Logs a user defined verbose message.
   *
   * @method logDebug
@@ -2405,7 +2410,7 @@ var Usergrid = (function(){
     this.monitor.logVerbose(options);
   };
 
-  /*
+  /**
   * Logs a user defined debug message.
   *
   * @method logDebug
@@ -2417,7 +2422,7 @@ var Usergrid = (function(){
     this.monitor.logDebug(options);
   };
 
-  /*
+  /**
   * Logs a user defined informational message.
   *
   * @method logInfo
@@ -2429,7 +2434,7 @@ var Usergrid = (function(){
     this.monitor.logInfo(options);
   };
 
-  /*
+  /**
   * Logs a user defined warning message.
   *
   * @method logWarn
@@ -2441,7 +2446,7 @@ var Usergrid = (function(){
     this.monitor.logWarn(options);
   };
 
-  /*
+  /**
   * Logs a user defined error message.
   *
   * @method logError
@@ -2453,7 +2458,7 @@ var Usergrid = (function(){
     this.monitor.logError(options);
   };
 
-  /*
+  /**
   * Logs a user defined assert message.
   *
   * @method logAssert
@@ -2611,7 +2616,7 @@ var Apigee = (function(){
     }
   };
 
-  /*
+  /**
   * Function for downloading the current Apigee Monitoring configuration.
   *
   * @method downloadConfig
@@ -2667,7 +2672,7 @@ var Apigee = (function(){
   };
 
 
-  /*
+  /**
   * Function for syncing data back to the server. Currently called in the Apigee.MonitoringClient constructor using setInterval.
   *
   * @method sync
@@ -2710,7 +2715,7 @@ var Apigee = (function(){
     }
   };
 
-  /*
+  /**
   * Function that is called during the window.onerror handler. Grabs all parameters sent by that function.
   *
   * @method catchCrashReport
@@ -2724,7 +2729,7 @@ var Apigee = (function(){
     logCrash({tag:"CRASH", logMessage:"Error:"+crashEvent+" for url:"+url+" on line:"+line});
   };
 
-  /*
+  /**
   * Registers a device with Apigee Monitoring. Generates a new UUID for a device and collects relevant info on it.
   *
   * @method registerDevice
@@ -2877,7 +2882,7 @@ var Apigee = (function(){
     Ti.App.fireEvent("analytics:attachReady");
   }
 };
-  /*
+  /**
   * Method to encapsulate the monkey patching of AJAX methods. We pass in the XMLHttpRequest object for monkey patching.
   *
   * @method catchCrashReport
@@ -3018,7 +3023,7 @@ var Apigee = (function(){
 
   };
 
-  /*
+  /**
   * Prepares data for syncing on window close.
   *
   * @method prepareSync
@@ -3054,7 +3059,7 @@ var Apigee = (function(){
     }
   };
 
-  /*
+  /**
   * Logs a user defined message.
   *
   * @method logMessage
@@ -3073,7 +3078,7 @@ var Apigee = (function(){
     logs.push(cleansedLog);
   };
 
-  /*
+  /**
   * Logs a user defined verbose message.
   *
   * @method logDebug
@@ -3089,7 +3094,7 @@ var Apigee = (function(){
     }
   };
 
-  /*
+  /**
   * Logs a user defined debug message.
   *
   * @method logDebug
@@ -3105,7 +3110,7 @@ var Apigee = (function(){
     }
   };
 
-  /*
+  /**
   * Logs a user defined informational message.
   *
   * @method logInfo
@@ -3121,7 +3126,7 @@ var Apigee = (function(){
     }
   };
 
-  /*
+  /**
   * Logs a user defined warning message.
   *
   * @method logWarn
@@ -3137,7 +3142,7 @@ var Apigee = (function(){
     }
   };
 
-  /*
+  /**
   * Logs a user defined error message.
   *
   * @method logError
@@ -3153,7 +3158,7 @@ var Apigee = (function(){
     }
   };
 
-  /*
+  /**
   * Logs a user defined assert message.
   *
   * @method logAssert
@@ -3169,7 +3174,7 @@ var Apigee = (function(){
     }
   };
 
-  /*
+  /**
   * Internal function for encapsulating crash log catches. Not directly callable.
   * Needed because of funkiness with the errors being thrown solely on the window
   *
@@ -3185,7 +3190,7 @@ var Apigee = (function(){
     logs.push(cleansedLog);
   }
 
-  /*
+  /**
   * Logs a network call.
   *
   * @method logNetworkCall
@@ -3198,7 +3203,7 @@ var Apigee = (function(){
   };
 
 
-  /*
+  /**
   * Retrieves monitoring URL.
   *
   * @method getMonitoringURL
@@ -3212,7 +3217,7 @@ var Apigee = (function(){
 
 
 
-  /*
+  /**
   * Gets custom config parameters. These are set by user in dashboard.
   *
   * @method getConfig
@@ -3249,7 +3254,7 @@ var Apigee = (function(){
 
   //UUID Generation function unedited
 
-  /* randomUUID.js - Version 1.0
+  /** randomUUID.js - Version 1.0
   *
   * Copyright 2008, Robert Kieffer
   *
@@ -3317,7 +3322,7 @@ var Apigee = (function(){
       return (typeof Titanium !== "undefined");
   }
 
-  /*
+  /**
    * @method determineBrowserType
    */
   function determineBrowserType(){
