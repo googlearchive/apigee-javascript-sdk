@@ -1258,7 +1258,7 @@ var Usergrid = (function(){
     } else {
       if (typeof(callback) === 'function') {
         var error = 'Error trying to delete object - no uuid specified.';
-        if (self._client.logging) {
+        if (this._client.logging) {
           console.log(error);
         }
         callback(true, error);
