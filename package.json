@@ -17,5 +17,8 @@
   "license": "GPLv2",
   "bugs": {
     "url": "https://github.com/apigee/apigee-javascript-sdk/issues"
+  },
+  "devDependencies": {
+    "grunt-contrib-watch": "~0.5.3"
   }
 }

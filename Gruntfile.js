@@ -20,6 +20,10 @@ module.exports = function(grunt) {
     },
     clean: ['build', 'tmp', 'report', 'instrument'],
     bumpup: 'package.json',
+    watch : {
+      files : [ tasks, tests, samples ],
+      tasks : ['default']
+    },
     //build
     copy: {
       app: {
@@ -145,10 +149,13 @@ module.exports = function(grunt) {
   grunt.loadNpmTasks('grunt-complexity');
   grunt.loadNpmTasks('grunt-contrib-connect');
   grunt.loadNpmTasks('grunt-qunit-istanbul');
+  grunt.loadNpmTasks('grunt-contrib-watch');  
   //release
   grunt.loadNpmTasks('grunt-bumpup');
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'copy', 'validate', 'test', 'build']);
+  grunt.registerTask('default', ['clean', 'copy'
+    //, 'validate', 'test', 'build'
+    ]);
   // test
   grunt.registerTask('validate', ['jshint', 'complexity']);
   grunt.registerTask('test', [
