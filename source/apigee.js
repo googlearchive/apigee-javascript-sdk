@@ -56,7 +56,6 @@ Apigee.Client = function(options) {
       }
     }
   Usergrid.client.call(this, options);
-  console.log(options);
 }
 Apigee.Client.prototype=Usergrid.client.prototype;
 //Apigee.Client.constructor=Apigee.Client;
@@ -65,7 +64,6 @@ Apigee.Client.prototype=Usergrid.client.prototype;
   //Constructor for Apigee Monitoring SDK
   Apigee.MonitoringClient = function(options) {
     //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
-    console.log("start monitor");
     var self = this;
     self.orgName = options.orgName;
     self.appName = options.appName;

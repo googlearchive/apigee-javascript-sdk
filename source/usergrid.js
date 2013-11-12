@@ -17,7 +17,6 @@
 
 	function Usergrid() {};
 		Usergrid.Client = function(options) {
-			console.dir(options);
 		//usergrid enpoint
 		this.URI = options.URI || 'https://api.usergrid.com';
 

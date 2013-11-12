@@ -153,8 +153,9 @@ module.exports = function(grunt) {
   //release
   grunt.loadNpmTasks('grunt-bumpup');
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'copy'
+  grunt.registerTask('default', ['clean', 'copy',
     //, 'validate', 'test', 'build'
+    'uglify'
     ]);
   // test
   grunt.registerTask('validate', ['jshint', 'complexity']);
