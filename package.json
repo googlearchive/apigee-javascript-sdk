@@ -14,7 +14,7 @@
     "url": "git://github.com/apigee/apigee-javascript-sdk.git"
   },
   "author": "Ryan Bridges, apigee",
-  "license": "GPLv2",
+  "license": "ASLv2",
   "bugs": {
     "url": "https://github.com/apigee/apigee-javascript-sdk/issues"
   },
