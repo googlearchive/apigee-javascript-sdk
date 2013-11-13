@@ -131,7 +131,14 @@ module.exports = function(grunt) {
     uglify: {
       my_target: {
         options: {
-          sourceMap: 'dist/apigee-source-map.js'
+          banner: '/*! <%= meta.package.name %>@<%= meta.package.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
+          sourceMap: 'dist/apigee-source-map.js',
+          'usergrid.js': {
+          options: {
+            mangle: false,
+            compress: true,
+            beautify: false
+          }}
         },
         files: {
           'dist/apigee.min.js': ['build/source/apigee.js']
