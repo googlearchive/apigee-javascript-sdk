@@ -10,6 +10,7 @@ module.exports = function(grunt) {
       package: grunt.file.readJSON('package.json'),
       src: {
         main: 'source',
+        lib: 'bower_components',
         test: 'tests',
         samples: 'samples'
       },
@@ -30,7 +31,12 @@ module.exports = function(grunt) {
         files: [{
           expand: true,
           cwd: '<%= meta.src.main %>',
-          src: ['**'],
+          src: ['**/*.js'],
+          dest: 'build/source'
+        }, {
+          expand: true,
+          cwd: '<%= meta.src.lib %>/usergrid-javascript-sdk',
+          src: ['usergrid.js'],
           dest: 'build/source'
         }, {
           expand: true,
@@ -48,7 +54,7 @@ module.exports = function(grunt) {
     //testing tasks
     complexity: {
       generic: {
-        src: ['./build/source/**/*.js'],
+        src: ['<%= meta.bin.main %>/source/**/*.js'],
         options: {
           //jsLintXML: reportDir+'/jsLintReport.xml', // create XML JSLint-like report
           //checkstyleXML: reportDir+'/checkstyle.xml', // create checkstyle report
@@ -96,7 +102,7 @@ module.exports = function(grunt) {
       server: {
         options: {
           port: 3000,
-          base: 'build'
+          base: './'
         }
       },
       test: {
@@ -128,6 +134,12 @@ module.exports = function(grunt) {
         print: 'detail'
       }
     },
+    bower: {
+      install: {
+        //targetDir:'<%= meta.bin.main %>/source'
+         //just run 'grunt bower:install' and you'll see files from your Bower packages in lib directory
+      }
+    },
     uglify: {
       my_target: {
         options: {
@@ -141,12 +153,13 @@ module.exports = function(grunt) {
           }}
         },
         files: {
-          'dist/apigee.min.js': ['build/source/apigee.js']
+          'dist/apigee.min.js': ['build/source/usergrid.js','build/source/monitoring.js','build/source/apigee.js']
         }
       }
     }
   });
   //build
+  grunt.loadNpmTasks('grunt-bower-task');
   grunt.loadNpmTasks('grunt-contrib-clean');
   grunt.loadNpmTasks('grunt-contrib-copy');
   grunt.loadNpmTasks('grunt-contrib-uglify');
@@ -160,7 +173,7 @@ module.exports = function(grunt) {
   //release
   grunt.loadNpmTasks('grunt-bumpup');
   // Default task(s).
-  grunt.registerTask('default', ['clean', 'copy',
+  grunt.registerTask('default', ['clean', 'copy', 'bower',
     //, 'validate', 'test', 'build'
     'uglify'
     ]);

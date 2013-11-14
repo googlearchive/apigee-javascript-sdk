@@ -28,6 +28,7 @@
     "grunt-bumpup": "~0.4.2",
     "grunt-contrib-uglify": "~0.2.7",
     "grunt-qunit-istanbul": "~0.3.0",
-    "grunt-istanbul": "~0.2.3"
+    "grunt-istanbul": "~0.2.3",
+    "grunt-bower-task": "~0.3.4"
   }
 }

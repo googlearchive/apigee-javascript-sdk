@@ -1,0 +1,20 @@
+{
+  "name": "apigee-javascript-sdk",
+  "version": "2.0.5",
+  "homepage": "https://github.com/apigee/apigee-javascript-sdk",
+  "authors": [
+    "ryan bridges <rbridges@apigee.com>"
+  ],
+  "main": "apigee.min.js",
+  "license": "APLv2",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "usergrid-javascript-sdk": "https://github.com/apigee/usergrid-javascript-sdk.git#~0.10.4"
+  }
+}
