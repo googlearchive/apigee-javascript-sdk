@@ -65,25 +65,25 @@ Apigee.Client.prototype=Usergrid.client.prototype;
   Apigee.MonitoringClient = function(options) {
     //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
     var self = this;
-    self.orgName = options.orgName;
-    self.appName = options.appName;
-    self.syncOnClose = options.syncOnClose || false;
+    this.orgName = options.orgName;
+    this.appName = options.appName;
+    this.syncOnClose = options.syncOnClose || false;
 
     //Put this in here because I don't want sync issues with testing.
-    self.testMode = options.testMode || false;
+    this.testMode = options.testMode || false;
     //You best know what you're doing if you're setting this for Apigee monitoring!
-    self.URI = typeof options.URI === "undefined" ? "https://api.usergrid.com" : options.URI;
+    this.URI = typeof options.URI === "undefined" ? "https://api.usergrid.com" : options.URI;
 
-    self.syncDate = timeStamp();
+    this.syncDate = timeStamp();
 
     //Can do a manual config override specifiying raw json as your config. I use this for testing.
     //May be useful down the road. Needs to conform to current config.
 
-    /*if (typeof options.config !== "undefined") {
+    if(typeof options.config !== "undefined") {
       this.configuration = options.config;
-      if (this.configuration.deviceLevelOverrideEnabled === true) {
+      if(this.configuration.deviceLevelOverrideEnabled === true) {
         this.deviceConfig = this.configuration.deviceLevelAppConfig;
-      } else if (this.abtestingOverrideEnabled === true) {
+      } else if(this.abtestingOverrideEnabled === true){
         this.deviceConfig = this.configuration.abtestingAppConfig;
       } else {
         this.deviceConfig = this.configuration.defaultAppConfig;
@@ -91,50 +91,74 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     } else {
       this.configuration = null;
       this.downloadConfig();
-    }*/
-    self.getConfig(function() {
-      //Don't do anything if configuration wasn't loaded.
-      if ((self.configuration !== null) && (self.configuration !== "undefined")) {
-        throw ("Error: Apigee APM configuration unavailable.");
-      }
+    }
+    
+    //Don't do anything if configuration wasn't loaded.
+    if((this.configuration !== null) && (this.configuration !== "undefined")) {
+
       //Ensure that we want to sample data from this device.
-      var sampleSeed = (self.deviceConfig.samplingRate < 100) ? Math.floor(Math.random() * 101) : 0;
-      var syncIntervalMillis = (typeof self.deviceConfig.agentUploadIntervalInSeconds !== "undefined") ? self.deviceConfig.agentUploadIntervalInSeconds * 1000 : 3000;
+      var sampleSeed = 0;
+      if(this.deviceConfig.samplingRate < 100) {
+        sampleSeed = Math.floor(Math.random() * 101)
+      }
 
       //If we're not in the sampling window don't setup data collection at all
-      if (sampleSeed >= self.deviceConfig.samplingRate) {
-        return;
+      if(sampleSeed < this.deviceConfig.samplingRate){
+        this.appId = this.configuration.instaOpsApplicationId;
+        this.appConfigType=this.deviceConfig.appConfigType;
+
+        //Let's monkeypatch logging calls to intercept and send to server.
+        if(this.deviceConfig.enableLogMonitoring) {
+          this.patchLoggingCalls();
+        }
+
+        var syncIntervalMillis = 3000;
+        if (typeof this.deviceConfig.agentUploadIntervalInSeconds !== "undefined") {
+          syncIntervalMillis = this.deviceConfig.agentUploadIntervalInSeconds * 1000;
+        }
+
+        //Needed for the setInterval call for syncing. Have to pass in a ref to ourselves. It blows scope away.
+        if(!this.syncOnClose) {
+          //Old server syncing logic
+          setInterval(function(){
+            self.prepareSync();
+          }, syncIntervalMillis);
+        } else {
+          if(isPhoneGap()) {
+            window.addEventListener("pause", function(){
+              self.prepareSync();
+            }, false);
+          } else if(isTrigger()) {
+            forge.event.appPaused.addListener(function(data){
+              //sync
+            }, function(error){
+              console.log("Error syncing data.");
+              console.log(error);
+            });
+          } else if (isTitanium()) {
+
+          } else {
+            window.addEventListener("beforeunload", function(e){
+              self.prepareSync();
+            });
+          }
+        }
+
+
+        //Setting up the catching of errors and network calls
+        if(this.deviceConfig.networkMonitoringEnabled) {
+           this.patchNetworkCalls(XMLHttpRequest);
+        }
+
+        window.onerror = Apigee.MonitoringClient.catchCrashReport;
+        this.startSession();
       }
-      self.appId = self.configuration.instaOpsApplicationId;
-      self.appConfigType = self.deviceConfig.appConfigType;
-      self.applyMonkeyPatches();
-      self.deviceConfig.logLevelToMonitor = 0;
-      var syncHandler = function() {
-        self.prepareSync();
-      };
-      if (!self.syncOnClose) {
-        //Old server syncing logic
-        setInterval(syncHandler, syncIntervalMillis);
-      } else if (isPhoneGap()) {
-        window.addEventListener("pause", syncHandler, false);
-      } else if (isTrigger()) {
-        forge.event.appPaused.addListener(function(data) {
-          //sync
-          //TODO nothing is being done for Trigger
-        }, function(error) {
-          console.log("Error syncing data.");
-          console.log(error);
-        });
-      } else if (isTitanium()) {
-        //TODO nothing is being done for Titanium
-      } else {
-        window.addEventListener("beforeunload", syncHandler);
-      }
-      window.onerror = Apigee.MonitoringClient.catchCrashReport;
-      self.startSession();
-    })
+    } else {
+      console.log("Error: Apigee APM configuration unavailable.");
+    }
   };
   Apigee.MonitoringClient.prototype.applyMonkeyPatches = function() {
+    var self = this;
     //Let's monkeypatch logging calls to intercept and send to server.
     if (self.deviceConfig.enableLogMonitoring) {
       self.patchLoggingCalls();
@@ -163,7 +187,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
       } else {
         this.deviceConfig = this.configuration.defaultAppConfig;
       }
-      callback(null, this.deviceConfig);
+      callback(this.deviceConfig);
     } else {
       this.configuration = null;
       this.downloadConfig(callback);
@@ -454,8 +478,6 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     self.startLocationCapture();
 
     self.sessionMetrics = self.detectAppPlatform(sessionSummary);
-    alert(JSON.stringify(sessionSummary, null, 4));
-
   };
   /*
    * Method to encapsulate the monkey patching of AJAX methods. We pass in the XMLHttpRequest object for monkey patching.
