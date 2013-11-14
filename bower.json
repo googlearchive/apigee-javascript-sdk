@@ -15,6 +15,6 @@
     "tests"
   ],
   "dependencies": {
-    "usergrid-javascript-sdk": "https://github.com/apigee/usergrid-javascript-sdk.git#~0.10.4"
+    "usergrid-javascript-sdk": "https://github.com/apigee/usergrid-javascript-sdk.git#master"
   }
 }
