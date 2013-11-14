@@ -15,11 +15,11 @@ module.exports = function(grunt) {
         samples: 'samples'
       },
       bin: {
-        main: 'build/',
+        main: 'build',
         coverage: 'reports/coverage'
       }
     },
-    clean: ['build', 'tmp', 'report', 'instrument'],
+    clean: ['<%= meta.bin.main %>', 'tmp', 'report', 'instrument'],
     bumpup: 'package.json',
     watch : {
       files : [ tasks, tests, samples ],
@@ -32,22 +32,22 @@ module.exports = function(grunt) {
           expand: true,
           cwd: '<%= meta.src.main %>',
           src: ['**/*.js'],
-          dest: 'build/source'
+          dest: '<%= meta.bin.main %>/source'
         }, {
           expand: true,
           cwd: '<%= meta.src.lib %>/usergrid-javascript-sdk',
           src: ['usergrid.js'],
-          dest: 'build/source'
+          dest: '<%= meta.bin.main %>/source'
         }, {
           expand: true,
           cwd: '<%= meta.src.samples %>',
           src: ['**'],
-          dest: 'build/samples'
+          dest: '<%= meta.bin.main %>/samples'
         }, {
           expand: true,
           cwd: '<%= meta.src.test %>',
           src: ['**'],
-          dest: 'build/tests'
+          dest: '<%= meta.bin.main %>/tests'
         }]
       }
     },
@@ -90,8 +90,8 @@ module.exports = function(grunt) {
             'http://localhost:8000/tests/qunit/apigee_test.html'
           ],
           coverage: {
-            src: ['source/**/*.js'],
-            instrumentedFiles: 'build/instrument',
+            src: ['<%= meta.src.main %>/**/*.js'],
+            instrumentedFiles: '<%= meta.bin.main %>/instrument',
             htmlReport: reportDir + '/coverage',
             coberturaReport: reportDir
           }
@@ -108,7 +108,7 @@ module.exports = function(grunt) {
       test: {
         options: {
           port: 8000,
-          base: 'build'
+          base: '<%= meta.bin.main %>'
         }
       }
     },
@@ -141,19 +141,26 @@ module.exports = function(grunt) {
       }
     },
     uglify: {
-      my_target: {
+      build: {
         options: {
           banner: '/*! <%= meta.package.name %>@<%= meta.package.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
-          sourceMap: 'dist/apigee-source-map.js',
-          'usergrid.js': {
-          options: {
+            mangle: false,
+            compress: false,
+            beautify: true
+        },
+        files: {
+          'dist/apigee.js': ['<%= meta.bin.main %>/source/usergrid.js','<%= meta.bin.main %>/source/monitoring.js','<%= meta.bin.main %>/source/apigee.js']
+        }
+      },
+      buildmin: {
+        options: {
+          banner: '/*! <%= meta.package.name %>@<%= meta.package.version %> <%= grunt.template.today("yyyy-mm-dd") %> */\n',
             mangle: false,
             compress: true,
             beautify: false
-          }}
         },
         files: {
-          'dist/apigee.min.js': ['build/source/usergrid.js','build/source/monitoring.js','build/source/apigee.js']
+          'dist/apigee.min.js': ['<%= meta.bin.main %>/source/usergrid.js','<%= meta.bin.main %>/source/monitoring.js','<%= meta.bin.main %>/source/apigee.js']
         }
       }
     }
