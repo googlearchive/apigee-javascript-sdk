@@ -15,7 +15,7 @@ fi
 
 SDK_VERSION="$1"
 
-SDK_SOURCE_VERSION=`grep Usergrid.USERGRID_SDK_VERSION source/apigee.js | awk '{print $3}' | cut -d"'" -f2`
+SDK_SOURCE_VERSION=`grep Usergrid.SDK_VERSION dist/apigee.js | awk '{print $3}' | cut -d'"' -f2 -s`
 
 if [ "${SDK_VERSION}" != "${SDK_SOURCE_VERSION}" ]; then
   echo "Error: sdk source version (${SDK_SOURCE_VERSION}) doesn't match specified version (${SDK_VERSION})"
@@ -26,8 +26,8 @@ fi
 # Use the command npm install -g minify to install the node module properly
 # More details on the minify module here https://npmjs.org/package/minify
 
-mkdir lib
-minify source/apigee.js lib/apigee.min.js
+#mkdir lib
+#minify source/apigee.js lib/apigee.min.js
 
 LIBRARY_BASE_NAME="apigee-javascript"
 ZIP_BASE_NAME="${LIBRARY_BASE_NAME}-sdk"
@@ -46,7 +46,12 @@ do
   if [ -f "$entry" ]; then
     cp "$entry" "${DEST_ZIP_DIR}"
   elif [ -d "$entry" ]; then
-    if [ "$entry" != "${TOP_LEVEL_ZIP_DIR}" ]; then
+    if  [ "$entry" != "${TOP_LEVEL_ZIP_DIR}" ] && 
+      [ "$entry" != "lib" ] && 
+      [ "$entry" != "analyze" ] && 
+      [ "$entry" != "build" ] && 
+      [ "$entry" != "bower_components" ] && 
+      [ "$entry" != "node_modules" ]; then
       cp -R "$entry" "${DEST_ZIP_DIR}"
     fi
   fi
