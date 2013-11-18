@@ -950,12 +950,10 @@ Apigee.Client.prototype=Usergrid.client.prototype;
 
   function generateDeviceId() {
     if (typeof window.localStorage.getItem("uuid") === null) {
-      return window.localStorage.getItem("uuid");
-    } else {
       var uuid = randomUUID();
       window.localStorage.setItem("uuid", uuid);
-      return window.localStorage.getItem("uuid");
     }
+    return window.localStorage.getItem("uuid");
   }
 
   //Helper. Determines if the platform device is phonegap
