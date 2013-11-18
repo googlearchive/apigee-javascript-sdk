@@ -152,6 +152,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
 
         window.onerror = Apigee.MonitoringClient.catchCrashReport;
         this.startSession();
+        this.sync({});
       }
     } else {
       console.log("Error: Apigee APM configuration unavailable.");
@@ -244,7 +245,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
             } else {
               self.deviceConfig = config.defaultAppConfig;
             }
-            self.prepareSync();
+            //self.prepareSync();
           }
         } // callback is not a function
       } // readyState === 4
