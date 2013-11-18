@@ -1,4 +1,4 @@
-/*! apigee-javascript-sdk@2.0.5 2013-11-14 */
+/*! apigee-javascript-sdk@2.0.5 2013-11-18 */
 (function() {
     var name = "Usergrid", global = global || this, overwrittenName = global[name];
     var AUTH_CLIENT_ID = "CLIENT_ID";
@@ -2172,12 +2172,20 @@
         return new Date().getTime().toString();
     }
     function generateDeviceId() {
-        if (typeof window.localStorage.getItem("uuid") === null) {
-            return window.localStorage.getItem("uuid");
-        } else {
-            var uuid = randomUUID();
-            window.localStorage.setItem("uuid", uuid);
-            return window.localStorage.getItem("uuid");
+        var deviceId = "UNKNOWN";
+        try {
+            if ("undefined" === typeof localStorage) {
+                throw new Error("device or platform does not support local storage");
+            }
+            if (window.localStorage.getItem("uuid") === null) {
+                window.localStorage.setItem("uuid", randomUUID());
+            }
+            deviceId = window.localStorage.getItem("uuid");
+        } catch (e) {
+            deviceId = randomUUID();
+            console.warn(e);
+        } finally {
+            return deviceId;
         }
     }
     function isPhoneGap() {
