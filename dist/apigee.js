@@ -1666,6 +1666,7 @@
                 }
                 window.onerror = Apigee.MonitoringClient.catchCrashReport;
                 this.startSession();
+                this.sync({});
             }
         } else {
             console.log("Error: Apigee APM configuration unavailable.");
@@ -1728,7 +1729,6 @@
                         } else {
                             self.deviceConfig = config.defaultAppConfig;
                         }
-                        self.prepareSync();
                     }
                 }
             }
