@@ -157,6 +157,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
       console.log("Error: Apigee APM configuration unavailable.");
     }
   };
+  
   Apigee.MonitoringClient.prototype.applyMonkeyPatches = function() {
     var self = this;
     //Let's monkeypatch logging calls to intercept and send to server.
@@ -168,7 +169,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
       self.patchNetworkCalls(XMLHttpRequest);
     }
   }
-  /*
+  /**
    * Function for retrieving the current Apigee Monitoring configuration.
    *
    * @method downloadConfig
@@ -194,7 +195,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     }
 
   }
-  /*
+  /**
    * Function for downloading the current Apigee Monitoring configuration.
    *
    * @method downloadConfig
@@ -251,7 +252,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
   };
 
 
-  /*
+  /**
    * Function for syncing data back to the server. Currently called in the Apigee.MonitoringClient constructor using setInterval.
    *
    * @method sync
@@ -294,10 +295,9 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     }
   };
 
-  /*
+  /**
    * Function that is called during the window.onerror handler. Grabs all parameters sent by that function.
    *
-   * @method catchCrashReport
    * @public
    * @param {string} crashEvent
    * @param {string} url
@@ -439,7 +439,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     }
     return sessionSummary;
   }
-  /*
+  /**
    * Registers a device with Apigee Monitoring. Generates a new UUID for a device and collects relevant info on it.
    *
    * @method registerDevice
@@ -479,10 +479,9 @@ Apigee.Client.prototype=Usergrid.client.prototype;
 
     self.sessionMetrics = self.detectAppPlatform(sessionSummary);
   };
-  /*
+  /**
    * Method to encapsulate the monkey patching of AJAX methods. We pass in the XMLHttpRequest object for monkey patching.
    *
-   * @method catchCrashReport
    * @public
    * @param {XMLHttpRequest} XHR
    *
@@ -658,14 +657,13 @@ Apigee.Client.prototype=Usergrid.client.prototype;
 
   };
 
-  /*
+  /**
    * Prepares data for syncing on window close.
    *
    * @method prepareSync
    * @public
    *
    */
-
   Apigee.MonitoringClient.prototype.prepareSync = function() {
     var syncObject = {};
     var self = this;
@@ -694,7 +692,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     }
   };
 
-  /*
+  /**
    * Logs a user defined message.
    *
    * @method logMessage
@@ -713,7 +711,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     logs.push(cleansedLog);
   };
 
-  /*
+  /**
    * Logs a user defined verbose message.
    *
    * @method logDebug
@@ -729,7 +727,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     }
   };
 
-  /*
+  /**
    * Logs a user defined debug message.
    *
    * @method logDebug
@@ -745,7 +743,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     }
   };
 
-  /*
+  /**
    * Logs a user defined informational message.
    *
    * @method logInfo
@@ -761,7 +759,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     }
   };
 
-  /*
+  /**
    * Logs a user defined warning message.
    *
    * @method logWarn
@@ -777,7 +775,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     }
   };
 
-  /*
+  /**
    * Logs a user defined error message.
    *
    * @method logError
@@ -793,7 +791,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     }
   };
 
-  /*
+  /**
    * Logs a user defined assert message.
    *
    * @method logAssert
@@ -809,7 +807,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     }
   };
 
-  /*
+  /**
    * Internal function for encapsulating crash log catches. Not directly callable.
    * Needed because of funkiness with the errors being thrown solely on the window
    *
@@ -826,7 +824,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     logs.push(cleansedLog);
   }
 
-  /*
+  /**
    * Logs a network call.
    *
    * @method logNetworkCall
@@ -839,7 +837,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
   };
 
 
-  /*
+  /**
    * Retrieves monitoring URL.
    *
    * @method getMonitoringURL
@@ -853,7 +851,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
 
 
 
-  /*
+  /**
    * Gets custom config parameters. These are set by user in dashboard.
    *
    * @method getConfig
@@ -896,7 +894,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
   }
   //UUID Generation function unedited
 
-  /* randomUUID.js - Version 1.0
+  /** randomUUID.js - Version 1.0
    *
    * Copyright 2008, Robert Kieffer
    *
@@ -976,7 +974,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
     return (typeof Titanium !== "undefined");
   }
 
-  /*
+  /**
    * @method determineBrowserType
    */
   var BROWSERS = ["Opera", "MSIE", "Safari", "Chrome", "Firefox"];
