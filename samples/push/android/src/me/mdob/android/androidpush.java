@@ -17,35 +17,20 @@
        under the License.
  */
 
-package md.mdobs.andyPush;
+package me.mdob.android;
 
-
-
-import android.app.AlertDialog;
-import android.content.BroadcastReceiver;
-import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.content.IntentFilter;
 import android.os.Bundle;
-import android.util.Log;
-import android.widget.Toast;
-
 import org.apache.cordova.*;
 
-import org.usergrid.cordova.WakeLocker;
-
-
-import com.google.android.gcm.GCMRegistrar;
-
-public class andyPush extends DroidGap
+public class androidpush extends DroidGap
 {
-	
     @Override
     public void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        // Set by <content src="index.html" /> in config.xml
         super.loadUrl(Config.getStartUrl());
-    } 
+        //super.loadUrl("file:///android_asset/www/index.html")
+    }
 }
 

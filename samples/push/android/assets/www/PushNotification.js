@@ -1,92 +1,65 @@
-//
-//  PushNotification.js
-//
-// Created by Olivier Louvignes on  2012-05-06.
-// Inspired by Urban Airship Inc orphaned PushNotification phonegap plugin.
-//
-// Copyright 2012 Olivier Louvignes. All rights reserved.
-// MIT Licensed
 
-(function(cordova) {
+var PushNotification = function() {
+};
 
-	function PushNotification() {}
-	// Call this to register for push notifications and retreive a deviceToken
-	PushNotification.prototype.registerDevice = function(config, callback) {
-		console.log(device.platform);
-		if(device.platform === "Android") {
-			document.addEventListener('push-registration', function(event) {
-		        callback(event);
-		    });
-		    //Hack to catch the callbacks
-			cordova.exec(function(e){ console.log(e);}, function(e){console.log(e);}, "PushNotification", "registerDevice", config ? [config] : []);
-		} else {
-			cordova.exec(callback, callback, "PushNotification", "registerDevice", config ? [config] : []);
-		}
-	};
 
-	// Call this to retreive pending notification received while the application is in background or at launch
-	PushNotification.prototype.getPendingNotifications = function(callback) {
-		cordova.exec(callback, callback, "PushNotification", "getPendingNotifications", []);
-	};
+// Call this to register for push notifications. Content of [options] depends on whether we are working with APNS (iOS) or GCM (Android)
+PushNotification.prototype.register = function(successCallback, errorCallback, options) {
+    if (errorCallback == null) { errorCallback = function() {}}
 
-	// Call this to get a detailed status of remoteNotifications
-	PushNotification.prototype.getRemoteNotificationStatus = function(callback) {
-		cordova.exec(callback, callback, "PushNotification", "getRemoteNotificationStatus", []);
-	};
+    if (typeof errorCallback != "function")  {
+        console.log("PushNotification.register failure: failure parameter not a function");
+        return
+    }
 
-  // Call this to get the current value of the application badge number
-  PushNotification.prototype.getApplicationIconBadgeNumber = function(callback) {
-    cordova.exec(callback, callback, "PushNotification", "getApplicationIconBadgeNumber", []);
-  };
+    if (typeof successCallback != "function") {
+        console.log("PushNotification.register failure: success callback parameter must be a function");
+        return
+    }
 
-	// Call this to set the application icon badge
-	PushNotification.prototype.setApplicationIconBadgeNumber = function(badge, callback) {
-		cordova.exec(callback, callback, "PushNotification", "setApplicationIconBadgeNumber", [{badge: badge}]);
-	};
+	cordova.exec(successCallback, errorCallback, "PushPlugin", "register", [options]);
+};
 
-	// Call this to clear all notifications from the notification center
-	PushNotification.prototype.cancelAllLocalNotifications = function(callback) {
-		cordova.exec(callback, callback, "PushNotification", "cancelAllLocalNotifications", []);
-	};
+// Call this to unregister for push notifications
+PushNotification.prototype.unregister = function(successCallback, errorCallback) {
+    if (errorCallback == null) { errorCallback = function() {}}
 
-	// Call this to retreive the original device unique id
-	// @warning As of today, usage is deprecated and requires explicit consent from the user
-	PushNotification.prototype.getDeviceUniqueIdentifier = function(callback) {
-		cordova.exec(callback, callback, "PushNotification", "getDeviceUniqueIdentifier", []);
-	};
+    if (typeof errorCallback != "function")  {
+        console.log("PushNotification.unregister failure: failure parameter not a function");
+        return
+    }
 
-    PushNotification.prototype.pushNotificationToDevice = function(options, callback){
-        cordova.exec(callback, callback, "PushNotification", "pushNotificationToDevice", [options]);
-    };
+    if (typeof successCallback != "function") {
+        console.log("PushNotification.unregister failure: success callback parameter must be a function");
+        return
+    }
+
+     cordova.exec(successCallback, errorCallback, "PushPlugin", "unregister", []);
+};
  
-    PushNotification.prototype.getApigeeDeviceId = function(callback){
-        cordova.exec(callback, callback,"PushNotification", "getDeviceId", []);
-    };
  
-	// Event spawned when a notification is received while the application is active
-	PushNotification.prototype.notificationCallback = function(notification) {
-		var ev = document.createEvent('HTMLEvents');
-		ev.notification = notification;
-		ev.initEvent('push-notification', true, true, arguments);
-		document.dispatchEvent(ev);
-	};
+// Call this to set the application icon badge
+PushNotification.prototype.setApplicationIconBadgeNumber = function(successCallback, errorCallback, badge) {
+    if (errorCallback == null) { errorCallback = function() {}}
 
-	PushNotification.prototype.registrationCallback = function(registrationMessage) {
-		var ev = document.createEvent('HTMLEvents');
-		ev.deviceId = registrationMessage.deviceId;
-		ev.initEvent('push-registration', true, true, arguments);
-		document.dispatchEvent(ev);
-	};
+    if (typeof errorCallback != "function")  {
+        console.log("PushNotification.setApplicationIconBadgeNumber failure: failure parameter not a function");
+        return
+    }
 
-	// Call this to register with a specific push provider only supports Apigee.
-	PushNotification.prototype.registerWithPushProvider = function(options, callback){
-		cordova.exec(callback, callback, "PushNotification", "registerWithPushProvider", [options]);
-	};
- 
-	/*cordova.addConstructor(function() {
-		if(!window.plugins) window.plugins = {};
-		window.plugins.pushNotification = new PushNotification();
-	});*/
-	
-	window.pushNotification = new PushNotification();
-})((window.cordova || window.Cordova));
+    if (typeof successCallback != "function") {
+        console.log("PushNotification.setApplicationIconBadgeNumber failure: success callback parameter must be a function");
+        return
+    }
+
+    cordova.exec(successCallback, successCallback, "PushPlugin", "setApplicationIconBadgeNumber", [{badge: badge}]);
+};
+
+//-------------------------------------------------------------------
+
+if(!window.plugins) {
+    window.plugins = {};
+}
+if (!window.plugins.pushNotification) {
+    window.plugins.pushNotification = new PushNotification();
+}
