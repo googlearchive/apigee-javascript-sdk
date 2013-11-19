@@ -18,7 +18,7 @@
        under the License.
 -->
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" android:windowSoftInputMode="adjustPan"
-      package="md.mdobs.andyPush" android:versionName="1.0" android:versionCode="1" android:hardwareAccelerated="true">
+      package="me.mdob.android" android:versionName="1.0" android:versionCode="1" android:hardwareAccelerated="true">
     <supports-screens
         android:largeScreens="true"
         android:normalScreens="true"
@@ -28,16 +28,6 @@
         android:anyDensity="true"
         />
 
-    <permission android:name="md.mdobs.andyPush.permission.C2D_MESSAGE" android:protectionLevel="signature" />
-   	<uses-permission android:name="md.mdobs.andyPush.permission.C2D_MESSAGE" />
-
-   	<!-- App receives GCM messages. -->
-   	<uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
-    
-   	<!-- Keeps the processor from sleeping when a message is received. -->
-    <uses-permission android:name="android.permission.WAKE_LOCK" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
-    
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.VIBRATE" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
@@ -53,13 +43,20 @@
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />   
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
-    <uses-permission android:name="android.permission.BROADCAST_STICKY" />    
+    <uses-permission android:name="android.permission.BROADCAST_STICKY" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+    <uses-permission android:name="android.permission.GET_TASKS" />
+    <permission android:name="me.mdob.android.permission.C2D_MESSAGE" android:protectionLevel="signature" />
+    <uses-permission android:name="me.mdob.android.permission.C2D_MESSAGE" />
 
 
     <application android:icon="@drawable/icon" android:label="@string/app_name"
         android:hardwareAccelerated="true"
         android:debuggable="true">
-        <activity android:name="andyPush" android:label="@string/app_name"
+        <activity android:name="androidpush" android:label="@string/app_name"
                 android:theme="@android:style/Theme.Black.NoTitleBar"
                 android:configChanges="orientation|keyboardHidden|keyboard|screenSize|locale">
             <intent-filter>
@@ -67,17 +64,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-        <receiver android:name="com.google.android.gcm.GCMBroadcastReceiver"
-                  android:permission="com.google.android.c2dm.permission.SEND" >
+        <activity android:name="com.plugin.gcm.PushHandlerActivity"/>
+        <receiver android:name="com.plugin.gcm.CordovaGCMBroadcastReceiver" android:permission="com.google.android.c2dm.permission.SEND" >
             <intent-filter>
                 <action android:name="com.google.android.c2dm.intent.RECEIVE" />
                 <action android:name="com.google.android.c2dm.intent.REGISTRATION" />
-                <category android:name="md.mdobs.andyPush" />
+                <category android:name="me.mdob.android" />
             </intent-filter>
         </receiver>
-        
-        <service android:name=".GCMIntentService" />
+        <service android:name="com.plugin.gcm.GCMIntentService" />
     </application>
 
     <uses-sdk android:minSdkVersion="7" android:targetSdkVersion="17"/>
