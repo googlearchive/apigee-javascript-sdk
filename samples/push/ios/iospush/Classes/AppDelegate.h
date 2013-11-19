@@ -18,23 +18,25 @@
  */
 
 //
-//  MainViewController.h
-//  pushtest
+//  AppDelegate.h
+//  iospush
 //
 //  Created by ___FULLUSERNAME___ on ___DATE___.
 //  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
 //
 
+#import <UIKit/UIKit.h>
+
 #import <Cordova/CDVViewController.h>
-#import <Cordova/CDVCommandDelegateImpl.h>
-#import <Cordova/CDVCommandQueue.h>
 
-@interface MainViewController : CDVViewController
+@interface AppDelegate : NSObject <UIApplicationDelegate>{}
 
-@end
+// invoke string is passed to your app on launch, this is only valid if you
+// edit iospush-Info.plist to add a protocol
+// a simple tutorial can be found here :
+// http://iphonedevelopertips.com/cocoa/launching-your-own-application-via-a-custom-url-scheme.html
 
-@interface MainCommandDelegate : CDVCommandDelegateImpl
-@end
+@property (nonatomic, strong) IBOutlet UIWindow* window;
+@property (nonatomic, strong) IBOutlet CDVViewController* viewController;
 
-@interface MainCommandQueue : CDVCommandQueue
 @end
