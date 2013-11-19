@@ -19,7 +19,7 @@
 
 //
 //  AppDelegate.m
-//  pushtest
+//  iospush
 //
 //  Created by ___FULLUSERNAME___ on ___DATE___.
 //  Copyright ___ORGANIZATIONNAME___ ___YEAR___. All rights reserved.
@@ -27,7 +27,6 @@
 
 #import "AppDelegate.h"
 #import "MainViewController.h"
-#import "PushNotification.h"
 
 #import <Cordova/CDVPlugin.h>
 
@@ -77,22 +76,12 @@
 
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
-    
-    NSDictionary* userInfo = [launchOptions objectForKey:UIApplicationLaunchOptionsRemoteNotificationKey];
-    if(userInfo) {
-        PushNotification *pushHandler = [self.viewController getCommandInstance:@"PushNotification"];
-        NSMutableDictionary* mutableUserInfo = [userInfo mutableCopy];
-        [mutableUserInfo setValue:@"1" forKey:@"applicationLaunchNotification"];
-        [mutableUserInfo setValue:@"0" forKey:@"applicationStateActive"];
-        [pushHandler.pendingNotifications addObject:mutableUserInfo];
-    }
 
-    
     return YES;
 }
 
 // this happens while we are running ( in the background, or from within our own app )
-// only valid if pushtest-Info.plist specifies a protocol to handle
+// only valid if iospush-Info.plist specifies a protocol to handle
 - (BOOL)application:(UIApplication*)application handleOpenURL:(NSURL*)url
 {
     if (!url) {
@@ -128,41 +117,6 @@
 - (void)applicationDidReceiveMemoryWarning:(UIApplication*)application
 {
     [[NSURLCache sharedURLCache] removeAllCachedResponses];
-}
-
-- (void)application:(UIApplication*)app didRegisterForRemoteNotificationsWithDeviceToken:(NSData*)deviceToken
-{
-    PushNotification* pushHandler = [self.viewController getCommandInstance:@"PushNotification"];
-    [pushHandler didRegisterForRemoteNotificationsWithDeviceToken:deviceToken];
-}
-
-- (void)application:(UIApplication*)app didFailToRegisterForRemoteNotificationsWithError:(NSError*)error
-{
-    PushNotification* pushHandler = [self.viewController getCommandInstance:@"PushNotification"];
-    [pushHandler didFailToRegisterForRemoteNotificationsWithError:error];
-}
-
-- (void)application:(UIApplication*)application didReceiveRemoteNotification:(NSDictionary*)userInfo
-{
-    NSLog(@"recieved push: %@",userInfo);
-    PushNotification* pushHandler = [self.viewController getCommandInstance:@"PushNotification"];
-    NSMutableDictionary* mutableUserInfo = [userInfo mutableCopy];
-    
-    // Get application state for iOS4.x+ devices, otherwise assume active
-    UIApplicationState appState = UIApplicationStateActive;
-    if ([application respondsToSelector:@selector(applicationState)]) {
-        appState = application.applicationState;
-    }
-    
-    [mutableUserInfo setValue:@"0" forKey:@"applicationLaunchNotification"];
-    if (appState == UIApplicationStateActive) {
-        [mutableUserInfo setValue:@"1" forKey:@"applicationStateActive"];
-        [pushHandler didReceiveRemoteNotification:mutableUserInfo];
-    } else {
-        [mutableUserInfo setValue:@"0" forKey:@"applicationStateActive"];
-        [mutableUserInfo setValue:[NSNumber numberWithDouble: [[NSDate date] timeIntervalSince1970]] forKey:@"timestamp"];
-        [pushHandler.pendingNotifications addObject:mutableUserInfo];
-    }
 }
 
 @end
