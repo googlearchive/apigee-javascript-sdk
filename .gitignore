@@ -5,3 +5,7 @@ build/
 instrument/
 report/
 node_modules/
+bower_components/
+*.old
+*.bak
+*.orig

@@ -152,6 +152,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
 
         window.onerror = Apigee.MonitoringClient.catchCrashReport;
         this.startSession();
+        this.sync({});
       }
     } else {
       console.log("Error: Apigee APM configuration unavailable.");
@@ -244,7 +245,7 @@ Apigee.Client.prototype=Usergrid.client.prototype;
             } else {
               self.deviceConfig = config.defaultAppConfig;
             }
-            self.prepareSync();
+            //self.prepareSync();
           }
         } // callback is not a function
       } // readyState === 4
@@ -945,14 +946,21 @@ Apigee.Client.prototype=Usergrid.client.prototype;
   }
 
   //Generate a device id, and attach it to localStorage.
-
   function generateDeviceId() {
-    if (typeof window.localStorage.getItem("uuid") === null) {
-      return window.localStorage.getItem("uuid");
-    } else {
-      var uuid = randomUUID();
-      window.localStorage.setItem("uuid", uuid);
-      return window.localStorage.getItem("uuid");
+    var deviceId = "UNKNOWN";
+    try {
+      if ("undefined" === typeof localStorage) {
+        throw new Error("device or platform does not support local storage")
+      }
+      if (window.localStorage.getItem("uuid") === null) {
+        window.localStorage.setItem("uuid", randomUUID());
+      }
+      deviceId = window.localStorage.getItem("uuid");
+    } catch (e) {
+      deviceId = randomUUID();
+      console.warn(e);
+    } finally {
+      return deviceId;
     }
   }
 
