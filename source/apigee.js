@@ -986,6 +986,32 @@ Apigee.Client.prototype=Usergrid.client.prototype;
    * @method determineBrowserType
    */
   var BROWSERS = ["Opera", "MSIE", "Safari", "Chrome", "Firefox"];
+  function createBrowserRegex(browser){
+    return new RegExp('\\b('+browser+')\\/([^\\s]+)');
+  }
+  function createBrowserTest(userAgent, positive, negatives){
+    var matches = BROWSER_REGEX[positive].exec(userAgent);
+    negatives=negatives||[];
+    if(matches && matches.length && !negatives.some(function(negative){return BROWSER_REGEX[negative].exec(userAgent)})){
+      return matches.slice(1,3);
+    }
+  }
+  var BROWSER_REGEX=["Seamonkey", "Firefox", "Chromium", "Chrome", "Safari", "Opera"].reduce(function(p,c){
+    p[c]=createBrowserRegex(c);
+    return p;
+  },{});
+  BROWSER_REGEX["MSIE"]=new RegExp(";(MSIE) ([^\\s]+)");
+  var BROWSER_TESTS=[
+    ["MSIE"],
+    ["Opera", []],
+    ["Seamonkey", []],
+    ["Firefox", ["Seamonkey"]],
+    ["Chromium", []],
+    ["Chrome", ["Chromium"]],
+    ["Safari", ["Chromium","Chrome"]]
+  ].map(function(arr){
+    return createBrowserTest(navigator.userAgent, arr[0], arr[1]);
+  });
 
   function determineBrowserType(ua, appName) {
     //var ua = navigator.userAgent;
@@ -995,36 +1021,9 @@ Apigee.Client.prototype=Usergrid.client.prototype;
       devicePlatform: UNKNOWN,
       deviceOSVersion: UNKNOWN
     };
-    BROWSERS.forEach(function(b) {
-      if (fullVersion !== UNKNOWN) {
-        return;
-      }
-      verOffset = ua.indexOf(b);
-      verLength = verOffset + b.length + 1;
-
-      if (verOffset !== -1) {
-        browserName = b;
-        fullVersion = ua.substring(verLength);
-        if ((verOffset = ua.indexOf("Version")) != -1) {
-          fullVersion = ua.substring(verOffset + 8);
-        }
-      }
-    });
-    if (fullVersion === UNKNOWN) {
-      nameOffset = ua.lastIndexOf(' ') + 1;
-      verOffset = ua.lastIndexOf('/');
-      if (nameOffset < verOffset) {
-        browserName = ua.substring(nameOffset, verOffset);
-        fullVersion = ua.substring(verOffset + 1);
-      }
-    }
-    // trim the fullVersion string at semicolon/space if present
-    if ((ix = fullVersion.indexOf(";")) != -1) {
-      fullVersion = fullVersion.substring(0, ix);
-    }
-    if ((ix = fullVersion.indexOf(" ")) != -1) {
-      fullVersion = fullVersion.substring(0, ix);
-    }
+    var browserData=BROWSER_TESTS.reduce(function(p,c){return (c)?c:p;}, "UNKNOWN");
+    browserName = browserData[0];
+    fullVersion = browserData[1];
     if (browserName === "MSIE") {
       browserName = "Microsoft Internet Explorer";
     }
