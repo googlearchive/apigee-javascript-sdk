@@ -8,7 +8,22 @@
         <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
         <script src="../dist/apigee.js"></script>
-        <script src="config.js"></script>
+        <script>
+            (function() {
+              var global = global||this,
+                APIGEE_ORGNAME="Your Org Name",
+                APIGEE_APPNAME="Your App Name";
+                if("undefined"===typeof APIGEE_ORGNAME || "Your Org Name" === APIGEE_ORGNAME){
+                    APIGEE_ORGNAME=prompt("What is the Organization Name you registered at http://apigee.com/usergrid ?\n(you can set this permanently on line 14)", "ORG NAME");
+                }
+                if("undefined"===typeof APIGEE_APPNAME || "Your App Name" === APIGEE_APPNAME){
+                    APIGEE_APPNAME=prompt("What is the App Name you created at http://apigee.com/usergrid ?\n(you can set this permanently in on line 15)", "sandbox");
+                }
+                global.APIGEE_ORGNAME=APIGEE_ORGNAME;
+                global.APIGEE_APPNAME=APIGEE_APPNAME;
+            })();
+
+        </script>
         <script type="text/javascript">
 
             if("undefined"===typeof APIGEE_ORGNAME){
