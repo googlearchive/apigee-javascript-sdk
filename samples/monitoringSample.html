@@ -9,12 +9,19 @@
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
   <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
   <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
+  <script src="config.js"></script>
   <script src="../dist/apigee.js"></script>
   <script>
+    if("undefined"===typeof APIGEE_ORGNAME){
+        APIGEE_ORGNAME=prompt("What is the Organization Name you registered at http://apigee.com/usergrid ?\n(you can set this permanently in config.js)", "ORG NAME");
+    }
+    if("undefined"===typeof APIGEE_APPNAME){
+        APIGEE_APPNAME="sandbox";
+    }
     var monitoringClient = new Apigee.Client({
     	//Replace 'YOUR_ORG' and 'YOUR_APP' with your Apigee organization and application names
-        orgName:"YOUR_ORG",
-        appName:"YOUR_APP"
+        orgName:APIGEE_ORGNAME,
+        appName:APIGEE_APPNAME
         //URI:"https://api.usergrid.com" //uncomment and change if logging to somewhere other than default Apigee server
     });
   </script>

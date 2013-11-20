@@ -8,12 +8,19 @@
         <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
         <script src="../dist/apigee.js"></script>
+        <script src="config.js"></script>
         <script type="text/javascript">
 
+            if("undefined"===typeof APIGEE_ORGNAME){
+                APIGEE_ORGNAME=prompt("What is the Organization Name you registered at http://apigee.com/usergrid ?\n(you can set this permanently in config.js)", "ORG NAME");
+            }
+            if("undefined"===typeof APIGEE_APPNAME){
+                APIGEE_APPNAME="sandbox";
+            }
             //We start by creating an instance of Apigee.Client to carry our App Services credentials        
             var apigee = new Apigee.Client({
-                orgName:'YOUR APIGEE.COM USERNAME',
-                appName:'sandbox'
+                orgName:APIGEE_ORGNAME,
+                appName:APIGEE_APPNAME
                 
             });
             
