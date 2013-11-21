@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<!-- APIGEE JavaScript SDK ENTITY EXAMPLE APP
+
+This sample app will show you how to perform basic entity operation using the Apigee JavaScript SDK, including:
+	
+	- creating an entity
+	- retrieving an entity
+	- updating/altering an entity
+	- deleting an entity
+
+
+** IMPORTANT - BEFORE YOU BEGIN **
+
+Be sure to include the Apigee JavaScript SDK (apigee.js) in your code like on line 22 below.
+
+All done? Great, let's get started! -->	      
+
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>Apigee Entities Sample App</title>
+        <script src="../source/apigee.js"></script>
+        
+        <script>
+	        /* 1. Create an instance of the Apigee.Client class by specifying your account details. 
+	              You will use this object to send your organization and application information 
+	              with all calls to the Apigee API. This is how we determine which data store to 
+	              access when you send a request.
+	
+	           - Enter your organization name below — it’s the username you picked when you signed 
+	             up at apigee.com
+	           - Keep the appName as “sandbox”: it’s a context we automatically created for you. It’s 
+	             completely open by default, but don’t worry, other apps you create are not! */
+	
+            var dataClient = new Apigee.Client({
+                orgName:'YOUR APIGEE ORGANIZATION NAME',
+                appName:'sandbox'
+            });
+
+
+
+	        /* 2. Create a new entity
+	
+				To start, let's create a function to create an entity and save it on Apigee. */
+				   
+			function createEntity () {
+				/* First, we specify the properties for your new entity:
+	            
+	            - The type property associated your entity with a collection. When the entity, 
+	              is created, if the corresponding collection doesn't exist a new collection 
+	              will automatically be created to hold any entities of the same type. 
+	              
+	              Collection names are the pluralized version of the entity type,
+	              e.g. all entities of type book will be saved in the books collection. 
+	            
+	            - Let's also specify some properties for your entity. Properties are formatted 
+	              as key-value pairs. We've started you off with three properties in addition 
+	              to type, but you can add any properties you want.    */
+			
+				var properties = {
+	                type:'book',
+	                title:'The Old Man and the Sea',
+	                price: 5.50,
+	                currency: 'USD'
+	            };
+	            
+	            /* Next, we call the createEntity() method. Notice that the method is prepended 
+	               by dataClient, so that the Apigee API knows what data store we want to work with. */
+			
+	            dataClient.createEntity(properties, function (errorStatus, entity, errorMessage) { 
+	                if (errorStatus) { 
+	                   // Error - there was a problem creating the entity
+	                   document.getElementsByTagName('body')[0].innerHTML
+                        +=  "Error! Unable to create your entity. "
+                        +   "Did you enter your organization name properly on ln 33?"
+                        +   "<br/><br/>"
+                        +   "Error message:" 
+                        +	"<pre>" + JSON.stringify(errorMessage); + "</pre>"
+	                } else { 
+	                    // Success - the entity was created properly
+	                    document.getElementsByTagName('body')[0].innerHTML
+                        +=  "Success!"
+                        +	"<br /><br />"
+                        +	"Here is the UUID (universally unique identifier of the"
+                        +	"entity you created. You will use this to perform retrieve, "
+                        + 	"update and delete operations on this entity:"
+                        +	"<br /><br />"
+                        +   JSON.stringify(entity.get('uuid'));
+                        +	"<br /><br />"
+                        + 	"And here is the object you created:"
+                        +   "<br/><br/>"
+                        +   "<pre>" + JSON.stringify(entity, undefined, 4); + "</pre>"
+	                }
+	            });
+			}
+	
+	
+		
+		
+	        /* 3. Retrieve an entity
+	        
+	           Now that we can create entities, let's define a function to retrieve them: */
+	           
+			function retrieveEntity () {
+				/*
+				- Specify the 'type' of the entity to be retrieved, 'book' in this case.
+				- Specify the 'UUID' property of the entity to be retrieved. You can get this from the 
+				  response we showed you when the entity was created. */		              
+				var properties = { 
+					type:'book',
+					uuid:'ENTITY_UUID' //Be sure to put the UUID of the entity you want to delete here
+				};
+				
+				/* Next we pass our properties to getEntity(), which initiates our GET request: */
+				dataClient.getEntity(properties, function (errorStatus, entity, errorMessage) { 
+					if (errorStatus) { 
+					  // Error - there was a problem retrieving the entity
+	                  document.getElementsByTagName('body')[0].innerHTML
+                        +=  "Error! Unable to retrieve your entity. "
+                        +   "Check that the 'uuid' of the entity you tried to retrieve is correct."
+                        +   "<br/><br/>"
+                        +   "Error message:" 
+                        + 	"<pre>" + JSON.stringify(errorMessage); + "</pre>"		                  
+					} else { 
+					  // Success - the entity was found and retrieved by the Apigee API
+					  document.getElementsByTagName('body')[0].innerHTML
+                        +=  "Success! Here is the entity we retrieved: "
+                        +   "<br/><br/>"
+                        +   "<pre>" + JSON.stringify(entity, undefined, 4); + "</pre>"
+					} 
+				}); 
+			}
+
+
+
+	        /* 4. Update/alter an entity
+	        
+	           We can easily add new properties to an entity or change existing properties by making a 
+	           call to the Apigee API. Let's define a function to add a new property and update an existing 
+	           property, then display the updated entity. */
+	           	         
+			function updateEntity() {
+			   /*
+	  			   - Specify your Apigee.Client object in the 'client' property. In this case, 'dataClient'.
+	  			   - Specify the following in the 'data' property:
+	  			   		- The 'type' and 'uuid' of the entity to be updated so that the API knows what 
+	  			   		  entity you are trying to update.
+	  			   		- New properties to add to the enitity. In this case, we'll add a property 
+	  			   		  to show whether the book is available.
+	  			   		- New values for existing properties. In this case, we are updating the 'price' property. */
+				var properties = {	           		
+					client:dataClient,
+					data:{
+						type:'book',
+						uuid:'ENTITY_UUID', //Be sure to put the UUID of the entity you want to delete here
+						price: 4.50, //our new price that will replace the existing value of 5.50
+						available: true //new property to be added
+					}
+				};	
+				
+				/* We need to create a local Entity object to hold our update */
+				entity = new Apigee.Entity(properties);
+				
+				/* Now we call save() to initiate the API PUT request on our Entity object */
+				entity.save(function (errorStatus,entity,errorMessage) {
+				
+				    if (errorStatus) { 
+					  /* Error - there was a problem updating the entity */
+	                  document.getElementsByTagName('body')[0].innerHTML
+                        +=  "Error! Unable to update your entity. "
+                        +   "Check that the or 'uuid' of the entity you tried to retrieve is correct."
+                        +   "<br/><br/>"
+                        +   "Error message:" 
+                        + 	"<pre>" + JSON.stringify(errorMessage); + "</pre>"		                 
+					} else { 
+					  /* Success - the entity was successfully updated */
+					  document.getElementsByTagName('body')[0].innerHTML
+                        +=  "Success! Here is the updated entity: "
+                        +   "<br/><br/>"
+                        +   "<pre>" + JSON.stringify(entity, undefined, 4); + "</pre>"			  
+					} 
+				
+				});
+		
+			}
+
+
+
+        	/* 5. Delete an entity
+        	
+        	   Now that we've created, retrieved and updated our entity, let's get delete it. This will 
+        	   permanently remove the entity from your data store. */
+        				
+			function deleteEntity () {
+			
+				/* - Specify your Apigee.Client object in the 'client' property. In this case, 'dataClient'.
+ 	  			   - Specify the 'type' and 'uuid' of the entity to be deleted in the 'data' property so
+ 	  			     that the API knows what entity you are trying to delete. */
+ 	  			   		
+	        	var properties = {
+					client:dataClient,	        			
+					data:{
+						type:'book',
+						uuid:'ENTITY_UUID' //the UUID of the entity you want to delete
+					}
+				};
+				
+				/* We need to create a local Entity object that we can call destroy() on */
+				entity = new Apigee.Entity(properties);
+				
+				/* Then we call the destroy() method to intitiate the API DELETE request */
+				entity.destroy(function (error,response) {
+				    if (error) { 
+						  // Error - there was a problem deleting the entity
+		                  document.getElementsByTagName('body')[0].innerHTML
+	                        +=  "Error! Unable to delete your entity. "
+	                        +   "Check that the 'uuid' of the entity you tried to delete is correct."
+	                        +   "<br/><br/>"
+	                        +   "Error message:" + JSON.stringify(error);		                 
+						} else { 
+						  // Success - the entity was successfully deleted
+						  document.getElementsByTagName('body')[0].innerHTML
+	                        +=  "Success! The entity has been deleted."
+					}
+				});	     
+			}
+        </script>        
+    </head>
+    <body>        
+        <script>
+        	/* 6. Now let's run it! 
+        	
+        		  Be sure to set your org name on ln 33 above, then uncomment the four function calls
+        		  below one at a time to see their result! */
+			
+	        /* Uncomment to create your new entity */
+	        //createEntity();
+	        
+	        /* Uncomment to retrieve your entity. */
+	        //retrieveEntity();
+	        
+	        /* Uncomment to update your entity */
+	        //updateEntity();
+	        
+	        /* Uncomment to delete for entity */
+	        //deleteEntity();
+        </script>        
+    </body>
+</html>
