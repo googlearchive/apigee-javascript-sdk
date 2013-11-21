@@ -17,7 +17,29 @@
  * under the License.
  */
 
-//Handler function for APN notifications.
+/*
+ * Though it is enabled here for one platform, this code can be
+ * easily modified to to support both iOS and Android. See the comments 
+ * for platform-specific code.
+ *
+ * In order to use this sample, you must first have:
+ *  
+ * - Created an Apple App ID that supports 
+ * push notifications.
+ * - Created an Apigee push notifier. 
+ */
+
+// IMPORTANT! Update these with your own values -- the org name,
+// app name, and notifier you created in the portal.
+var orgName = "YOUR ORGNAME";
+var appName = "YOUR APPNAME";
+var notifier = "YOUR NOTIFIER";
+
+/*
+ * Called when a notification is received from Apple.
+ * Here, handle notifications as they should be handled on 
+ * an iOS device.
+ */
 function onNotificationAPN(event) {
     console.log(JSON.stringify(event, undefined, 2));
     if (event.alert) {
@@ -34,7 +56,11 @@ function onNotificationAPN(event) {
     }
 }
 
-//Handler function for GCM Push notifications
+/*
+ * Called by Google with notification-related events. Can be
+ * called to confirm device registration and when events
+ * are sent.
+ */
 function onNotificationGCM(e) {
     $("#app-status-ul").append('<li>EVENT -> RECEIVED:' + e.event + '</li>');
 
@@ -84,87 +110,107 @@ function onNotificationGCM(e) {
 }
 
 var app = {
-    // Application Constructor
-initialize: function() {
-    this.bindEvents();
-},
-    // Bind Event Listeners
-    //
-    // Bind any events that are required on startup. Common events are:
-    // 'load', 'deviceready', 'offline', and 'online'.
-bindEvents: function() {
-    document.addEventListener('deviceready', this.onDeviceReady, false);
-},
-    // deviceready Event Handler
-    //
-    // The scope of 'this' is the event. In order to call the 'receivedEvent'
-    // function, we must explicity call 'app.receivedEvent(...);'
-onDeviceReady: function() {
-    var client = new Apigee.Client({
-                                   orgName:"YOUR ORGNAME",
-                                   appName:"YOUR APPNAME",
-                                   logging:true
-                                   });
-    var pushNotification = window.plugins.pushNotification;
+  // Application Constructor
+  initialize: function() {
+      this.bindEvents();
+  },
+  // Bind event listeners
+  //
+  // Bind any events that are required on startup. Common events are:
+  // 'load', 'deviceready', 'offline', and 'online'.
+  bindEvents: function() {
+      document.addEventListener('deviceready', this.onDeviceReady, false);
+  },
+  // deviceready event handler
+  //
+  // The scope of 'this' is the event. In order to call the 'receivedEvent'
+  // function, we must explicity call 'app.receivedEvent(...);'
+  onDeviceReady: function() {
+      var client = new Apigee.Client({
+        orgName:orgName,
+        appName:appName,
+        logging:true
+      });
 
-    //Token handler for device registrations
-    function tokenHandler(status) {
-      if(status) {
+      // A variable to refer to the PhoneGap push notification plugin.
+      var pushNotification = window.plugins.pushNotification;
+
+      // A callback function used by Apple APNs when notification 
+      // registration is successful.
+      function tokenHandler(status) {
+        if(status) {
+          var options = {
+            notifier:notifier,
+            deviceToken:status
+          };
+
+          // Now register with Apigee so that you can target this device 
+          // for notifications.
+          client.registerDevice(options, function(error, result){
+            if(error) {
+                console.log(error);
+            } else {
+                console.log(result);
+            }
+          });
+        }
+      }
+
+      // A callback function used by Google GCM when notification registration
+      // is successful. Not used on iOS.
+      function successHandler(result) {console.log(result);}
+
+      // A callback function used by Apple APNs and Google GCM when 
+      // notification registration fails.
+      function errorHandler(error){ console.log(error);}
+
+      // Detect the device platform this app is deployed on and register
+      // accordingly for notifications.
+      if (device.platform == 'android' || device.platform == 'Android') {
+          // If this is an Android device, register with Google GCM to receive notifications.
+          // On Android, the senderID value is the project number for Google API project
+          // that supports Google Cloud Messaging.
+          pushNotification.register(successHandler, errorHandler, 
+            {"senderID":"replace_with_sender_id", "ecb":"onNotificationGCM"});
+      } else {
+          // If this is an iOS device, register with Apple APNs to receive notifications.
+          pushNotification.register(tokenHandler, errorHandler, 
+            {"badge":"true", "sound":"true", "alert":"true", "ecb":"onNotificationAPN"});
+      }
+
+      // Handle the app UI button's click event to send a notification
+      // to this device.
+      $("#push").on("click", function(e){
+
+        // Build the request URL that will create a notification in app services.
+        // Use this device's ID as the recipient.
+        var devicePath = "devices/"+client.getDeviceUUID()+"/notifications";
         var options = {
-          notifier:"YOUR NOTIFIER",
-          deviceToken:status
+          notifier:notifier,
+          path:devicePath,
+          message:"Hello world from JavaScript!"
         };
-
-        client.registerDevice(options, function(error, result){
+        // Send a notification to this device.
+        client.sendPushToDevice(options, function(error, data){
           if(error) {
-              console.log(error);
+            console.log(data);
           } else {
-              console.log(result);
+            console.log("Push sent");
           }
         });
-      }
-    }
-
-    //Error handler
-    function errorHandler(error){ console.log(error);}
-
-    function successHandler(result) {console.log(result);}
-
-    if (device.platform == 'android' || device.platform == 'Android') {
-        pushNotification.register(successHandler, errorHandler, {"senderID":"replace_with_sender_id", "ecb":"onNotificationGCM"});
-    } else {
-        pushNotification.register(tokenHandler, errorHandler, {"badge":"true", "sound":"true", "alert":"true", "ecb":"onNotificationAPN"});
-    }
-
-    $("#push").on("click", function(e){
-                  //push here
-                  
-                  var devicePath = "devices/"+client.getDeviceUUID()+"/notifications";
-                  var options = {
-                  notifier:"YOUR NOTIFIER",
-                  path:devicePath,
-                  message:"hello world from JS"
-                  };
-                  client.sendPushToDevice(options, function(error, data){
-                                          if(error) {
-                                          console.log(data);
-                                          } else {
-                                          console.log("push sent");
-                                          }
-                                          });
-                  });
-    
-    app.receivedEvent('deviceready');
-},
-    // Update DOM on a Received Event
-receivedEvent: function(id) {
-    var parentElement = document.getElementById(id);
-    var listeningElement = parentElement.querySelector('.listening');
-    var receivedElement = parentElement.querySelector('.received');
-    
-    listeningElement.setAttribute('style', 'display:none;');
-    receivedElement.setAttribute('style', 'display:block;');
-    
-    console.log('Received Event: ' + id);
-}
+      });
+      
+      app.receivedEvent('deviceready');
+  },
+  // Update DOM on a Received Event
+  receivedEvent: function(id) {
+      var parentElement = document.getElementById(id);
+      var listeningElement = parentElement.querySelector('.listening');
+      var receivedElement = parentElement.querySelector('.received');
+      
+      listeningElement.setAttribute('style', 'display:none;');
+      receivedElement.setAttribute('style', 'display:block;');
+      
+      console.log('Received Event: ' + id);
+  }
 };
