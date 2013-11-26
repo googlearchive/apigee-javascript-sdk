@@ -9,7 +9,7 @@ module.exports = function(grunt) {
     meta: {
       package: grunt.file.readJSON('package.json'),
       src: {
-        main: 'source',
+        main: 'src/main/javascript',
         lib: 'bower_components',
         test: 'tests',
         samples: 'samples'
@@ -19,7 +19,7 @@ module.exports = function(grunt) {
         coverage: 'reports/coverage'
       }
     },
-    clean: ['<%= meta.bin.main %>', 'tmp', 'report', 'instrument'],
+    clean: ['<%= meta.bin.main %>', 'tmp', 'report', 'instrument', 'zip'],
     bumpup: 'package.json',
     watch : {
       files : [ tasks, tests, samples ],
@@ -149,7 +149,7 @@ module.exports = function(grunt) {
             beautify: true
         },
         files: {
-          'dist/apigee.js': ['<%= meta.bin.main %>/source/usergrid.js','<%= meta.bin.main %>/source/monitoring.js','<%= meta.bin.main %>/source/apigee.js']
+          'source/apigee.js': ['<%= meta.bin.main %>/source/usergrid.js','<%= meta.bin.main %>/source/monitoring.js','<%= meta.bin.main %>/source/apigee.js']
         }
       },
       buildmin: {
@@ -160,7 +160,7 @@ module.exports = function(grunt) {
             beautify: false
         },
         files: {
-          'dist/apigee.min.js': ['<%= meta.bin.main %>/source/usergrid.js','<%= meta.bin.main %>/source/monitoring.js','<%= meta.bin.main %>/source/apigee.js']
+          'source/apigee.min.js': ['<%= meta.bin.main %>/source/usergrid.js','<%= meta.bin.main %>/source/monitoring.js','<%= meta.bin.main %>/source/apigee.js']
         }
       }
     }
