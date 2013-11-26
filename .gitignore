@@ -9,3 +9,14 @@ bower_components/
 *.old
 *.bak
 *.orig
+
+samples/push/android/bin/
+samples/push/android/gen/
+
+samples/push/android/.classpath
+
+samples/push/android/project.properties
+
+samples/push/android/.classpath
+
+samples/push/android/.settings/org.eclipse.jdt.core.prefs
