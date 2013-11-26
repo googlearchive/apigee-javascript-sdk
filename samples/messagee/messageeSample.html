@@ -7,8 +7,23 @@
     <style type="text/css">.error{ background-color: #ffaaaa; } </style>
     <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
     <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
-    <script src="../../lib/apigee.min.js" type="text/javascript"></script>
+    <script src="../../dist/apigee.min.js" type="text/javascript"></script>
     <script src="usergrid.validation.js" type="text/javascript"></script>
+        <script>
+            (function() {
+              var global = global||this,
+                APIGEE_ORGNAME="Your Org Name",
+                APIGEE_APPNAME="Your App Name";
+                if("undefined"===typeof APIGEE_ORGNAME || "Your Org Name" === APIGEE_ORGNAME){
+                    APIGEE_ORGNAME=prompt("What is the Organization Name you registered at http://apigee.com/usergrid ?\n(you can set this permanently on line 15)", "ORG NAME");
+                }
+                if("undefined"===typeof APIGEE_APPNAME || "Your App Name" === APIGEE_APPNAME){
+                    APIGEE_APPNAME=prompt("What is the App Name you created at http://apigee.com/usergrid ?\n(you can set this permanently in on line 16)", "sandbox");
+                }
+                global.APIGEE_ORGNAME=APIGEE_ORGNAME;
+                global.APIGEE_APPNAME=APIGEE_APPNAME;
+            })();
+        </script>
     <script src="app.js" type="text/javascript"></script>
   </head>
   <body>

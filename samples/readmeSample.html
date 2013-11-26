@@ -4,14 +4,28 @@
         <!-- Don't forget to download and include the SDK. -->
         <!-- It’s available at the root of github.com/apigee/usergrid-javascript-sdk -->
         <script src="../dist/apigee.js"></script>
+        <script>
+            (function() {
+              var global = global||this,
+                APIGEE_ORGNAME="Your Org Name",
+                APIGEE_APPNAME="Your App Name";
+                if("undefined"===typeof APIGEE_ORGNAME || "Your Org Name" === APIGEE_ORGNAME){
+                    APIGEE_ORGNAME=prompt("What is the Organization Name you registered at http://apigee.com/usergrid ?\n(you can set this permanently on line 11)", "ORG NAME");
+                }
+                if("undefined"===typeof APIGEE_APPNAME || "Your App Name" === APIGEE_APPNAME){
+                    APIGEE_APPNAME=prompt("What is the App Name you created at http://apigee.com/usergrid ?\n(you can set this permanently in on line 12)", "sandbox");
+                }
+                global.APIGEE_ORGNAME=APIGEE_ORGNAME;
+                global.APIGEE_APPNAME=APIGEE_APPNAME;
+            })();
 
+        </script>
         <script type="text/javascript">
-
             // Initialize the SDK by telling App Services which organization and application
             // this client app is making requests from.
             var client = new Apigee.Client({
-                orgName:'yourorgname', // Your organization name. You'll find this in the admin portal.
-                appName:'sandbox' // Your App Services app name. It's in the admin portal.
+                orgName:APIGEE_ORGNAME, // Your organization name. You'll find this in the admin portal.
+                appName:APIGEE_APPNAME // Your App Services app name. It's in the admin portal.
             });
 
             // Read data about books from the App Services application. Start by
