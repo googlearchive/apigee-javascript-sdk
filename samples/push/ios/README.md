@@ -1,4 +1,4 @@
-## Apigee App Services Push Notifications with Phonegap!
+## Apigee Push Notifications for iOS with Phonegap!
 
 This sample illustrates how you can add support for push notifications in an HTML5/JavaScript app run on an iOS device. In the [Apigee documentation](http://apigee.com/docs/app-services/content/tutorial-push-notifications-sample-app), you'll find more information in a complete walkthrough on adding push notifications support.
 
