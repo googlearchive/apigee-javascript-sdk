@@ -46,6 +46,14 @@ Detailed instructions follow but if you just want a quick example of how to get 
 	<body></body>
 </html>
 ```
+##Build
+
+With v2.0.6, we're using the [Grunt](http://gruntjs.com/) task runner to build the Apigee library from modular components. The following steps will produce _apigee.js_ and _apigess.min.js_ files in the project's _source_ directory.
+
+- `git clone https://github.com/apigee/apigee-javascript-sdk.git apigee-javascript-sdk`
+- `cd apigee-javascript-sdk`
+- `npm install`
+- `grunt`
 
 ##App Monitoring Getting Started
 
