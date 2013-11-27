@@ -48,12 +48,13 @@ Detailed instructions follow but if you just want a quick example of how to get 
 ```
 ##Build
 
-With v2.0.6, we're using the [Grunt](http://gruntjs.com/) task runner to build the Apigee library from modular components. The following steps will produce _apigee.js_ and _apigess.min.js_ files in the project's _source_ directory.
+With v2.0.6, we're using the [Grunt](http://gruntjs.com/) task runner to build the Apigee library from modular components. You will need to have [NodeJS](http://nodejs.org/) installed on your system. The following steps will produce _apigee.js_ and _apigess.min.js_ files in the project's _source_ directory.
 
-- `git clone https://github.com/apigee/apigee-javascript-sdk.git apigee-javascript-sdk`
-- `cd apigee-javascript-sdk`
-- `npm install`
-- `grunt`
++ `npm install grunt-cli -g` _*may require elevated privileges_
++ `git clone https://github.com/apigee/apigee-javascript-sdk.git apigee-javascript-sdk`
++ `cd apigee-javascript-sdk`
++ `npm install`
++ `grunt`
 
 ##App Monitoring Getting Started
 
@@ -88,7 +89,15 @@ App monitoring will automatically detect the specific information about your dev
 
 ##Examples
 
-There are two examples in the `/examples` folder. These are two small single page web apps that will demonstrate how to call the SDK logging, how crashes are tracked, and network calls are monitored.
+You can start a simple web server by running `grunt dev`. You can then access the samples at port 3000 on localhost. 
+
++ [README Sample](http://localhost:3000/samples/readmeSample.html)
++ [Entities](http://localhost:3000/samples/entities.html)
++ [Collections](http://localhost:3000/samples/collections.html)
++ [Monitoring](http://localhost:3000/samples/monitoringSample.html)
++ [Geolocation](http://localhost:3000/samples/geolocation.html)
++ [Books Sample](http://localhost:3000/samples/booksSample.html)
++ [Messagee (a simple twitter clone)](http://localhost:3000/samples/messagee/messageeSample.html)
 
 ##Tests 
 
