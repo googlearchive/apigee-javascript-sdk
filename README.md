@@ -3,7 +3,7 @@
 
 ##App Services Getting Started
 
-Detailed instructions follow but if you just want a quick example of how to get started with this SDK, here’s a minimal HTML5 file that shows you how to include & initialize the SDK, as well as how to read & write data from Apigee App Services with it.
+Detailed instructions are available in our [Apigee JavaScript SDK install guide](http://apigee.com/docs/app-services/content/installing-apigee-sdk-javascript) but if you just want a quick example of how to get started with this SDK, here’s a minimal HTML5 file that shows you how to include & initialize the SDK, as well as how to read & write data from Apigee App Services with it.
 
 ```html
 <!DOCTYPE html>
@@ -69,7 +69,7 @@ App monitoring is enabled by default by initializing the `Apigee.Client` object.
 
 ##More documentation
 
-Head over to the [Apigee Mobile SDK wiki](https://github.com/apigee/apigee-javascript-sdk/wiki) to learn more about how to use App Services in JavaScript!
+Head over to the [App Services documentation](http://apigee.com/docs/app-services) to learn more about how to use App Services in JavaScript!
 
 ##Crash Reporting
 
@@ -127,31 +127,22 @@ For the SDK to properly report device based metrics like OS and version name we 
 		});
 	});
 
-## Contributing
-We welcome your enhancements!
+##Node.js
+Want to use Node.js? No problem - use the Usergrid Node Module:
 
-Like [Usergrid](https://github.com/apigee/usergrid-node-module), the Apigee JavaScript SDK is open source and licensed under the Apache License, Version 2.0.
+<https://npmjs.org/package/usergrid>
 
-1. Fork it
-2. Create your feature branch (`git checkout -b my-new-feature`)
-3. Commit your changes (`git commit -am 'Added some feature'`)
-4. Push your changes to the upstream branch (`git push origin my-new-feature`)
-5. Create new Pull Request (make sure you describe what you did and why your mod is needed)
+or on github:
 
-##More information
-For more information on Apigee App Services, visit <http://apigee.com/about/developers>.
+<https://github.com/apigee/usergrid-node-module>
 
-## Copyright
-Copyright 2013 Apigee Corporation
+The syntax for this Javascript SDK and the Usergrid Node module are almost exactly the same so you can easily transition between them.
 
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
+##Comments / Questions
+Please feel free to send comments or questions to the Usergrid Google group:
 
-<http://www.apache.org/licenses/LICENSE-2.0>
+usergrid@googlegroups.com
 
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License.
+Or just open github issues.  We want to know what you think, and will address all suggestions / comments / concerns.
+
+Thank you!
