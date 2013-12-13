@@ -5,6 +5,8 @@
 
 Detailed instructions are available in our [Apigee JavaScript SDK install guide](http://apigee.com/docs/app-services/content/installing-apigee-sdk-javascript) but if you just want a quick example of how to get started with this SDK, here’s a minimal HTML5 file that shows you how to include & initialize the SDK, as well as how to read & write data from Apigee App Services with it.
 
+Be sure to see the [full SDK documentation](http://apigee.com/docs/content/build-apps-home) at Apigee.
+
 ```html
 <!DOCTYPE html>
 <html>
