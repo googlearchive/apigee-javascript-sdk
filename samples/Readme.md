@@ -20,7 +20,7 @@ Before you do, however, each of the sample apps require you to do two things:
 
 * Include the Apigee JavaScript SDK
 
-If you downloaded the SDK and are running the apps from the /samples directory, we have already properly included apigee.js (the SDK) for you in the <head> of the app:
+If you downloaded the SDK and are running the apps from the /samples directory, we have already properly included apigee.js (the SDK) for you in the &lt;head&gt; of the app:
 
 ```html
 <script src="../source/apigee.js"></script>
