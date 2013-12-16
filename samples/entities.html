@@ -75,7 +75,7 @@ All done? Great, let's get started! -->
                         +   "Did you enter your organization name properly on  ln 36?"
                         +   "<br/><br/>"
                         +   "Error message:" 
-                        +	"<pre>" + JSON.stringify(errorMessage); + "</pre>"
+                        +	"<pre>" + JSON.stringify(errorMessage) + "</pre>";
 	                } else { 
 	                    // Success - the entity was created properly
 	                    document.getElementsByTagName('body')[0].innerHTML
@@ -85,11 +85,11 @@ All done? Great, let's get started! -->
                         +	"entity you created. You will use this to perform retrieve, "
                         + 	"update and delete operations on this entity:"
                         +	"<br /><br />"
-                        +   JSON.stringify(entity.get('uuid'));
+                        +   JSON.stringify(entity.get('uuid'))
                         +	"<br /><br />"
                         + 	"And here is the object you created:"
                         +   "<br/><br/>"
-                        +   "<pre>" + JSON.stringify(entity, undefined, 4); + "</pre>"
+                        +   "<pre>" + JSON.stringify(entity, undefined, 4) + "</pre>";
 	                }
 	            });
 			}
