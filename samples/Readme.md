@@ -20,26 +20,26 @@ Before you do, however, each of the sample apps require you to do two things:
 
 * Include the Apigee JavaScript SDK
 
-If you downloaded the SDK and are running the apps from the /samples directory, we have already properly included apigee.js (the SDK) for you in the &lt;head&gt; of the app:
+	If you downloaded the SDK and are running the apps from the /samples directory, we have already properly included apigee.js (the SDK) for you in the &lt;head&gt; of the app:
 
-```html
+	```html
 <script src="../source/apigee.js"></script>
 ```
 
-If you have moved any of the samples, you will need to update the relative path to apigee.js for the sample to run properly.
+	If you have moved any of the samples, you will need to update the relative path to apigee.js for the sample to run properly.
 
-* Provide your Apigee organization name
+* Initialize the SDK
 
-Each of these apps are designed to use the default, unsecured 'sandbox' application that was included when you created your Apigee account. To access your data store, you will need to provide your organization name by updating the call to Apigee.Client in each sample app. Near the top of the code in each app, you should see something similar to this:
+	Each of these apps are designed to use the default, unsecured 'sandbox' application that was included when you created your Apigee account. To access your data store, you will need to provide your organization name by updating the call to Apigee.Client in each sample app. Near the top of the code in each app, you should see something similar to this:
 
-```html
+	```html
 var client = new Apigee.Client({
 	orgName:'yourorgname', // Your Apigee.com username for App Services
 	appName:'sandbox' // Your Apigee App Services app name
 });
 ```
 
-Simply change the value of the orgName property to your Apigee organization name.
+	Simply change the value of the orgName property to your Apigee organization name.
 
 ##Running the sample apps from localhost
 
