@@ -50,5 +50,7 @@ You can start a simple web server by running `grunt dev`. You can then access th
 - [Collections](http://localhost:3000/samples/collections.html)
 - [Monitoring](http://localhost:3000/samples/monitoringSample.html)
 - [Geolocation](http://localhost:3000/samples/geolocation.html)
+- [Push Notifications - iOS](http://localhost:3000/samples/push/ios/www/index.html)
+- [Push Notifications - Android](http://localhost:3000/samples/push/ios/assets/www/index.html)
 - [Books Sample](http://localhost:3000/samples/booksSample.html)
 - [Messagee (a simple twitter clone)](http://localhost:3000/samples/messagee/messageeSample.html)
