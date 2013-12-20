@@ -129,7 +129,8 @@ var app = {
       var client = new Apigee.Client({
         orgName:orgName,
         appName:appName,
-        logging:true
+        logging: true, //optional - turn on logging, off by default
+		buildCurl: true //optional - logs all network calls to the console, off by default
       });
 
       // A variable to refer to the PhoneGap push notification plugin.

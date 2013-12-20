@@ -3,7 +3,7 @@
     <head>
         <!-- Don't forget to download and include the SDK. -->
         <!-- It’s available at the root of github.com/apigee/usergrid-javascript-sdk -->
-        <script src="../source/apigee.js"></script>
+        <script src="../../source/apigee.js"></script>
         <script>
             (function() {
               var global = global||this,
@@ -25,7 +25,10 @@
             // this client app is making requests from.
             var client = new Apigee.Client({
                 orgName:APIGEE_ORGNAME, // Your organization name. You'll find this in the admin portal.
-                appName:APIGEE_APPNAME // Your App Services app name. It's in the admin portal.
+                appName:APIGEE_APPNAME, // Your App Services app name. It's in the admin portal.
+				logging: true, //optional - turn on logging, off by default
+				buildCurl: true //optional - log network calls in the console, off by default
+
             });
 
             // Read data about books from the App Services application. Start by
