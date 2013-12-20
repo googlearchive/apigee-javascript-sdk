@@ -53,9 +53,11 @@ Be sure to see the [full SDK documentation](http://apigee.com/docs/content/build
 
 App monitoring is enabled by default by initializing the `Apigee.Client` object. 
 
-###Network Call Monitoring
+###Network Call & App Usage Monitoring
 
-The SDK will also monitor your network calls to track errors and usage. This configuration is pulled from the rules that you configure on the App Monitoring dashboard of the [admin console](https://apigee.com/appservices).
+The SDK will monitor app usage statistics, as well as network calls to track errors and usage. This configuration is pulled from the rules that you configure on the App Monitoring dashboard of the [admin console](https://apigee.com/appservices).
+
+For more information, see [Monitoring app usage data](http://apigee.com/docs/app-services/content/monitoring-app-usage-data) and [Monitoring network performance](http://apigee.com/docs/app-services/content/monitoring-network-performance) in the Apigee docs.
 
 ###Simple and Advanced Logging
 
@@ -70,13 +72,19 @@ You can use the following methods for logging calls.
 - `logError()`
 - `logAssert()`
 
-###Figuring out your device type
-
-App monitoring will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the App Monitoring dashboard of the [admin console](https://apigee.com/appservices).
+For more information, see [Monitor app errors and crashes](http://apigee.com/docs/app-services/content/monitoring-app-errors-and-crashes) in the Apigee docs.
 
 ###Crash Reporting
 
 The app monitoring portion of the SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
+
+For more information, see [Monitor app errors and crashes](http://apigee.com/docs/app-services/content/monitoring-app-errors-and-crashes) in the Apigee docs.
+
+###Figuring out your device type
+
+App monitoring will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the App Monitoring dashboard of the [admin console](https://apigee.com/appservices).
+
+For more information, see [Customizing app monitoring](http://apigee.com/docs/app-services/content/customizing-app-monitoring) in the Apigee docs.
 
 ##Mobile app development
 
@@ -108,16 +116,12 @@ For the SDK to properly report device based metrics like OS and version name we 
 		});
 	});
 
-##Node.js
-Want to use Node.js? No problem - use the Usergrid Node Module:
+##Node.js Module and Other SDKs
+Want to use Node.js? No problem - use the Usergrid Node Module. You can get it from [npm](https://npmjs.org/package/usergrid) and [GitHub](https://github.com/apigee/usergrid-node-module)
 
-<https://npmjs.org/package/usergrid>
+The syntax for this JavaScript SDK and the Usergrid Node module are almost exactly the same so you can easily transition between them.
 
-or on github:
-
-<https://github.com/apigee/usergrid-node-module>
-
-The syntax for this Javascript SDK and the Usergrid Node module are almost exactly the same so you can easily transition between them.
+We also have SDKs available for many other platforms, including Android, iOS, Ruby, .NET. Visit our [SDK download page](http://apigee.com/docs/app-services/content/app-services-sdks) for a full list.
 
 ##Tests 
 
