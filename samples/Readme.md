@@ -3,6 +3,7 @@
 The sample apps in this directory are intended to show basic usage of some of the major features of App Services using the Apigee JavaScript SDK. By default, all of the sample apps are set up to use the unsecured 'sandbox' application that was created for you when you created your Apigee account.
 
 ##Included Samples Apps
+
 * **messagee** - A Twitter-like app that uses data store, social and user management features.
 * **push** - An app that sends push notifications to mobile devices using APNS or GCM.
 * **booksSample** - A 'list' app that lets the user create, retrieve and perform geolocation queries on a list of books. This sample also makes use of jQuery and jQuery mobile.
@@ -14,41 +15,16 @@ The sample apps in this directory are intended to show basic usage of some of th
 
 ##Running the sample apps
 
-To run the sample apps, simply open its index.html file in a browser.
+To run the sample apps, do the following:
 
-Before you do, however, each of the sample apps require you to do two things:
+1. Put a copy of apigee.js (located in the /source directory) in the project director. We recommend creating a <code>/js</code> directory for this.
+	
+2. Update the path to apigee.js in the project's index.html. By default, we have already included this in the &lt;head&gt; of the app:
 
-* Include the Apigee JavaScript SDK
-
-If you downloaded the SDK and are running the apps from the /samples directory, we have already properly included apigee.js (the SDK) for you in the &lt;head&gt; of the app:
-
-```html
-<script src="../source/apigee.js"></script>
+	```html
+<script src="js/apigee.js"></script>
 ```
+	
+	You will need to update this path if apigee.js is not located in <code>js/</code>.
 
-If you have moved any of the samples, you will need to update the relative path to apigee.js for the sample to run properly.
-
-* Provide your Apigee organization name
-
-Each of these apps are designed to use the default, unsecured 'sandbox' application that was included when you created your Apigee account. To access your data store, you will need to provide your organization name by updating the call to Apigee.Client in each sample app. Near the top of the code in each app, you should see something similar to this:
-
-```html
-var client = new Apigee.Client({
-	orgName:'yourorgname', // Your Apigee.com username for App Services
-	appName:'sandbox' // Your Apigee App Services app name
-});
-```
-
-Simply change the value of the orgName property to your Apigee organization name.
-
-##Running the sample apps from localhost
-
-You can start a simple web server by running `grunt dev`. You can then access the samples at port 3000 on localhost. 
-
-- [README Sample](http://localhost:3000/samples/readmeSample.html)
-- [Entities](http://localhost:3000/samples/entities.html)
-- [Collections](http://localhost:3000/samples/collections.html)
-- [Monitoring](http://localhost:3000/samples/monitoringSample.html)
-- [Geolocation](http://localhost:3000/samples/geolocation.html)
-- [Books Sample](http://localhost:3000/samples/booksSample.html)
-- [Messagee (a simple twitter clone)](http://localhost:3000/samples/messagee/messageeSample.html)
+3. Now simply open the project's index.html file in your brower!

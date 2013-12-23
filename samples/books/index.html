@@ -7,7 +7,7 @@
         <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
         <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
         <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
-        <script src="../source/apigee.js"></script>
+        <script src="js/apigee.js"></script>
         <script>
             (function() {
               var global = global||this,
@@ -35,7 +35,10 @@
             //We start by creating an instance of Apigee.Client to carry our App Services credentials        
             var apigee = new Apigee.Client({
                 orgName:APIGEE_ORGNAME,
-                appName:APIGEE_APPNAME
+                appName:APIGEE_APPNAME,
+				logging: true, //optional - turn on logging, off by default
+				buildCurl: true //optional - log network calls in the console, off by default
+
                 
             });
             
@@ -50,10 +53,10 @@
             $(document).ready(function () {
                 $('#create-button').bind('click', createBook);
                 
-                navigator.geolocation.getCurrentPosition(loadBooks)
+                loadBooks();
             });
 
-            function loadBooks (location) {
+            function loadBooks () {
                 
                 my_books.fetch( // Actual network call
 

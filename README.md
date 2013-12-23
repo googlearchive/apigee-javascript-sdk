@@ -1,7 +1,7 @@
 #Apigee JavaScript SDK
 
 
-##App Services Getting Started
+##Getting Started
 
 Detailed instructions are available in our [Apigee JavaScript SDK install guide](http://apigee.com/docs/app-services/content/installing-apigee-sdk-javascript) but if you just want a quick example of how to get started with this SDK, here’s a minimal HTML5 file that shows you how to include & initialize the SDK, as well as how to read & write data from Apigee App Services with it.
 
@@ -48,19 +48,22 @@ Be sure to see the [full SDK documentation](http://apigee.com/docs/content/build
 	<body></body>
 </html>
 ```
-##Build
 
-With v2.0.6, we're using the [Grunt](http://gruntjs.com/) task runner to build the Apigee library from modular components. You will need to have [NodeJS](http://nodejs.org/) installed on your system. The following steps will produce _apigee.js_ and _apigess.min.js_ files in the project's _source_ directory.
+##App Monitoring
 
-1. `npm install grunt-cli -g` _*may require elevated privileges_
-2. `git clone https://github.com/apigee/apigee-javascript-sdk.git apigee-javascript-sdk`
-3. `cd apigee-javascript-sdk`
-4. `npm install`
-5. `grunt`
+App monitoring is enabled by default by initializing the `Apigee.Client` object. 
 
-##App Monitoring Getting Started
+###Network Call & App Usage Monitoring
 
-App monitoring is enabled by default by initializing the `Apigee.Client` object. You can also use the following methods for logging calls.
+The SDK will monitor app usage statistics, as well as network calls to track errors and usage. This configuration is pulled from the rules that you configure on the App Monitoring dashboard of the [admin console](https://apigee.com/appservices).
+
+For more information, see [Monitoring app usage data](http://apigee.com/docs/app-services/content/monitoring-app-usage-data) and [Monitoring network performance](http://apigee.com/docs/app-services/content/monitoring-network-performance) in the Apigee docs.
+
+###Simple and Advanced Logging
+
+You can log specific events in your SDK by using one of the many log methods. You may also use the console logging methods to track messages. This is configured in the App Monitoring dashboard of the [admin console](https://apigee.com/appservices).
+
+You can use the following methods for logging calls.
 
 - `logVerbose()`
 - `logDebug()`
@@ -69,43 +72,27 @@ App monitoring is enabled by default by initializing the `Apigee.Client` object.
 - `logError()`
 - `logAssert()`
 
-##More documentation
+For more information, see [Monitor app errors and crashes](http://apigee.com/docs/app-services/content/monitoring-app-errors-and-crashes) in the Apigee docs.
 
-Head over to the [App Services documentation](http://apigee.com/docs/app-services) to learn more about how to use App Services in JavaScript!
-
-##Crash Reporting
+###Crash Reporting
 
 The app monitoring portion of the SDK will monitor the window.onerror event to track if your app experiences javascript crashes.
 
-##Network Call Monitoring
+For more information, see [Monitor app errors and crashes](http://apigee.com/docs/app-services/content/monitoring-app-errors-and-crashes) in the Apigee docs.
 
-The SDK will also monitor your network calls to track errors and usage. This configuration is pulled from the rules that you configure on the App Monitoring dashboard.
+###Figuring out your device type
 
-##Simple and Advanced Logging
+App monitoring will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the App Monitoring dashboard of the [admin console](https://apigee.com/appservices).
 
-You can log specific events in your SDK by using one of the many log methods. You may also use the console logging methods to track messages. This is configured in the App Monitoring dashboard.
+For more information, see [Customizing app monitoring](http://apigee.com/docs/app-services/content/customizing-app-monitoring) in the Apigee docs.
 
-##Figuring out your device type
+##Mobile app development
 
-App monitoring will automatically detect the specific information about your device, analyze data that is collected by device type. The level of granularity in detection is also controlled by the App Monitoring dashboard.
+###PhoneGap
 
-##Examples
+No additional configuration is needed to use the Apigee JavaScript SDK in PhoneGap apps.
 
-You can start a simple web server by running `grunt dev`. You can then access the samples at port 3000 on localhost. 
-
-- [README Sample](http://localhost:3000/samples/readmeSample.html)
-- [Entities](http://localhost:3000/samples/entities.html)
-- [Collections](http://localhost:3000/samples/collections.html)
-- [Monitoring](http://localhost:3000/samples/monitoringSample.html)
-- [Geolocation](http://localhost:3000/samples/geolocation.html)
-- [Books Sample](http://localhost:3000/samples/booksSample.html)
-- [Messagee (a simple twitter clone)](http://localhost:3000/samples/messagee/messageeSample.html)
-
-##Tests 
-
-Basic set of test cases can be found in the `/test` folder. Just open the tests.html file, and they will all run accordingly.
-
-##Trigger.io configuration
+###Trigger.io configuration
 
 The following plugins should be enabled:
 
@@ -114,7 +101,7 @@ The following plugins should be enabled:
 
 Or the SDK will not function properly!
 
-##Titanium Configuration
+###Titanium Configuration
 
 For the SDK to properly report device based metrics like OS and version name we need to add this snippet of code anywhere in your `app.js` file.
 
@@ -129,16 +116,20 @@ For the SDK to properly report device based metrics like OS and version name we 
 		});
 	});
 
-##Node.js
-Want to use Node.js? No problem - use the Usergrid Node Module:
+##Node.js Module and Other SDKs
+Want to use Node.js? No problem - use the Usergrid Node Module. You can get it from [npm](https://npmjs.org/package/usergrid) and [GitHub](https://github.com/apigee/usergrid-node-module)
 
-<https://npmjs.org/package/usergrid>
+The syntax for this JavaScript SDK and the Usergrid Node module are almost exactly the same so you can easily transition between them.
 
-or on github:
+We also have SDKs available for many other platforms, including Android, iOS, Ruby, .NET. Visit our [SDK download page](http://apigee.com/docs/app-services/content/app-services-sdks) for a full list.
 
-<https://github.com/apigee/usergrid-node-module>
+##Tests 
 
-The syntax for this Javascript SDK and the Usergrid Node module are almost exactly the same so you can easily transition between them.
+Basic set of test cases can be found in the `/test` folder. Just open the tests.html file, and they will all run accordingly.
+
+##More documentation
+
+Head over to the [App Services documentation](http://apigee.com/docs/app-services) to learn more about how to use App Services in JavaScript!
 
 ##Comments / Questions
 Please feel free to send comments or questions to the Usergrid Google group:

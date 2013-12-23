@@ -9,7 +9,7 @@
   <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
   <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
   <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
-  <script src="../source/apigee.js"></script>
+  <script src="js/apigee.js"></script>
   <script>
       (function() {
         var global = global||this,
@@ -30,7 +30,10 @@
     var monitoringClient = new Apigee.Client({
     	//Replace 'YOUR_ORG' and 'YOUR_APP' with your Apigee organization and application names
         orgName:APIGEE_ORGNAME,
-        appName:APIGEE_APPNAME
+        appName:APIGEE_APPNAME,
+		logging: true, //optional - turn on logging, off by default
+		buildCurl: true //optional - log network calls in the console, off by default
+
         //URI:"https://api.usergrid.com" //uncomment and change if logging to somewhere other than default Apigee server
     });
   </script>
