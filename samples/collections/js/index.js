@@ -64,7 +64,7 @@ function createCollection () {
            // Error - there was a problem creating the collection
            document.getElementById('result-text').innerHTML
             +=  "Error! Unable to create your collection. "
-            +   "Did you enter your organization name properly on ln 35?"
+            +   "Did you enter the correct organization name?"
             +   "<br/><br/>"
             +   "Error message:"
             +	"<pre>" + JSON.stringify(error) + "</pre>";
@@ -318,7 +318,7 @@ function deleteCollection () {
            // Error - there was a problem deleting the collection
            document.getElementById('result-text').innerHTML
             +=  "Error! Unable to delete your collection. "
-            +   "Did you enter your organization name properly on ln 35?"
+            +   "Did you enter the correct organization name?"
             +   "<br/><br/>"
             +   "Error message:" 
             +	"<pre>" + JSON.stringify(error); + "</pre>"
@@ -345,7 +345,7 @@ function deleteCollection () {
            // Error - there was a problem deleting the entities
            document.getElementById('result-text').innerHTML
             +=  "Error! Unable to delete your collection. "
-            +   "Did you enter your organization name properly on ln 35?"
+            +   "Did you enter the correct organization name?"
             +   "<br/><br/>"
             +   "Error message:" + JSON.stringify(error);
         } else { 
