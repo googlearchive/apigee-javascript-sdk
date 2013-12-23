@@ -8,377 +8,84 @@ This sample app will show you how to perform basic operations on collections usi
 	- retrieving and paging through a collection
 	- deleting entities from a collection
 	
+This index.html is the UI for the app. To see the code that makes the actual API request, see index.js.
+
 ** IMPORTANT - BEFORE YOU BEGIN **
 
-Be sure to include the Apigee JavaScript SDK (apigee.js) in your code like on ln 35 below.
-
-All done? Great, let's get started! -->	      
+Be sure to include the Apigee JavaScript SDK (apigee.js) in this project. By default this app is set up to 
+include apigee.js from the /js directory. -->	      
 
 <html>
     <head>
         <meta charset="utf-8">
         <title>Apigee Collections Sample App</title>
-        <script src="js/apigee.js"></script>
+
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+        <link rel="stylesheet" href="css/apigee.min.css" />
+		<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+        <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
         
-        <script>
-	        /* 1. Create an instance of the Apigee.Client class by specifying 
-	        	  your account details. You will use this object to send your organization and application 
-	        	  information with all calls to the Apigee API.
-	              
-	              This is how we determine which data store to access when you send a request.
-	
-	              - Enter your organization name below — it’s the username you picked when you signed up at apigee.com
-	              - Keep the appName as “sandbox”: it’s a context we automatically created for you. It’s 
-	                completely open by default, but don’t worry, other apps you create are not! */
-	
-            var dataClient = new Apigee.Client({
-                orgName:'YOUR APIGEE ORGANIZATION NAME',
-                appName:'sandbox',
-				logging: true, //optional - turn on logging, off by default
-				buildCurl: true //optional - log network calls in the console, off by default
-
-            });
-
-
-
-	        /* 2. Create an empty collection
-	
-				To start, let's declare a function to create an empty collection in Apigee for us to work with: */
-				   
-			function createCollection () {
-				/*			
-				First, we specify the properties for your new collection:
-	            
-	            -The endpoint from 'books' will be the name of your collection, which will
-	             hold any entities of that type. 
-	              
-	             Collection names are the pluralized version of the entity type, e.g. all entities of type 
-	             book will be saved in the books collection. */
-	            
-				var properties = {
-	                endpoint:'books',
-	                method:'POST' //HTTP method. Since we are creating an entity, we use 'POST'. 
-	            };
-	            
-	            /* Next, we call the request() method. Notice that the method is prepended by dataClient, 
-	               so that the Apigee API knows what data store we want to work with. */
-			
-	            dataClient.request(properties, function (error, response) { 
-	                if (error) { 
-	                   // Error - there was a problem creating the collection
-	                   document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Error! Unable to create your collection. "
-                        +   "Did you enter your organization name properly on ln 35?"
-                        +   "<br/><br/>"
-                        +   "Error message:"
-                        +	"<pre>" + JSON.stringify(error) + "</pre>";
-	                } else { 
-	                    // Success - the collection was created properly
-	                    document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Success!"
-                        +	"<br /><br />"
-                        +	"Here is the response from the Apigee API. By the way, you "
-                        +   "don't have to create an empty collection. Creating a new entity "
-                        + 	"will automatically create the corresponding collection for you."
-                        +	"<br /><br />"
-                        +   "<pre>" + JSON.stringify(response) + "</pre>";
-	                }
-	            });
-			}
-
-
-
-			/* 3. Add entities to a collection
-			
-			   Now we'll add some entities to our collection so that we have data to work with. */
-			   
-		   function addEntity () {
-			   
-			   /* We start by creating a local colleciton object to work with */				   				   
-			   var options = {
-				   client:dataClient, //our Apigee.Client object
-				   type:'book' //the entity type associated with our collection
-			   }				   
-			   collection = new Apigee.Collection(options); //this creates our local object
-			   
-			   /* Next, we define the entity we want to add */				   				   
-			   var properties = {
-				   title:'A Moveable Feast'
-			   }
-			 
-			   /* And now we call addEntity() to add the entity to our collection! */				   
-			   collection.addEntity(properties, function (error, response){
-				  if (error) {
-					  // Error - there was a problem adding the entity
-	                  document.getElementsByTagName('body')[0].innerHTML
-                      +=  "Error! Unable to add your entity. "
-                      +   "<br/><br/>"
-                      +   "Error message:" 
-                      +	  "<pre>" + JSON.stringify(error); + "</pre>"
-				  } else {
-					  // Success - the entity was created properly
-	                  document.getElementsByTagName('body')[0].innerHTML
-                      +=  "Success! A single entity has been added to your collection"
-                      +	  "<br /><br />"
-                      +	  "and..."
-				  }
-				});
-
-				/* We can also add multiple entities at once, using the request() method. 
-				   To do this, we create a JSON array with all the entities we want to add.*/
-				var entityArray = [
-				   {
-					   type:'book', //the entity type should correspond to the collection type
-					   title:'For Whom the Bell Tolls'
-				   },
-				   {
-					   type:'book',
-					   title:'The Old Man and the Sea'
-				   },
-				   {
-					   type:'book',
-					   title:'A Farewell to Arms'
-				   },
-				   {
-					   type:'book',
-					   title:'The Sun Also Rises'
-				   }
-				]
-				
-				/* Next we call request() to initiate the POST request, and pass our entity
-				   array in the 'body' property of our request properties*/
-				var properties = {
-					endpoint:'books',
-					method:'POST',
-					body:entityArray
-				}
-									
-				dataClient.request(properties, function (error, response) { 
-	                if (error) { 
-	                   // Error - there was a problem adding the array
-	                   document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Error! Unable to add your entity array. "
-                        +   "<br/><br/>"
-                        +   "Error message:"
-                        +	"<pre>" + JSON.stringify(error); + "</pre>"
-	                } else { 
-	                    // Success - the entities were created properly
-	                    document.getElementsByTagName('body')[0].innerHTML
-                        +=	"<br /><br />"
-                        +   "So has your array!"
-	                }
-	            });
-	            
-	            /* We're going to add the entity array a couple more times so that we have a
-	               good amount of data to work with when we look at paging later. */
-	            for (i=1;i<=2;i++) {
-		            dataClient.request(properties, function (error, response) { 
-		                if (error) { 
-		                   //Error
-		                } else { 
-		                    //Success
-		                }
-		            });
-				}
-		   }
-
-
-
-	        /* 3. Retrieve a collection
-	        
-	           Now that we have data in our collection, let's declare a function to retrieve it: */
-	           
-			function retrieveCollection () {
-				
-				/* We start by creating a local colleciton object to work with */				   				   
-				var options = {
-				   client:dataClient, //our Apigee.Client object
-				   type:'book2' //the entity type associated with our collection
-				}
-				
-				collection = new Apigee.Collection(options); //this creates our local object
-				
-				/* Next we call fetch(), which initiates our GET request to the API: */
-				collection.fetch(function (error, response) { 
-					if (error) { 
-					  // Error - there was a problem retrieving the collection
-	                  document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Error! Unable to retrieve your collection. "
-                        + 	"<br /><br />"
-                        +   "Check that the 'type' of the collection is correct."
-                        +   "<br/><br/>"
-                        +   "Error message:" + JSON.stringify(error);		                 
-					} else { 
-					  // Success - the collection was found and retrieved by the Apigee API
-					  document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Success! Here is the collection we retrieved. Notice that only "
-                        +  	"the first 10 entities in the collection are retrieved. "
-                        +	"We'll show you how to page through to get more results later."
-                        +   "<br/><br/>"
-                        +   "<pre>" + JSON.stringify(response); + "</pre>"
-					} 
-				});
-				
-			}
-	
-	
-	
-			/* 4. Using cursors (paging through a collection)
-	        
-	           By default, the Apigee API only returns the first 10 entities in a collection. 
-	           This is why our retrieveCollection() function only gave us back the first 
-	           10 entities in our collection.
-	           
-	           To get the next 10 results, we send a new GET request that references the 
-	           'cursor' property of the previous response by using the hasNextPage() and 
-	           getNextPage() methods. */
-	           	         
-		   function pageCollection() {
-			
-	  			  /* We start by creating a local colleciton object to work with */				   				   
-	  			  var options = {
-				   client:dataClient, //our Apigee.Client object
-				   type:'book' //the entity type associated with our collection
-				}
-				
-				collection = new Apigee.Collection(options); //this creates our local object				
-				
-				/* Then we call fetch, just like in our retrieveCollection() function above */
-				collection.fetch(function (error, response) { 					
-				    if (error) { 
-					  // Error - there was a problem retrieving the collection
-	                  document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Error! Unable to retrieve your collection. "
-                        + 	"<br /><br />"	                        
-                        +   "Check that the 'type' of the collection is correct."
-                        +   "<br/><br/>"
-                        +   "Error message:" 
-                        +	"<pre>" + JSON.stringify(error); + "</pre>"		                 
-					} else { 
-					  /* Success - the collection was found and retrieved by the Apigee API, so we use 
-					     hasNextPage() to check if the 'cursor' property exists. If it does, we use 
-					     getNextPage() to initiate another GET and retrieve the next 10 entities. */
-						 if (collection.hasNextPage()) {
-							 collection.getNextPage(function (error, response){
-								if (error) { 
-								  // Error - there was a problem retrieving the next set of entities
-				                  document.getElementsByTagName('body')[0].innerHTML
-			                        +=  "Error! Unable to retrieve the next result set. "
-			                        +   "<br/><br/>"
-			                        +   "Error message:" 
-			                        +	"<pre>" + JSON.stringify(error); + "</pre>"		                 
-								} else { 
-								  // Success - the next set of entities in the collection was found
-								  document.getElementsByTagName('body')[0].innerHTML
-			                        +=  "Success! Here are the next 10 entities in our collection."
-			                        +   "<br/><br/>"
-			                        +   "<pre>" + JSON.stringify(response); + "</pre>"
-								}	 
-							 });
-						 } else {
-						 	//if hasNextPage() returns false, there was no cursor in the last response
-							document.getElementsByTagName('body')[0].innerHTML
-								+= "There are no more entities in this collection."
-						 }
-					}
-				});
-				
-				/* You can also use these other useful SDK methods for paging through results:
-				   - hasPreviousPage() and getPreviousPage() page through the collection in reverse
-				   - hasNextEntity() and getNextEntity() iterate through entities in the current result set. */
-		
-			}
-
-
-        	/* 5. Delete a collection
-        	
-        	   At this time, it is not possible to delete a collection, but you can delete entities from a 
-        	   collection, including performing batch deletes. Please be aware that removing entities from 
-        	   a collection will delete the entities. */
-        				
-			function deleteCollection () {
-
-				/* Let's start by batch deleting the first 5 entities in our collection. To do this, we specify 
-				   a query string with the 'qs' property in the format {ql:<query string>}. 
-				   
-				   In this case, by specifying limit=5 we ask the API to only return the first 5 entities in 
-				   the collection, rather than the default 10. */			
-
-				var options = {
-					method:'DELETE',
-					endpoint:'book2s',
-					qs:{ql:'limit=5'}
-				}
-		 		
-				/* Next, we call the request() method. Notice that the method is prepended by dataClient, 
-		           so that the Apigee API knows what data store we want to work with. */				
-	            dataClient.request(options, function (error, response) { 
-	                if (error) { 
-	                   // Error - there was a problem deleting the collection
-	                   document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Error! Unable to delete your collection. "
-                        +   "Did you enter your organization name properly on ln 35?"
-                        +   "<br/><br/>"
-                        +   "Error message:" 
-                        +	"<pre>" + JSON.stringify(error); + "</pre>"
-	                } else { 
-	                    // Success - all entities in the collection were deleted
-	                    document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Success! The first 5 entities in your collection were deleted."
-                        +	"<br /><br />"
-                        =	"and..."
-	                }
-	            });
-	            
-	            /* We can also delete specific entities from our collection using a query string. 
-	               In this example, we'll delete all entities with the title 'For Whom the Bell Tolls'. */
-	            
-	            var options = {
-	            	method:'DELETE',
-					endpoint:'books',
-					qs:{ql:"title='For Whom the Bell Tolls'"}
-				}
-
-	            dataClient.request(options, function (error, response) { 
-	                if (error) { 
-	                   // Error - there was a problem deleting the entities
-	                   document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Error! Unable to delete your collection. "
-                        +   "Did you enter your organization name properly on ln 35?"
-                        +   "<br/><br/>"
-                        +   "Error message:" + JSON.stringify(error);
-	                } else { 
-	                    // Success - entities were deleted
-	                    document.getElementsByTagName('body')[0].innerHTML
-                        +=  "All entities with title 'For Whom the Bell Tolls' have been "
-                        +	"deleted from your collection."
-	                }
-	            });
-	            
-			}
-        </script>        
+        <!-- Include our API request functions from index.js and the SDK from apigee.js -->
+        <script src="js/index.js"></script>
+        <script src="js/apigee.js"></script>                
+        
+		<script>
+			$(document).ready( function(){				
+				$('#start-button').bind('click',promptClientCredsAndInitializeSDK);
+				$('#create-button').bind('click',function () {$('#result-text').empty(); createCollection();});
+				$('#add-button').bind('click',function () {$('#result-text').empty(); addEntity();});
+				$('#retrieve-button').bind('click',function () {$('#result-text').empty(); retrieveCollection();});
+				$('#page-button').bind('click',function () {$('#result-text').empty(); pageCollection();});
+				$('#delete-button').bind('click',function () {$('#result-text').empty(); deleteCollection();});
+	        });
+	    </script>
     </head>
     <body>        
-        <script>
-        	/* 6. Now let's run it! 
-        	
-        	   Be sure to set your org name on ln 35 above, then uncomment the five function
-        	   calls below one at a time to see their result! */
-			
-	        /* Uncomment to create your new empty collection */
-	        //createCollection();
-	        
-	        /* Uncomment to add entities to your collection */
-	        //addEntity();
-	        
-	        /* Uncomment to retrieve the first 10 entities in your collection. */
-	        //retrieveCollection();
-	        
-	        /* Uncomment to retrieve the next 10 entities in your collection */
-	        //pageCollection();
-	        
-	        /* Uncomment to delete entities from your collection */
-	        //deleteCollection();
-        </script>        
+		<div data-role='page' data-theme='b'>
+			<div data-role='header' data-theme='b'><h3>Apigee Collections Sample App</h3></div>
+			<div data-role='content'>
+				<p>This sample app will show you how to perform basic operations on collections using the Apigee JavaScript SDK, including:</p>
+				<ul>	
+					<li>creating an empty collection</li>
+					<li>adding one or more entities to a collection</li>
+					<li>retrieving and paging through a collection</li>
+					<li>deleting entities from a collection</li>	
+				</ul>
+				<p><strong>IMPORTANT - BEFORE YOU BEGIN</strong></p>					
+				<p>Be sure the Apigee JavaScript SDK (apigee.js) is properly included in this project.</p>
+				<p>See /samples/Readme.md for more information on including the SDK.</p>
+				<a href='#main-page' id='start-button' data-role='button' data-inline='true'>Start</a>
+			</div>
+		</div>
+		<div id='main-page' data-role='page' data-theme='b'>
+			<div data-role='header' data-theme='b'><h3>Apigee Collections Sample App</h3></div>
+			<div data-role='content'>
+				<p>This app show the basics of working with collections using the Apigee JavaScript SDK. Click each button to execute an API call and see its response. For this app to work properly you must execute the calls sequentially.</p>
+				<p>To view the code and more detailed comments on how this app operates, open js/index.js.</p>
+				<ol>
+					<li><strong>Create an empty 'books' collection</strong><br />
+						This creates an empty collection to hold entities of type 'book'<br />
+						<a href='#result-page' data-transition='slide' id='create-button' data-role='button' data-inline='true'>Create</a></li>
+					<li><strong>Add entities to the collection</strong><br />
+						Now we add some books by Hemmingway. This will add a single book entity then add an array of book entities.<br />
+						<a href='#result-page' data-transition='slide' id='add-button' data-role='button' data-inline='true'>Add</a></li>
+					<li><strong>Retrieve the first 10 entities</strong><br />
+						By default, we return 10 entities but you can request more. This will retrieve the first 10 book entities in our collection.<br />
+						<a href='#result-page' data-transition='slide' id='retrieve-button' data-role='button' data-inline='true'>Retrieve</a></li>
+					<li><strong>Retrieve the next page of entities</strong><br />
+						Since the first retrieve returned just the first 10 entities, we'll use the 'cursor' from the response to get the next 10.<br />
+						<a href='#result-page' data-transition='slide' id='page-button' data-role='button' data-inline='true'>Retrieve Next</a></li>
+					<li><strong>Delete some entities</strong><br />
+						Last, we delete some entities from the collection. This will delete the first 5 entities in the collection and delete just the entity with the title 'For Whom the Bell Tolls'<br />
+						<a href='#result-page' data-transition='slide' id='delete-button' data-role='button' data-inline='true'>Delete</a></li>
+				</ol>
+			</div>			
+		</div>
+		<div id='result-page' data-role='page' data-theme='b'>
+			<div data-role='header' data-theme='b'><h3>Apigee Collections Sample App</h3></div>
+			<a href='#main-page' data-transition='slide' id='back-button' data-role='button' data-inline='true' class='ui-btn-right'>Back</a>
+			<div id='result-text' data-role='content'></div>
+		</div>
     </body>
 </html>
