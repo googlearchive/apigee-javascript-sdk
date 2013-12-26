@@ -17,7 +17,7 @@ The sample apps in this directory are intended to show basic usage of some of th
 
 To run the sample apps, do the following:
 
-1. Put a copy of apigee.js (located in the /source directory) in the project director. We recommend creating a <code>/js</code> directory for this.
+1. Put a copy of apigee.js (located in the /source directory) in the project directory. We recommend creating a <code>/js</code> directory for this.
 	
 2. Update the path to apigee.js in the project's index.html. By default, we have already included this in the &lt;head&gt; of the app:
 
