@@ -1,150 +1,75 @@
 <!DOCTYPE html>
-<!-- APIGEE JavaScript SDK ENTITY EXAMPLE APP
+<!-- APIGEE JavaScript SDK GEOLOCATION EXAMPLE APP
 
-This sample app will show you how to perform basic entity operation using the Apigee JavaScript SDK, including:
+This sample app will show you how to use the geolocation features of the Apigee JavaScript SDK, including:
 	
-	- Create an entity with location data
-	- Query the Apigee API for entities based on location
+	- Creating an entity with location data
+	- Querying the Apigee API for entities based on location
 
 ** IMPORTANT - BEFORE YOU BEGIN **
 
-Be sure to include the Apigee JavaScript SDK (apigee.js) in your code like on line 19 below.
+Be sure to include the Apigee JavaScript SDK (apigee.js) in this project. By default this app is set up to 
+include apigee.js from the /js directory. -->	      
 
-All done? Great, let's get started! -->	      
 
 <html>
     <head>
         <meta charset="utf-8">
         <title>Apigee Geolocation Sample App</title>
-        <script src="js/apigee.js"></script>
+
+        <link rel="stylesheet" href="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.css" />
+        <link rel="stylesheet" href="css/theme.min.css" />
+		<link rel="stylesheet" href="css/themes/jquery.mobile.icons.min.css" />
+        <script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+        <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
         
-        <script>
-	        /* 1. Create an instance of the Apigee.Client class by specifying your account details. 
-	              You will use this object to send your organization and application information 
-	              with all calls to the Apigee API. This is how we determine which data store to
-	              access when you send a request.
-	
-				  - Enter your organization name below — it’s the username you picked when you 
-				  	signed up at apigee.com
-				  - Keep the appName as “sandbox”: it’s a context we automatically created for you. 
-				  	It’s completely open by default, but don’t worry, other apps you create are not! */
-	
-            var dataClient = new Apigee.Client({
-                orgName:'YOUR APIGEE ORGANIZATION NAME',
-                appName:'sandbox',
-				logging: true, //optional - turn on logging, off by default
-				buildCurl: true //optional - log network calls in the console, off by default
-
-            });
-		</script>			
-            
-        <script>
-	        /* 2. Add location data to an entity
-	
-				To start, let's create a function to create an entity with location data and 
-				save it on Apigee. */
-				   
-			function addLocation () {
-				/*			
-				First, we specify the properties for your new entity:
-	            
-	            - Set the values of the 'latitude' and 'longitude' properties to a location near you. */
-			
-				var properties = {
-	                type:'device',
-	                location: {
-	                	latitude:'LATITUDE',
-	                	longitude:'LONGITUDE'
-					}
-	            };
-	            
-	            /* Next, we call the createEntity() method. Notice that the method is prepended by 
-	               dataClient, so that the Apigee API knows what data store we want to work with. */
-			
-	            dataClient.createEntity(properties, function (errorStatus, entity, errorMessage) { 
-	                if (errorStatus) { 
-	                   // Error - there was a problem creating the entity
-	                   document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Error! Unable to create your entity. "
-                        +   "Did you enter your organization name properly on ln 30?"
-                        +   "<br/><br/>"
-                        +   "Error message:" 
-                        + 	"<pre>" + JSON.stringify(errorMessage); + "</pre>"
-	                } else { 
-	                    // Success - the entity was created properly
-	                    document.getElementsByTagName('body')[0].innerHTML
-                        +=  "Success! The entity has been created."
-	                }
-	            });
-			}
-		</script>        
-
+        <!-- Include our API request functions from index.js and the SDK from apigee.js -->
+        <script src="js/index.js"></script>
+        <script src="js/apigee.js"></script>                
+        
 		<script>
-	        /* 3. Query the Apigee API based on entity location
-	        
-	           Now let's the user's location and ask the API to return all entities within 
-	           16000 meters of them. */
-	           
-			function queryLocation () {
-				
-				/* We start by using the JavaScript geolocation API to retrieve the user's
-				   current position. */									
-				navigator.geolocation.getCurrentPosition(success, error, options);
-				
-				/* Then we declare a function to handle the location information */ 
-				function success (location) {
-				
-					/* We extract the user's current latitude and longitude coordinates */
-					var latitude = location.coords.latitude;
-					var longitude = location.coords.longitude;
-					
-					/* And specify a distance from that point in meters */
-					var distance = '16000';
-		            
-		            /* Now we form our geolocation query in the format: 
-		               location within <distance> of <latitude>,<longitude> */
-					var properties = { 
-						endpoint:'/devices',
-						method:'GET',
-						qs:{ql:'location within ' + distance + ' of ' + latitude + ',' + longitude}
-					};
-					
-					/* And finally we pass our properties to request(), which initiates our GET request: */
-					dataClient.request(properties, function (error, response) { 
-						if (errorStatus) { 
-						  // Error - there was a problem retrieving the entity
-		                  document.getElementsByTagName('body')[0].innerHTML
-	                        +=  "Error! Unable to retrieve your entity. "
-	                        +   "Check that the 'uuid' of the entity you tried to retrieve is correct."
-	                        +   "<br/><br/>"
-	                        +   "Error message:" + JSON.stringify(error);		                 
-						} else { 
-						  // Success - the request was successful and the API returns the results of our query
-						  document.getElementsByTagName('body')[0].innerHTML
-	                        +=  "Success! Here is the entity we retrieved. If you don't see an entity, make "
-	                        + 	"sure that the location of the entity was set within 16000 meters of your current location."
-	                        +   "<br/><br/>"
-	                        +   "<pre>" + JSON.stringify(response); + "</pre>"
-						} 
-					}); 
-				}
-			}
-		</script>                
+			$(document).ready( function(){	
+				getLocation();			
+				$('#start-button').bind('click',promptClientCredsAndInitializeSDK);
+				$('#add-button').bind('click',function () {$('#result-text').empty(); createLocation();});
+				$('#query-button').bind('click',function () {$('#result-text').empty(); queryLocation();});
+	        });
+	    </script>
     </head>
     <body>        
-        <script>
-        	/* 6. Now let's run it! 
-        	
-        	   Be sure to set your org name on ln 33 above, then uncomment the two function calls 
-        	   below one at a time to see their result! 
-        	   
-        	   Make sure your browser is set to allow location sharing or you won't get any entities back! */
-			
-	        /* Uncomment to create a new entity with location data */
-	        //addLocation();
-	        
-	        /* Uncomment to retrieve the entity based on location. */
-	        //queryLocation();	        
-        </script>        
+		<div data-role='page' data-theme='b'>
+			<div data-role='header' data-theme='b'><h3>Apigee Geolocation Sample App</h3></div>
+			<div data-role='content'>
+				<p>This sample app will show you how to use the geolocation features of the Apigee JavaScript SDK, including:</p>
+				<ul>	
+					<li>Creating an entity with location data</li>
+					<li>Querying the Apigee API for entities based on location</li>
+				</ul>
+				<p><strong>IMPORTANT - BEFORE YOU BEGIN</strong></p>					
+				<p>Be sure the Apigee JavaScript SDK (apigee.js) is properly included in this project.</p>
+				<p>See /samples/Readme.md for more information on including the SDK.</p>
+				<a href='#main-page' id='start-button' data-role='button' data-inline='true'>Start</a>
+			</div>
+		</div>
+		<div id='main-page' data-role='page' data-theme='b'>
+			<div data-role='header' data-theme='b'><h3>Apigee Geolocation Sample App</h3></div>
+			<div data-role='content'>
+				<p>This app show the basics of working with the geolocation features of the Apigee JavaScript SDK. Click each button to execute an API call and see its response. For this app to work properly you must execute the add step before you can query. You also must also run this in a browser with location sharing enabled.</p>
+				<p>To view the code and more detailed comments on how this app operates, open js/index.js.</p>
+				<ol>
+					<li><strong>Create a new entity with location data</strong><br />
+						Creates a new 'device' entity with location data.<br />
+						<a href='#result-page' data-transition='slide' id='add-button' data-role='button' data-inline='true'>Add</a></li>
+					<li><strong>Query by location</strong><br />
+						Queries the 'devices' collection for all 'device' entities within 16000 meters of your current locations.<br />
+						<a href='#result-page' data-transition='slide' id='query-button' data-role='button' data-inline='true'>Query</a></li>
+				</ol>
+			</div>			
+		</div>
+		<div id='result-page' data-role='page' data-theme='b'>
+			<div data-role='header' data-theme='b'><h3>Apigee Geolocation Sample App</h3></div>
+			<a href='#main-page' data-transition='slide' id='back-button' data-role='button' data-inline='true' class='ui-btn-right'>Back</a>
+			<div id='result-text' data-role='content'></div>
+		</div>
     </body>
 </html>
