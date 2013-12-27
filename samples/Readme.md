@@ -12,6 +12,7 @@ The sample apps in this directory are intended to show basic usage of some of th
 * **geolocation** - An app that shows you how to creates entities with location data, and perform geolocation queries to retrieve them.
 * **monitoringSample** - An app that lets you test the App Monitoring feature by sending logging, crash and error reports to your account.
 * **readmeSample** - Similar to the booksSample app. This app retrieves the 'books' collection from your account and displays all the title of each 'book' entity as a JavaScript alert.
+* **usersAndGroups** - An app that illustrates SDK APIs through which you can manage users and group in your app services application.
 
 ##Running the sample apps
 
