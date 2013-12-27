@@ -13,19 +13,3 @@ The sample apps in this directory are intended to show basic usage of some of th
 * **monitoringSample** - An app that lets you test the App Monitoring feature by sending logging, crash and error reports to your account.
 * **readmeSample** - Similar to the booksSample app. This app retrieves the 'books' collection from your account and displays all the title of each 'book' entity as a JavaScript alert.
 * **usersAndGroups** - An app that illustrates SDK APIs through which you can manage users and group in your app services application.
-
-##Running the sample apps
-
-To run the sample apps, do the following:
-
-1. Put a copy of apigee.js (located in the /source directory) in the project directory. We recommend creating a <code>/js</code> directory for this.
-	
-2. Update the path to apigee.js in the project's index.html. By default, we have already included this in the &lt;head&gt; of the app:
-
-	```html
-<script src="js/apigee.js"></script>
-```
-	
-	You will need to update this path if apigee.js is not located in <code>js/</code>.
-
-3. Now simply open the project's index.html file in your brower!
