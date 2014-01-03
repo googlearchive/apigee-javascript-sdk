@@ -123,10 +123,6 @@ The syntax for this JavaScript SDK and the Usergrid Node module are almost exact
 
 We also have SDKs available for many other platforms, including Android, iOS, Ruby, .NET. Visit our [SDK download page](http://apigee.com/docs/app-services/content/app-services-sdks) for a full list.
 
-##Tests 
-
-Basic set of test cases can be found in the `/test` folder. Just open the tests.html file, and they will all run accordingly.
-
 ##More documentation
 
 Head over to the [App Services documentation](http://apigee.com/docs/app-services) to learn more about how to use App Services in JavaScript!
