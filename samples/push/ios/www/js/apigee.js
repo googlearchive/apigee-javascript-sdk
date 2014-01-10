@@ -1,4 +1,4 @@
-/*! apigee-javascript-sdk@2.0.5 2014-01-08 */
+/*! apigee-javascript-sdk@2.0.5 2014-01-10 */
 /*
 *  This module is a collection of classes designed to make working with
 *  the Apigee App Services API as easy as possible.
