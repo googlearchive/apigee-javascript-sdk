@@ -1,5 +1,5 @@
-/*! apigee-javascript-sdk@2.0.6 2014-03-05 */
-/*! usergrid@0.0.0 2014-03-03 */
+/*! apigee-javascript-sdk@2.0.6 2014-03-17 */
+/*! usergrid@0.10.8 2014-03-13 */
 var UsergridEventable = function() {
     throw Error("'UsergridEventable' is not intended to be invoked directly");
 };
@@ -294,6 +294,19 @@ function extend(subClass, superClass) {
     return subClass;
 }
 
+function propCopy(from, to) {
+    for (var prop in from) {
+        if (from.hasOwnProperty(prop)) {
+            if ("object" === typeof from[prop] && "object" === typeof to[prop]) {
+                to[prop] = propCopy(from[prop], to[prop]);
+            } else {
+                to[prop] = from[prop];
+            }
+        }
+    }
+    return to;
+}
+
 function NOOP() {}
 
 //Usergrid namespace encapsulates this SDK
@@ -564,6 +577,9 @@ function doCallback(callback, params, context) {
         if (options.appName) {
             this.set("appName", options.appName);
         }
+        if (options.qs) {
+            this.setObject("default_qs", options.qs);
+        }
         //other options
         this.buildCurl = options.buildCurl || false;
         this.logging = options.logging || false;
@@ -599,6 +615,7 @@ function doCallback(callback, params, context) {
         //is this a query to the management endpoint?
         var orgName = this.get("orgName");
         var appName = this.get("appName");
+        var default_qs = this.getObject("default_qs");
         var uri;
         var logoutCallback = function() {
             if (typeof this.logoutCallback === "function") {
@@ -615,6 +632,9 @@ function doCallback(callback, params, context) {
         }
         if (this.getToken()) {
             qs.access_token = this.getToken();
+        }
+        if (default_qs) {
+            qs = propCopy(qs, default_qs);
         }
         var req = new Usergrid.Request(method, uri, qs, body, function(err, response) {
             if ([ "auth_expired_session_token", "auth_missing_credentials", "auth_unverified_oath", "expired_token", "unauthorized", "auth_invalid" ].indexOf(response.error) !== -1) {
@@ -768,8 +788,8 @@ function doCallback(callback, params, context) {
    */
     Usergrid.Client.prototype.createCollection = function(options, callback) {
         options.client = this;
-        var collection = new Usergrid.Collection(options, function(err, response, collection) {
-            doCallback(callback, [ err, collection, response ]);
+        new Usergrid.Collection(options, function(err, data, collection) {
+            doCallback(callback, [ err, collection, data ]);
         });
     };
     /*
@@ -2647,11 +2667,11 @@ Usergrid.Folder = function(options, callback) {
         return !(required in self._data);
     });
     if (missingData) {
-        return doCallback(callback, [ true, new Usergrid.Error("Invalid asset data: 'name', 'owner', and 'path' are required properties.") ], self);
+        return doCallback(callback, [ true, new UsergridError("Invalid asset data: 'name', 'owner', and 'path' are required properties.") ], self);
     }
     self.save(function(err, data) {
         if (err) {
-            doCallback(callback, [ true, new Usergrid.Error(data) ], self);
+            doCallback(callback, [ true, new UsergridError(data) ], self);
         } else {
             if (data && data.entities && data.entities.length) {
                 self.set(data.entities[0]);
@@ -2835,11 +2855,11 @@ Usergrid.Asset = function(options, callback) {
         return !(required in self._data);
     });
     if (missingData) {
-        return doCallback(callback, [ true, new Usergrid.Error("Invalid asset data: 'name', 'owner', and 'path' are required properties.") ], self);
+        return doCallback(callback, [ true, new UsergridError("Invalid asset data: 'name', 'owner', and 'path' are required properties.") ], self);
     }
     self.save(function(err, data) {
         if (err) {
-            doCallback(callback, [ true, new Usergrid.Error(data) ], self);
+            doCallback(callback, [ true, new UsergridError(data) ], self);
         } else {
             if (data && data.entities && data.entities.length) {
                 self.set(data.entities[0]);
