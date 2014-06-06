@@ -83,6 +83,7 @@
             function createBook() {
 
                 new_book = { "title":$("#title-field").val(),
+                                "name":$("#title-field").val(),
                             "author":$("#author-field").val() };
 
                 my_books.addEntity(new_book, function (error, response) {
