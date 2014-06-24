@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta charset="utf-8">
+        <title>App Services HTML5 Template</title>
+        <script src="../apigee.min.js"></script>
+    </head>
+    <body>
+        <script>
+
+        /*
+            1. Set your account details in the app
+
+            - Enter your orgName below — it’s the username you picked when you signed up at apigee.com
+            - Keep the appName as “sandbox”: it’s a context we automatically created for you. It’s completely open by default, but don’t worry, other apps you create are not!      */
+
+            var client = new Apigee.Client({
+                orgName:'YOUR APIGEE.COM USERNAME',
+                appName:'sandbox'
+            });
+
+            
+        /*
+            2. Set some details for your first object
+
+            Great, we know where your where account is now!
+            Let’s try to create a book, save it on Apigee, and output it on the page.
+            
+            - Keep the type as “book”.
+            - Enter the title of your favorite book below, instead of “the old man and the sea”.    */
+
+            var options = {
+                type:'book',
+                title:'the old man and the sea'
+            };
+
+
+        /*
+            3. Now, run it!
+            
+            You’re good to go! Open index.html in a web browser to see it running!
+            
+            - This app will NOT work in Internet Explorer due to their lack of CORS support.
+            - Please use Firefox, Chrome or Safari, etc. instead.      */
+
+            client.createEntity(options, function (error, response) { 
+                if (error) { // Error - the book was not saved properly
+                    alert("Could not create the book. Did you enter your orgName (username) correctly on line 18 of index.html?");
+                } else { // Success - the book was created properly
+                    
+                    // The saved object is returned in the “response” variable,
+                    // defined on line 46. The code below outputs it on the page!
+                    document.getElementsByTagName('body')[0].innerHTML
+                        +=  "Success! Here is the object we stored; "
+                        +   "notice the timestamps and unique id we created for you:"
+                        +   "<br/><br/>"
+                        +   JSON.stringify(response.get());
+                }
+            });
+
+        /*
+            4. Congrats, you’re done!
+
+            - You can try adding more properties after line 34 and reloading the page!
+            - You can then see the admin view of this data by logging in at https://apigee.com/usergrid
+            - Or you can go explore more advanced examples in our docs: http://apigee.com/docs/usergrid         */
+        </script>
+    </body>
+</html>
