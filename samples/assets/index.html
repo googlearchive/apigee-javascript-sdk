@@ -32,13 +32,10 @@ include apigee.js from the /js directory. -->
 		<script>
 			$(document).ready( function(){				
 				$('#start-button').bind('click',promptClientCredsAndInitializeSDK);
-				$('#create-user-button').bind('click',function () {$('#result-text').empty(); createUser();});
 				$('#create-button').bind('click',function () {$('#result-text').empty(); createAsset();});
 				$('#add-button').bind('click',function () {$('#result-text').empty(); updateAsset();});
 				$('#retrieve-button').bind('click',function () {$('#result-text').empty(); retrieveAsset();});
-				$('#delete-button').bind('click',function () {$('#result-text').empty(); deleteAsset();});
-				$('#delete-user-button').bind('click',function () {$('#result-text').empty(); deleteUser();});
-	        });
+				  });
 	    </script>
     </head>
     <body>        
