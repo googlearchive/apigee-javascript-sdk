@@ -26,8 +26,8 @@ include apigee.js from the /js directory. -->
         <script src="http://code.jquery.com/mobile/1.1.1/jquery.mobile-1.1.1.min.js"></script>
         
         <!-- Include our API request functions from index.js and the SDK from apigee.js -->
-        <script src="js/index.js"></script>
-        <script src="../../apigee.js"></script>                
+        <script src="index.js"></script>
+        <script src="usergrid.js"></script>                
         
 		<script>
 			$(document).ready( function(){				
@@ -47,9 +47,9 @@ include apigee.js from the /js directory. -->
 			<div data-role='content'>
 				<p>This sample app will show you how to perform basic operations on assets using the Apigee JavaScript SDK, including:</p>
 				<ul>	
-					<li>creating an asset</li>
-					<li>Adding binary data to an asset</li>
-					<li>Downloading asset content</li>	
+					<li>creating a entity to attach an asset to</li>
+					<li>Attaching an asset as binary data to an entity</li>
+					<li>Downloading the asset as a blob from the entity</li>	
 				</ul>
 				<p><strong>IMPORTANT - BEFORE YOU BEGIN</strong></p>					
 				<p>Be sure the Apigee JavaScript SDK (apigee.js) is properly included in this project.</p>
@@ -63,11 +63,8 @@ include apigee.js from the /js directory. -->
 				<p>This app show the basics of working with assets using the Apigee JavaScript SDK. Click each button to execute an API call and see its response. For this app to work properly you must run the create step first.</p>
 				<p>To view the code and more detailed comments on how this app operates, open js/index.js.</p>
 				<ol>
-					<li><strong>Create a user for the example</strong><br />
-						Assets need an owner. Let's create an owner for our sample.<br />
-						<a href='#result-page' data-transition='slide' id='create-user-button' data-role='button' data-inline='true'>Create an example user</a></li>
-					<li><strong>Create an asset</strong><br />
-						This creates an asset that is owned by our new user with the name and path specified.<br />
+					<li><strong>Create an entity</strong><br />
+						This creates a user entity to attach our asset to. You can attach one asset to any entity.<br />
 						<a href='#result-page' data-transition='slide' id='create-button' data-role='button' data-inline='true'>Create</a></li>
 					<li><strong>Add content</strong><br />
 						Select a file from your filesystem, whose data will be added to the entity.<br />
@@ -75,13 +72,7 @@ include apigee.js from the /js directory. -->
 						<a href='#result-page' data-transition='slide' id='add-button' data-role='button' data-inline='true'>Update</a></li>
 					<li><strong>Retrieve the asset</strong><br />
 						Retrieve the asset data and display it.<br />
-						<a href='#result-page' data-transition='slide' id='retrieve-button' data-role='button' data-inline='true'>Retrieve</a></li>
-					<li><strong>Delete an asset</strong><br />
-						Delete our asset.<br />
-						<a href='#result-page' data-transition='slide' id='delete-button' data-role='button' data-inline='true'>Delete</a></li>
-					<li><strong>Delete our example user</strong><br />
-						Last, we delete our example user.<br />
-						<a href='#result-page' data-transition='slide' id='delete-user-button' data-role='button' data-inline='true'>Delete the example user</a></li>
+						<a href='#result-page' data-transition='slide' id='retrieve-button' data-role='button' data-inline='true'>Retrieve</a></li>					
 				</ol>
 			</div>			
 		</div>
