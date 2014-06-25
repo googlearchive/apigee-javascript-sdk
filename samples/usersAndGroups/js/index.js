@@ -129,44 +129,22 @@ function getGroups() {
  * Adds a new user to the database.
  */
 function addUser() {
-    $('#usernameMessageText').empty();
-
     // Variable to collect data to send with the request.
     var userName = $("#fld_user_name").val(); // Must be unique.
     var name = $("#fld_name").val();
     var email = $("#fld_email").val();
     var password = $("#fld_password").val();
 
-    // Options representing the new user to add.
-    var options = {
-        'username':userName,
-        'type':'users'
-    }
-    // Call an SDK method to get an entity representing
-    // the user. If no user is returned, then add one.
-    apigeeClient.getEntity(options, function(error, entity, data){
+    // Call an SDK method to create a new user with
+    // data collected from the form.
+    apigeeClient.signup(userName, password, email, 
+        name, function (error, entity, data) {
         if (error) {
-            var errorMessage = data["error"];
-            if (errorMessage == "service_resource_not_found"){
-                // Call an SDK method to create a new user with
-                // data collected from the form.
-                apigeeClient.signup(userName, password, email, 
-                    name, function (error, entity, data) {
-                    if (error) {
-                        var message = "Unable to add a user. " + data;
-                        apigeeClient.logError({tag:"addUser", logMessage:message})
-                    } else {
-                        // Refresh the user list to include the new user.
-                        getUsers();
-                    }
-                });
-            }
-            // Go back to the user list.
-            $.mobile.navigate('#page_view_users_list');
+            var message = "Unable to add a user. " + data;
+            apigeeClient.logError({tag:"addUser", logMessage:message})
         } else {
-            // Display a message because there's already a user with that username.
-            var message = "<p style='color:red;font-size:12px'>That username is taken. Please choose another.</p>";
-            $('#usernameMessageText').append(message);
+            // Refresh the user list to include the new user.
+            getUsers();
         }
     });
 }
@@ -340,6 +318,7 @@ function displayAddUserToGroup(){
     }
 }
 
+
 /**
  * Displays a popup.
  */
@@ -347,7 +326,6 @@ function displayPopup(message){
     var options = {
         "transition" : "slideup"
     }
-
     $('#messagePopup').empty();
     $('#messagePopup').append(
         '<p>' + message + '</p>'
