@@ -1,4 +1,4 @@
-/*! apigee-javascript-sdk@2.0.9 2014-06-24 */
+/*! apigee-javascript-sdk@2.0.9 2014-06-25 */
 var UsergridEventable = function() {
     throw Error("'UsergridEventable' is not intended to be invoked directly");
 };
@@ -3603,6 +3603,97 @@ Usergrid.Asset.prototype.download = function(callback) {
         Usergrid.Client.call(this, options);
     };
     Apigee.Client.prototype = Usergrid.Client.prototype;
+    /*
+  *  Function to get the assigned Apigee UUID of the device. Call directly to retrieve this information.
+  *
+  *  @method getDeviceUUID
+  *  @public
+  *  @return {string} uuid
+  */
+    Usergrid.Client.prototype.getDeviceUUID = function() {
+        if (typeof window.localStorage.getItem("deviceUUID") === "string") {
+            return window.localStorage.getItem("deviceUUID");
+        } else {
+            var uuid = randomUUID();
+            window.localStorage.setItem("deviceUUID", uuid);
+            return window.localStorage.getItem("deviceUUID");
+        }
+    };
+    /*
+  *  Function to register a device with Apigee. Call directly with options object.
+  *
+  *  @method registerDevice
+  *  @public
+  *  @param {object} options
+  *  @param {function} callback
+  *  @return {callback} callback(err, data)
+  */
+    Usergrid.Client.prototype.registerDevice = function(options, callback) {
+        if (options) {
+            var notifierId = options.notifier + ".notifier.id";
+            var device = {
+                type: "devices",
+                uuid: this.getDeviceUUID()
+            };
+            device[notifierId] = options.deviceToken;
+            var entityOptions = {
+                client: this,
+                data: device
+            };
+            var deviceEntity = new Usergrid.Entity(entityOptions);
+            deviceEntity.save(callback);
+        } else {
+            callback(true);
+        }
+    };
+    /*
+  *  Function to send push notification to a specified path. Call directly.
+  *
+  *  @method sendPushToDevice
+  *  @public
+  *  @param {object} options
+  *  @param {function} callback
+  *  @return {callback} callback(err, data)
+  */
+    Usergrid.Client.prototype.sendPushToDevice = function(options, callback) {
+        if (options) {
+            var notifierName = options.notifier;
+            var notifierLookupOptions = {
+                type: "notifier",
+                name: options.notifier
+            };
+            var self = this;
+            this.getEntity(notifierLookupOptions, function(error, result) {
+                if (error) {
+                    callback(error, result);
+                } else {
+                    var pushEntity = {
+                        type: options.path
+                    };
+                    if (result.get("provider") === "google") {
+                        pushEntity["payloads"] = {};
+                        pushEntity["payloads"][notifierName] = options.message;
+                    } else if (result.get("provider") === "apple") {
+                        pushEntity["payloads"] = {};
+                        pushEntity["payloads"][notifierName] = {
+                            aps: {
+                                alert: options.message,
+                                sound: options.sound
+                            }
+                        };
+                    }
+                    var entityOptions = {
+                        client: self,
+                        data: pushEntity
+                    };
+                    var notification = new Usergrid.Entity(entityOptions);
+                    notification.save(callback);
+                }
+            });
+        } else {
+            callback(true);
+        }
+    };
     //BEGIN APIGEE MONITORING SDK
     //Constructor for Apigee Monitoring SDK
     Apigee.MonitoringClient = function(options) {
@@ -3946,7 +4037,7 @@ Usergrid.Asset.prototype.download = function(callback) {
     /**
    * Registers a device with Apigee Monitoring. Generates a new UUID for a device and collects relevant info on it.
    *
-   * @method registerDevice
+   * @method startSession
    * @public
    *
    */
