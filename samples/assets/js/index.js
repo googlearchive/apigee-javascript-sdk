@@ -1,6 +1,6 @@
-/* Usergrid JavaScript SDK ENTITY EXAMPLE APP
+/* APIGEE JavaScript SDK ENTITY EXAMPLE APP
 
-This sample app will show you how to perform basic entity operation using the Usergrid JavaScript SDK, including:
+This sample app will show you how to perform basic entity operation using the Apigee JavaScript SDK, including:
 	
 	- creating an entity
 	- retrieving an entity
@@ -9,27 +9,28 @@ This sample app will show you how to perform basic entity operation using the Us
 	
 This file contains the functions that make the actual API requests. To run the app, open index.html in your browser. */
 
-/* Before we make any requests, we prompt the user for their Usergrid organization name, then initialize the SDK by
-   instantiating the Usergrid.Client class. 
+/* Before we make any requests, we prompt the user for their Apigee organization name, then initialize the SDK by
+   instantiating the Apigee.Client class. 
    
    Note that this app is designed to use the unsecured 'sandbox' application that was included when you created your organization. */
    
 var dataClient;
 var entityUuid; //saves the UUID of the entity we create so we can perform retrieve, update and delete operations on it 
 var user; //The owner of our assets
+var asset; //The newly-created asset
 
 function promptClientCredsAndInitializeSDK(){
-	var Usergrid_ORGNAME;
-	var Usergrid_APPNAME='sandbox';
-	if("undefined"===typeof Usergrid_ORGNAME){
-	    Usergrid_ORGNAME=prompt("What is the Organization Name you registered at http://Usergrid.com/usergrid?");
+	var APIGEE_ORGNAME;
+	var APIGEE_APPNAME='sandbox';
+	if("undefined"===typeof APIGEE_ORGNAME){
+	    APIGEE_ORGNAME=prompt("What is the Organization Name you registered at http://apigee.com/usergrid?");
 	}
-	initializeSDK(Usergrid_ORGNAME,Usergrid_APPNAME);
+	initializeSDK(APIGEE_ORGNAME,APIGEE_APPNAME);
 }            
 
 
 function initializeSDK(ORGNAME,APPNAME){	
-	dataClient = new Usergrid.Client({
+	dataClient = new Apigee.Client({
 	    orgName:ORGNAME,
 	    appName:APPNAME,
 		logging: false, //optional - turn on logging, off by default
@@ -38,13 +39,45 @@ function initializeSDK(ORGNAME,APPNAME){
 		if(!err){
 
 		}
-	});
-	console.log(dataClient);	
+	});	
 }
 
-/* 1. Create a new entity
+/* 1. Create a new user
 
-	To start, let's create a user entity to attach an asset to and save it on Usergrid. */
+	To start, let's create a new user to serve as the owner of our asset. */
+function createUser(){
+	//create a user named Wilbur who will "own" our assets
+	var username="user_"+Math.round(Math.random()*100000);
+	dataClient.signup(username, "Sup3rS3cr3t!", "usergrid+"+username+"@apigee.com", "Wilbur", function (error, entity, data) {
+        if (error) {
+           document.getElementById('result-text').innerHTML
+            =  "Error! Unable to create your user. "
+            +   "Did you enter the correct organization name?"
+            +   "<br/><br/>"
+            +   "Error message:" 
+            +	"<pre>" + JSON.stringify(data) + "</pre>";
+            apigeeClient.logError({tag:"addUser", logMessage:message})
+        } else {
+            document.getElementById('result-text').innerHTML
+            =  "Success!"
+            +	"<br /><br />"
+            +	"Here is the UUID (universally unique identifier of the"
+            +	"user you created. We've saved it to reference the user "
+            + 	"when we create the asset:"
+            +	"<br /><br />"
+            +   entity.get('uuid')
+            +	"<br /><br />"
+            + 	"And here is the full API response. The user is stored in the data property:"
+            +   "<br/><br/>"
+            +   "<pre>" + JSON.stringify(data, undefined, 4) + "</pre>";
+            user=entity;
+        }
+    });
+}
+
+/* 2. Create a new entity
+
+	To start, let's create a function to create an entity and save it on Apigee. */
 	   
 function createAsset () {
 	/* First, we specify the properties for your new entity:
@@ -59,35 +92,55 @@ function createAsset () {
     
     - Let's also specify some properties for your entity. Properties are formatted 
       as key-value pairs. We've started you off with the required properties: type,
-      name, path, and owner.  You can add more properties as needed.  */      
+      name, path, and owner.  You can add more properties as needed.  */
     var imageName='image_'+Math.round(Math.random()*100000)+'.jpg';
-		
-		var properties = {
-        type:'users',
-        username:'assetUser', 
+	var properties = {
+        type:'asset',
+        name:imageName,
+        path: '/uploads/'+imageName,
+        owner:user.get("uuid")
     };
     
     /* Next, we create our asset. Notice that we are passing the dataClient to the asset. */
-    dataClient.createEntity(properties, function(err, response, entity) {
-    	if (!err) {
-    		user = entity;
-    		console.log(entity);
-    	} else {
+    asset=new Usergrid.Asset({client:dataClient, data:properties}, function(errorStatus, asset){
+        if (errorStatus) { 
+           // Error - there was a problem creating the asset
+           document.getElementById('result-text').innerHTML
+            =  "Error! Unable to create your asset. "
+            +   "Did you enter the correct organization name?"
+            +   "<br/><br/>"
+            +   "Error message:" 
+            +	"<pre>" + JSON.stringify(asset) + "</pre>";
+        } else { 
+            // Success - the entity was created properly
+            document.getElementById('result-text').innerHTML
+            =  "Success!"
+            +	"<br /><br />"
+            +	"Here is the UUID (universally unique identifier of the "
+            +	"asset you created. We've saved it to reference the asset "
+            + 	"when we perform retrieve update and delete operations on it:"
+            +	"<br /><br />"
+            +   JSON.stringify(asset.get('uuid'))
+            +	"<br /><br />"
+            + 	"And here is the full API response. The asset is stored in the _data property:"
+            +   "<br/><br/>"
+            +   "<pre>" + JSON.stringify(asset, undefined, 4) + "</pre>";
 
-    	}
-    });    
+           entityUuid = asset.get("uuid"); //saving the UUID so it's available for our other operations in this app
+        }
+    });
 }
 
 
 
 
-/* 2. Upload asset data
+/* 3. Upload asset data
 
    We can add binary data to our asset using the upload method */
    	         
 function updateAsset() {
    /*
-		   - Specify your Usergrid.Client object in the 'client' property. In this case, 'dataClient'.
+		   - Specify your Apigee.Client object in the 'client' property. In this case, 'dataClient'.
 		   - Specify the following in the 'data' property:
 		   		- The 'type' and 'uuid' of the entity to be updated so that the API knows what 
 		   		  entity you are trying to update.
@@ -99,11 +152,11 @@ function updateAsset() {
 	if(files.length===0){
           document.getElementById('result-text').innerHTML
             =  "Error! You need to select a file. "
-            +   "You can use the Usergrid.ico file in the same directory as this sample."
+            +   "You can use the apigee.ico file in the same directory as this sample."
             +   "<br/><br/>"
 	}else{
 		/* we have a file, let's upload it.*/
-		user.attachAsset(files[0], function(errorStatus, entity){
+		asset.upload(files[0], function(errorStatus, entity){
 			if (errorStatus) { 
 			  // Error - there was a problem uploading the data
 	          document.getElementById('result-text').innerHTML
@@ -113,7 +166,7 @@ function updateAsset() {
 	            +   "Error message:" 
 	            + 	"<pre>" + JSON.stringify(entity, undefined, 4); + "</pre>"		                  
 			} else { 
-			  // Success - the entity was found and retrieved by the Usergrid API
+			  // Success - the entity was found and retrieved by the Apigee API
 			  document.getElementById('result-text').innerHTML
 	            =  "Success! Here is the asset data we retrieved: "
 	            +   "<br/><br/>"
@@ -126,16 +179,14 @@ function updateAsset() {
 
 
 
-/* 3. Retrieve the asset
+/* 4. Retrieve the asset
 
    Now that we have uploaded data, let's download and display it: */
    
 function retrieveAsset () {
-
-
 	document.getElementById('result-text').innerHTML = "Downloading asset data...";
 	/* The data is returned as a Javascript Blob */
-	user.downloadAsset(function(errorStatus, file){
+	asset.download(function(errorStatus, file){
 			if (errorStatus) { 
 			  // Error - there was a problem retrieving the data
 	          document.getElementById('result-text').innerHTML
@@ -144,20 +195,68 @@ function retrieveAsset () {
 	            +   "Error message:" 
 	            + 	"<pre>" + JSON.stringify(file, undefined, 4); + "</pre>"		                  
 			} else { 
-			  // Success - the entity was found and retrieved by the Usergrid API
+			  // Success - the entity was found and retrieved by the Apigee API
 				document.getElementById('result-text').innerHTML
 					=  "Success! Here is the asset data we retrieved: "
 					+   "<br/><br/>";
 				/* Create an image tag to hold our downloaded image data */
 				var img = document.createElement("img");
 			    /* Create a FileReader to feed the image into our newly-created element */
-			    var reader = new FileReader();			    			    
+			    var reader = new FileReader();
 			    reader.onload = (function(aImg) { return function(e) { aImg.src = e.target.result; }; })(img);
 			    reader.readAsDataURL(file);
-
 			    /* append the img element to our results page */
 			    document.getElementById('result-text').appendChild(img);
    			} 
 
 	})
+}
+
+
+
+/* 5. Delete an asset
+
+   Now that we've created, retrieved and updated our asset, let's delete it. This will 
+   permanently remove the asset and its contents from your data store. */
+			
+function deleteAsset () {
+
+	/* We call the destroy() method to intitiate the API DELETE request */
+	asset.destroy(function (error,response) {
+	    if (error) { 
+			  // Error - there was a problem deleting the entity
+              document.getElementById('result-text').innerHTML
+                =  "Error! Unable to delete your entity. "
+                +   "Check that the 'uuid' of the entity you tried to delete is correct."
+                +   "<br/><br/>"
+                +   "Error message:" + JSON.stringify(error);		                 
+			} else { 
+			  // Success - the entity was successfully deleted
+			  document.getElementById('result-text').innerHTML
+                =  "Success! The entity has been deleted."
+		}
+	});	     
+}
+
+/* 6. Delete the user
+
+   Now let's use the same method to selete our temporary user */
+			
+function deleteUser () {
+
+	/* We call the destroy() method to intitiate the API DELETE request */
+	user.destroy(function (error,response) {
+	    if (error) { 
+			  // Error - there was a problem deleting the entity
+              document.getElementById('result-text').innerHTML
+                =  "Error! Unable to delete your user. "
+                +   "Check that the 'uuid' of the user you tried to delete is correct."
+                +   "<br/><br/>"
+                +   "Error message:" + JSON.stringify(error);		                 
+			} else { 
+			  // Success - the entity was successfully deleted
+			  document.getElementById('result-text').innerHTML
+                =  "Success! The user has been deleted."
+		}
+	});	     
 }
