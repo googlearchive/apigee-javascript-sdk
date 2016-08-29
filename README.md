@@ -1,3 +1,7 @@
+#NOTE: THIS REPOSITORY IS DEPRECATED. THE LATEST CODE IS LOCATED  [HERE](https://github.com/apache/usergrid/tree/master/sdks/html5-javascript).
+
+
+
 #Apigee JavaScript SDK
 
 
